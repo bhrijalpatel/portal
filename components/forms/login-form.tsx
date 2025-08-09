@@ -35,7 +35,7 @@ const formSchema = z.object({
   password: z.string().min(8, "Password must be at least 6 characters"),
 });
 
-export function LoginForm({
+export function SignInForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
