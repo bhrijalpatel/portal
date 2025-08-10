@@ -62,7 +62,7 @@ export default function HomePage() {
           service records, inventory management, and team collaboration tools.
         </p>
 
-        <div className="mt-10 flex flex-col sm:flex-row gap-4 items-center">
+        <div className="mt-10 flex flex-col sm:flex-row gap-3 items-center border rounded-2xl p-3 shadow group">
           <Button
             asChild
             size="lg"
@@ -73,7 +73,7 @@ export default function HomePage() {
               <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
             </Link>
           </Button>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground group-hover:text-emerald-600 transition-all duration-300">
             <Shield className="h-4 w-4" />
             <span>Secure team access</span>
           </div>

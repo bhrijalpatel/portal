@@ -17,6 +17,15 @@ export async function requireSession(): Promise<Session> {
 }
 
 /**
+ * Opposite guard for public auth pages (sign-in/up)
+ * Redirects authenticated users away from auth pages.
+ */
+export async function redirectIfAuthenticated(to: string = "/dashboard") {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (session) redirect(to);
+}
+
+/**
  * Non-throwing variant. Returns null instead of redirecting.
  * Useful when a page can render for both authed and guest users.
  */

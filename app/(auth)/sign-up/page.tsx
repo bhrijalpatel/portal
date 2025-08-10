@@ -1,13 +1,13 @@
-import { SignInForm } from "@/components/forms/signin-form";
+import { SignUpForm } from "@/components/forms/signup-form";
 import Link from "next/link";
 import { ArrowLeft, Sparkles } from "lucide-react";
 
-export default function SignInPage() {
+export default function SignUpPage() {
   return (
     <div className="relative min-h-svh flex flex-col items-center justify-center gap-6 p-6 md:p-10 bg-gradient-to-br from-background via-background to-secondary/5">
       {/* Back to Home Link */}
-      <Link 
-        href="/" 
+      <Link
+        href="/"
         className="absolute top-6 left-6 flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors group"
       >
         <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
@@ -22,9 +22,9 @@ export default function SignInPage() {
         <div className="absolute top-1/4 left-1/5 h-96 w-96 rounded-full bg-primary/10 blur-3xl animate-pulse" />
         <div className="absolute bottom-1/4 right-1/5 h-80 w-80 rounded-full bg-blue-500/10 blur-3xl animate-pulse delay-1000" />
       </div>
-      
+
       <div className="flex w-full max-w-sm flex-col gap-6">
-        <SignInForm />
+        <SignUpForm />
       </div>
     </div>
   );
