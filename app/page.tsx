@@ -65,11 +65,7 @@ export default function HomePage() {
         </p>
 
         <div className="mt-10 flex flex-col sm:flex-row gap-3 items-center border rounded-2xl p-3 shadow group">
-          <Button
-            asChild
-            size="lg"
-            className="px-10 py-6 text-lg font-semibold bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-600/90 shadow-lg hover:shadow-xl transition-all duration-300 group"
-          >
+          <Button asChild size="lg" variant="outline">
             <Link href="/sign-in" className="flex items-center gap-2">
               Access Dashboard
               <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
