@@ -1,83 +1,192 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import {
+  ArrowRight,
+  Shield,
+  Zap,
+  Sparkles,
+  Lock,
+  Users,
+  Rocket,
+  Wrench,
+  Car,
+  ClipboardCheck,
+} from "lucide-react";
 
 export default function HomePage() {
   return (
-    <div className="relative min-h-screen flex flex-col overflow-hidden bg-gradient-to-br from-background via-background to-background">
-      {/* Decorative gradient blur */}
-      <div className="pointer-events-none absolute inset-0 -z-10 [mask-image:radial-gradient(circle_at_center,white,transparent)]">
-        <div className="absolute top-1/3 left-1/4 h-72 w-72 rounded-full bg-primary/20 blur-3xl" />
-        <div className="absolute bottom-10 right-1/4 h-72 w-72 rounded-full bg-secondary/30 blur-3xl" />
+    <div className="relative min-h-screen flex flex-col overflow-hidden bg-gradient-to-br from-background via-background to-secondary/5">
+      {/* Enhanced decorative elements */}
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute top-1/4 left-1/5 h-96 w-96 rounded-full bg-primary/10 blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/5 h-80 w-80 rounded-full bg-blue-500/10 blur-3xl animate-pulse delay-1000" />
+        <div className="absolute top-3/4 left-1/3 h-64 w-64 rounded-full bg-purple-500/10 blur-3xl animate-pulse delay-500" />
       </div>
 
-      <header className="w-full flex items-center justify-between px-6 py-4 md:px-12">
-        <div className="text-lg font-semibold tracking-tight">Portal</div>
+      <header className="w-full flex items-center justify-between px-6 py-6 md:px-12">
+        <div className="flex items-center gap-2">
+          <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center">
+            <Sparkles className="h-4 w-4 text-primary-foreground" />
+          </div>
+          <span className="text-xl font-bold tracking-tight">Portal</span>
+        </div>
         <nav className="flex items-center gap-3">
-          <Button asChild variant="ghost" size="sm">
-            <Link href="/sign-in">Sign In</Link>
-          </Button>
-          <Button asChild size="sm">
-            <Link href="/sign-up">Get Started</Link>
+          <Button
+            asChild
+            variant="ghost"
+            size="sm"
+            className="hover:bg-primary/5"
+          >
+            <Link href="/sign-up" className="flex items-center gap-2">
+              Sign Up
+            </Link>
           </Button>
         </nav>
       </header>
 
-      <main className="flex-1 px-6 md:px-12 flex flex-col items-center text-center max-w-5xl mx-auto pt-10 md:pt-20">
-        <h1 className="text-4xl md:text-6xl font-bold tracking-tight bg-gradient-to-b from-foreground to-foreground/70 bg-clip-text text-transparent">
-          A Simple Auth Portal Starter
-        </h1>
-        <p className="mt-6 text-base md:text-lg text-muted-foreground max-w-2xl">
-          Secure authentication, session management, and a clean UI foundation.
-          Build your product faster with a modern stack and opinionated
-          defaults.
-        </p>
-        <div className="mt-8 flex flex-col sm:flex-row gap-4">
-          <Button asChild size="lg" className="px-8">
-            <Link href="/sign-up">Create Account</Link>
-          </Button>
-          <Button asChild variant="outline" size="lg" className="px-8">
-            <Link href="/sign-in">I already have an account</Link>
-          </Button>
+      <main className="flex-1 px-6 md:px-12 flex flex-col items-center text-center max-w-6xl mx-auto pt-16 md:pt-24">
+        {/* Hero Section */}
+        <div className="relative">
+          <div className="absolute -inset-4 bg-gradient-to-r from-primary/20 via-blue-500/20 to-purple-500/20 rounded-2xl blur-xl opacity-30"></div>
+          <h1 className="relative text-5xl md:text-7xl font-black tracking-tight bg-gradient-to-br from-foreground via-primary to-blue-600 bg-clip-text text-transparent leading-tight">
+            Workshop
+            <br />
+            <span className="bg-gradient-to-r from-primary via-blue-500 to-purple-500 bg-clip-text text-transparent">
+              Management Portal
+            </span>
+          </h1>
         </div>
 
-        <div className="mt-16 grid gap-6 sm:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 w-full">
-          <FeatureCard
-            title="Modern Stack"
-            description="Next.js App Router, TypeScript, and Better Auth pre-wired."
+        <p className="mt-8 text-lg md:text-xl text-muted-foreground max-w-3xl leading-relaxed">
+          Streamline your automotive workshop operations with secure access to
+          service records, inventory management, and team collaboration tools.
+        </p>
+
+        <div className="mt-10 flex flex-col sm:flex-row gap-4 items-center">
+          <Button
+            asChild
+            size="lg"
+            className="px-10 py-6 text-lg font-semibold bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-600/90 shadow-lg hover:shadow-xl transition-all duration-300 group"
+          >
+            <Link href="/sign-in" className="flex items-center gap-2">
+              Access Dashboard
+              <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </Button>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Shield className="h-4 w-4" />
+            <span>Secure team access</span>
+          </div>
+        </div>
+
+        {/* Stats/Features Bar */}
+        <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-8 w-full max-w-3xl">
+          <StatCard icon={Car} value="500+" label="Vehicles Serviced" />
+          <StatCard icon={Wrench} value="24/7" label="System Access" />
+          <StatCard
+            icon={ClipboardCheck}
+            value="100%"
+            label="Digital Records"
           />
-          <FeatureCard
-            title="Secure Sessions"
-            description="Robust auth flows with session handling and sign-out redirect."
-          />
-          <FeatureCard
-            title="Rapid UI"
-            description="Reusable components and utility classes accelerate iteration."
-          />
+        </div>
+
+        {/* Feature Showcase */}
+        <div className="mt-24 w-full">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            Built for Automotive Workshops
+          </h2>
+          <p className="text-lg text-muted-foreground mb-12 max-w-2xl mx-auto">
+            Comprehensive tools designed specifically for workshop operations
+            and team management.
+          </p>
+
+          <div className="grid gap-8 sm:gap-10 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full">
+            <FeatureCard
+              icon={ClipboardCheck}
+              title="Service Management"
+              description="Track service history, maintenance schedules, and customer information with secure digital records."
+              highlight="Streamlined workflow"
+            />
+            <FeatureCard
+              icon={Wrench}
+              title="Inventory Control"
+              description="Monitor parts availability, track usage, and manage supplier information in real-time."
+              highlight="Always stocked"
+            />
+            <FeatureCard
+              icon={Users}
+              title="Team Collaboration"
+              description="Secure role-based access for technicians, managers, and administrative staff."
+              highlight="Work together"
+            />
+          </div>
         </div>
       </main>
 
-      <footer className="mt-20 py-8 text-center text-xs text-muted-foreground">
-        <p>&copy; {new Date().getFullYear()} Portal. All rights reserved.</p>
+      <footer className="mt-32 py-12 border-t border-border/50">
+        <div className="max-w-6xl mx-auto px-6 md:px-12 text-center">
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <Sparkles className="h-5 w-5 text-primary" />
+            <span className="font-semibold">Portal</span>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            &copy; {new Date().getFullYear()} Workshop Portal. Secure access for
+            your automotive business.
+          </p>
+        </div>
       </footer>
     </div>
   );
 }
 
-function FeatureCard({
-  title,
-  description,
+function StatCard({
+  icon: Icon,
+  value,
+  label,
 }: {
-  title: string;
-  description: string;
+  icon: any;
+  value: string;
+  label: string;
 }) {
   return (
-    <div className="rounded-lg border bg-card p-6 text-left shadow-sm backdrop-blur-sm">
-      <h3 className="font-semibold mb-2 text-sm tracking-wide uppercase text-primary/80">
-        {title}
-      </h3>
-      <p className="text-sm leading-relaxed text-muted-foreground">
-        {description}
-      </p>
+    <div className="text-center p-6 rounded-xl bg-card/50 backdrop-blur-sm border border-border/50 hover:border-primary/20 transition-colors">
+      <Icon className="h-8 w-8 text-primary mx-auto mb-3" />
+      <div className="text-2xl font-bold text-foreground">{value}</div>
+      <div className="text-sm text-muted-foreground">{label}</div>
+    </div>
+  );
+}
+
+function FeatureCard({
+  icon: Icon,
+  title,
+  description,
+  highlight,
+}: {
+  icon: any;
+  title: string;
+  description: string;
+  highlight: string;
+}) {
+  return (
+    <div className="group relative p-8 rounded-2xl bg-card/50 backdrop-blur-sm border border-border/50 hover:border-primary/20 transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+      <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+      <div className="relative">
+        <div className="mb-4 flex items-center gap-3">
+          <div className="p-3 rounded-xl bg-primary/10 group-hover:bg-primary/15 transition-colors">
+            <Icon className="h-6 w-6 text-primary" />
+          </div>
+          <span className="text-xs font-semibold uppercase tracking-wider text-primary">
+            {highlight}
+          </span>
+        </div>
+        <h3 className="text-xl font-bold mb-3 text-foreground group-hover:text-primary transition-colors">
+          {title}
+        </h3>
+        <p className="text-sm leading-relaxed text-muted-foreground">
+          {description}
+        </p>
+      </div>
     </div>
   );
 }
