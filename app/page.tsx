@@ -12,6 +12,7 @@ import {
   Car,
   ClipboardCheck,
 } from "lucide-react";
+import ThemeToggle from "@/components/context/ThemeToggle";
 
 export default function HomePage() {
   return (
@@ -41,6 +42,7 @@ export default function HomePage() {
               Sign Up
             </Link>
           </Button>
+          <ThemeToggle />
         </nav>
       </header>
 
