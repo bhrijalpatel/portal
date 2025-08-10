@@ -62,7 +62,7 @@ export function SignUpForm({
     );
     if (success) {
       toast.success(message as string);
-      router.push("/login");
+      router.push("/sign-in");
     } else {
       toast.error(message as string);
     }

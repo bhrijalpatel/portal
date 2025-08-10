@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
-export default function Home() {
+export default function HomePage() {
   return (
     <div className="relative min-h-screen flex flex-col overflow-hidden bg-gradient-to-br from-background via-background to-background">
       {/* Decorative gradient blur */}
