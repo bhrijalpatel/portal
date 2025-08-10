@@ -123,17 +123,22 @@ export default function HomePage() {
         </div>
       </main>
 
-      <footer className="mt-32 py-12 border-t border-border/50">
-        <div className="max-w-6xl mx-auto px-6 md:px-12 text-center">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <Sparkles className="h-5 w-5 text-primary" />
-            <span className="font-semibold">Portal</span>
-          </div>
-          <p className="text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} Workshop Portal. Secure access for
-            your automotive business.
-          </p>
-        </div>
+      <footer className="mt-32 py-6 flex flex-col gap-3 border-t border-border text-center">
+        <p className="text-sm text-muted-foreground">
+          &copy; {new Date().getFullYear()} Portal. Secure access for your
+          automotive business.
+        </p>
+        <p className="text-sm text-muted-foreground">
+          Built by{" "}
+          <Link
+            href="https://pateltrading.biz"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:text-primary transition-colors"
+          >
+            Patel Trading Company (1961) Limited
+          </Link>
+        </p>
       </footer>
     </div>
   );
