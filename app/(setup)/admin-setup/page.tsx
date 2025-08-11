@@ -1,0 +1,32 @@
+import { adminExists, requireSession, ensureProfile } from "@/lib/auth-helpers";
+import ClaimAdmin from "./claim";
+
+export default async function AdminSetupPage() {
+  // Only accessible when NO admin exists
+  if (await adminExists()) {
+    // An admin already exists — do not expose this UI anymore
+    return (
+      <main className="flex flex-col items-center justify-center max-w-md mx-auto py-10 space-y-4">
+        <h1 className="text-2xl font-semibold">Setup Complete</h1>
+        <p className="text-muted-foreground">
+          An admin user already exists in the system.
+        </p>
+      </main>
+    );
+  }
+
+  const { user } = await requireSession();
+  // Make sure the current user has a profile row (role=user initially)
+  await ensureProfile(user.id);
+
+  return (
+    <main className="flex flex-col items-center justify-center max-w-md mx-auto py-10 space-y-4">
+      <h1 className="text-2xl font-semibold">Initial Admin Setup</h1>
+      <p>
+        Signed in as: <b>{user.email}</b>
+      </p>
+      <p>No admin exists. You can claim the admin role for this app.</p>
+      <ClaimAdmin />
+    </main>
+  );
+}

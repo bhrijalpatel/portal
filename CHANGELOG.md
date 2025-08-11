@@ -27,6 +27,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Hydration-safe theme provider with proper SSR support
 - Enhanced authentication route group structure with `app/(auth)/` grouping
 - Reverse authentication guard preventing authenticated users from accessing auth pages
+- **Role-Based Access Control (RBAC) system** with bootstrap admin flow
+- `db/schema.profiles.ts` - Custom profiles table for user roles and metadata
+- Extended auth helpers with role management:
+  - `requireRole()` - Role-based access control guard with 403 redirect
+  - `adminExists()` - Check if any admin user exists in the system  
+  - `ensureProfile()` - Automatic profile creation with default role assignment
+- Bootstrap admin setup flow at `app/(setup)/admin-setup/`
+  - One-time admin claim process for first user
+  - Automatic lockdown after admin exists
+  - Client-side claim component with error handling
+- Admin panel at `app/(protected)/admin/` with comprehensive user management
+  - User list with role badges and metadata display
+  - Responsive table design with alternating row colors
+  - Role-based styling (red badges for admin, gray for users)
+  - Navigation integration with logout and theme toggle
+- Secure admin bootstrap API endpoint at `/api/admin/bootstrap`
+  - POST endpoint for claiming admin role
+  - Conflict prevention when admin already exists
+  - Session validation and error handling
+- Custom 403 Forbidden error page with navigation options
 
 ### Changed
 - **BREAKING**: Moved dashboard from `app/dashboard/page.tsx` to `app/(protected)/dashboard/page.tsx`
@@ -53,6 +73,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated dashboard access button styling to outline variant for improved visibility
 - Enhanced authentication flow with proper route group structure and reverse authentication
 - Improved form validation and error handling in sign-in/sign-up components
+- **Database schema updates** for RBAC implementation:
+  - Added `profiles` table with user roles, display names, and metadata
+  - Extended schema exports to include profiles table
+  - Added foreign key relationship between profiles and users with cascade delete
+- **Enhanced admin panel UI** with improved navigation and user experience:
+  - Added dashboard navigation button and logout functionality
+  - Integrated theme toggle in admin interface
+  - Improved responsive design with container layout
 
 ### Security
 - Implemented defense-in-depth authentication strategy:
@@ -60,12 +88,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Secondary**: Middleware for improved user experience
 - All protected routes now validate sessions against database, not just cookies
 - Added reverse authentication protection: authenticated users are redirected away from auth pages
+- **Enhanced RBAC security measures**:
+  - Role validation occurs server-side with database queries
+  - Admin bootstrap API prevents multiple admin creation attempts
+  - Proper error handling and 403 redirects for unauthorized access
+  - Profile creation ensures every user has appropriate role assignment
+  - Secure role-based route protection following Better-Auth patterns
 
 ### Documentation
 - Updated `CLAUDE.md` with new authentication architecture details
 - Added middleware maintenance requirements for future protected routes
 - Created comprehensive testing guide for authentication system
 - Updated project documentation to reflect automotive workshop focus
+- **RBAC system documentation**:
+  - Comprehensive step-by-step testing guide for admin bootstrap flow
+  - Role-based access control implementation details
+  - Admin panel functionality and user management documentation
+  - Database schema changes and migration information
 
 ### Dependencies
 - Added `next-themes@0.4.6` for dark mode functionality
@@ -74,3 +113,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Authentication system now follows Better-Auth recommended patterns
 - Server-side protection provides real security vs. cookie-only checks
 - Middleware remains for UX optimization but is not relied upon for security
+
+### RBAC Implementation Notes
+- **Bootstrap Admin Flow**: First user to visit `/admin-setup` can claim admin role
+- **Role Management**: Roles stored in separate `profiles` table, not in Better-Auth schema
+- **Extensible Design**: Role system can easily be extended to support additional roles (manager, technician, etc.)
+- **Database Separation**: Better-Auth tables remain untouched; all custom data in `profiles` table
+- **Security-First**: All role checks happen server-side with database validation
+- **One-Time Setup**: Admin bootstrap automatically locks after first admin is created
+- **Future Expansion**: System designed to support complex role hierarchies and permissions
+- **Better-Auth Compliance**: Implementation follows Better-Auth Next.js best practices throughout

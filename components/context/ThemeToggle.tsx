@@ -8,9 +8,7 @@ import { Button } from "../ui/button";
 
 type ThemeType = "light" | "dark" | "system";
 
-export default function ThemeToggle({
-  className = "",
-}: {
+export default function ThemeToggle({}: {
   className?: string;
 }): React.ReactElement | null {
   const { theme, setTheme, resolvedTheme } = useTheme();

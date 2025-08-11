@@ -145,8 +145,8 @@ export function SignUpForm({
                   </Button>
                 </div>
                 <div className="text-center text-xs text-muted-foreground">
-                  In case you don't have an account, or you want to create a new
-                  one contact the admin.
+                  In case you do not have an account, or you want to create a
+                  new one contact the admin.
                 </div>
               </div>
             </form>

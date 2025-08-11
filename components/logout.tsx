@@ -27,7 +27,7 @@ export function Logout() {
           },
         },
       });
-    } catch (e) {
+    } catch {
       toast.error("Logout failed");
       setLoading(false);
     }

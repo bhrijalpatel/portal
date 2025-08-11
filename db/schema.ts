@@ -1,3 +1,4 @@
+// db/schema.ts
 import {
   pgTable,
   text,
@@ -6,6 +7,7 @@ import {
   integer,
 } from "drizzle-orm/pg-core";
 
+/** Better‑Auth tables (must match what’s already in your DB) */
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
@@ -15,10 +17,10 @@ export const user = pgTable("user", {
     .notNull(),
   image: text("image"),
   createdAt: timestamp("created_at")
-    .$defaultFn(() => /* @__PURE__ */ new Date())
+    .$defaultFn(() => new Date())
     .notNull(),
   updatedAt: timestamp("updated_at")
-    .$defaultFn(() => /* @__PURE__ */ new Date())
+    .$defaultFn(() => new Date())
     .notNull(),
 });
 
@@ -58,17 +60,27 @@ export const verification = pgTable("verification", {
   identifier: text("identifier").notNull(),
   value: text("value").notNull(),
   expiresAt: timestamp("expires_at").notNull(),
-  createdAt: timestamp("created_at").$defaultFn(
-    () => /* @__PURE__ */ new Date()
-  ),
-  updatedAt: timestamp("updated_at").$defaultFn(
-    () => /* @__PURE__ */ new Date()
-  ),
+  createdAt: timestamp("created_at").$defaultFn(() => new Date()),
+  updatedAt: timestamp("updated_at").$defaultFn(() => new Date()),
 });
 
-export const schema = {
-  user,
-  session,
-  account,
-  verification,
-};
+/** Custom Tables after Better-Auth */
+export const profiles = pgTable("profiles", {
+  userId: text("user_id")
+    .primaryKey()
+    .references(() => user.id, { onDelete: "cascade" }),
+  role: text("role").notNull().default("user"), // "admin" | "user" (extend later)
+  displayName: text("display_name"),
+  fullName: text("full_name"),
+  phone: text("phone"),
+  avatarUrl: text("avatar_url"),
+  createdAt: timestamp("created_at")
+    .$defaultFn(() => new Date())
+    .notNull(),
+  updatedAt: timestamp("updated_at")
+    .$defaultFn(() => new Date())
+    .notNull(),
+});
+
+/** Optional: central export for tooling */
+export const schema = { user, session, account, verification, profiles };

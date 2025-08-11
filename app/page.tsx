@@ -144,7 +144,7 @@ function StatCard({
   value,
   label,
 }: {
-  icon: any;
+  icon: React.ElementType;
   value: string;
   label: string;
 }) {
@@ -163,7 +163,7 @@ function FeatureCard({
   description,
   highlight,
 }: {
-  icon: any;
+  icon: React.ElementType;
   title: string;
   description: string;
   highlight: string;
