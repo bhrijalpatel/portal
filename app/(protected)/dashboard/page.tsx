@@ -1,7 +1,7 @@
 // app/(protected)/dashboard/page.tsx
 import { getSessionOrNull } from "@/lib/auth-helpers";
 import { Logout } from "@/components/logout";
-import Link from "next/link";
+import ThemeToggle from "@/components/context/ThemeToggle";
 
 export default async function DashboardPage() {
   // Not strictly necessary—layout already enforces auth.
@@ -13,7 +13,10 @@ export default async function DashboardPage() {
       <h1 className="text-2xl font-semibold">Dashboard</h1>
       {session && <p>Signed in as {session.user.name}</p>}
       {session && <p>Email: {session.user.email}</p>}
-      <Logout />
+      <div className="flex flex-row gap-2">
+        <Logout />
+        <ThemeToggle />
+      </div>
     </main>
   );
 }

@@ -3,11 +3,8 @@ import { Button } from "@/components/ui/button";
 import {
   ArrowRight,
   Shield,
-  Zap,
   Sparkles,
-  Lock,
   Users,
-  Rocket,
   Wrench,
   Car,
   ClipboardCheck,

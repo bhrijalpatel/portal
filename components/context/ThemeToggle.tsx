@@ -4,6 +4,7 @@
 import { useTheme } from "next-themes";
 import React, { useEffect, useState } from "react";
 import { Monitor, Sun, Moon } from "lucide-react";
+import { Button } from "../ui/button";
 
 type ThemeType = "light" | "dark" | "system";
 
@@ -37,14 +38,14 @@ export default function ThemeToggle({
     theme === "system" ? Monitor : activeTheme === "dark" ? Sun : Moon;
 
   return (
-    <button
-      type="button"
+    <Button
+      variant="outline"
+      size="icon"
       onClick={cycleTheme}
-      className={`inline-flex size-8 items-center justify-center rounded-md border bg-background/25 p-1.5 text-xs font-medium transition-colors hover:bg-background/40 ${className}`}
       aria-label={`Toggle theme (current: ${themeLabel})`}
       title={`Theme: ${themeLabel} (click to change)`}
     >
-      <Icon size={16} className="text-foreground" />
-    </button>
+      <Icon />
+    </Button>
   );
 }

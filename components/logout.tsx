@@ -35,7 +35,7 @@ export function Logout() {
 
   return (
     <Button variant="outline" onClick={handleLogout} disabled={loading}>
-      <LogOut className="mr-2 h-4 w-4" />
+      <LogOut />
       {loading ? "Logging out..." : "Logout"}
     </Button>
   );
