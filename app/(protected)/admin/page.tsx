@@ -3,7 +3,7 @@ import { db } from "@/db/drizzle";
 import { user as authUsers, profiles } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { Logout } from "@/components/logout";
-import ThemeToggle from "@/components/context/ThemeToggle";
+import { ThemeToggle } from "@/components/context/ThemeToggle";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 

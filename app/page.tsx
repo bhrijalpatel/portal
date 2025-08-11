@@ -9,7 +9,7 @@ import {
   Car,
   ClipboardCheck,
 } from "lucide-react";
-import ThemeToggle from "@/components/context/ThemeToggle";
+import { ThemeToggle } from "@/components/context/ThemeToggle";
 
 export default function HomePage() {
   return (

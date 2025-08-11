@@ -1,7 +1,7 @@
 // app/(protected)/dashboard/page.tsx
 import { getSessionOrNull } from "@/lib/auth-helpers";
 import { Logout } from "@/components/logout";
-import ThemeToggle from "@/components/context/ThemeToggle";
+import { ThemeToggle } from "@/components/context/ThemeToggle";
 
 export default async function DashboardPage() {
   // Not strictly necessary—layout already enforces auth.
