@@ -2,10 +2,9 @@ import { requireRole } from "@/lib/auth-helpers";
 import { db } from "@/db/drizzle";
 import { user as authUsers, profiles } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { Logout } from "@/components/logout";
+import { ButtonDashboard } from "@/components/buttons/ButtonDashboard";
+import { ButtonLogout } from "@/components/buttons/ButtonLogout";
 import { ThemeToggle } from "@/components/context/ThemeToggle";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 
 export default async function AdminPage() {
   await requireRole("admin");
@@ -32,12 +31,8 @@ export default async function AdminPage() {
           </p>
         </div>
         <div className="flex flex-row items-center gap-2">
-          <Button asChild>
-            <Link href="/dashboard" className="btn">
-              Dashboard
-            </Link>
-          </Button>
-          <Logout />
+          <ButtonDashboard />
+          <ButtonLogout />
           <ThemeToggle />
         </div>
       </div>

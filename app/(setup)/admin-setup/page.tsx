@@ -1,16 +1,18 @@
 import { adminExists, requireSession, ensureProfile } from "@/lib/auth-helpers";
 import ClaimAdmin from "./claim";
+import { ButtonDashboard } from "@/components/buttons/ButtonDashboard";
 
 export default async function AdminSetupPage() {
   // Only accessible when NO admin exists
   if (await adminExists()) {
     // An admin already exists — do not expose this UI anymore
     return (
-      <main className="flex flex-col items-center justify-center max-w-md mx-auto py-10 space-y-4">
+      <main className="flex flex-col items-center justify-center max-w-md mx-auto gap-3 h-screen">
         <h1 className="text-2xl font-semibold">Setup Complete</h1>
         <p className="text-muted-foreground">
           An admin user already exists in the system.
         </p>
+        <ButtonDashboard />
       </main>
     );
   }
@@ -20,7 +22,7 @@ export default async function AdminSetupPage() {
   await ensureProfile(user.id);
 
   return (
-    <main className="flex flex-col items-center justify-center max-w-md mx-auto py-10 space-y-4">
+    <main className="flex flex-col items-center justify-center max-w-md mx-auto gap-3 h-screen">
       <h1 className="text-2xl font-semibold">Initial Admin Setup</h1>
       <p>
         Signed in as: <b>{user.email}</b>

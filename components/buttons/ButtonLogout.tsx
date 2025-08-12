@@ -1,13 +1,13 @@
 "use client";
 
 import { authClient } from "@/lib/auth-client";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import { LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
-export function Logout() {
+export function ButtonLogout() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
@@ -34,7 +34,12 @@ export function Logout() {
   };
 
   return (
-    <Button variant="outline" onClick={handleLogout} disabled={loading}>
+    <Button
+      variant="outline"
+      onClick={handleLogout}
+      disabled={loading}
+      className="cursor-pointer"
+    >
       <LogOut />
       {loading ? "Logging out..." : "Logout"}
     </Button>

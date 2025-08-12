@@ -29,12 +29,7 @@ export default function HomePage() {
           <span className="text-xl font-bold tracking-tight">Portal</span>
         </div>
         <nav className="flex items-center gap-3">
-          <Button
-            asChild
-            variant="ghost"
-            size="sm"
-            className="hover:bg-primary/5"
-          >
+          <Button asChild variant="ghost" className="hover:bg-primary/5">
             <Link href="/sign-up" className="flex items-center gap-2">
               Sign Up
             </Link>

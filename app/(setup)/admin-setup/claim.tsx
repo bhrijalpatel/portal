@@ -2,15 +2,16 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { ShieldCheck } from "lucide-react";
 
 export default function ClaimAdmin() {
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
   async function onClaim() {
-    setLoading(true); 
+    setLoading(true);
     setErr(null);
-    
+
     try {
       const res = await fetch("/api/admin/bootstrap", { method: "POST" });
       if (!res.ok) {
@@ -28,12 +29,9 @@ export default function ClaimAdmin() {
 
   return (
     <div className="space-y-2">
-      <Button 
-        onClick={onClaim} 
-        disabled={loading}
-        className="w-full"
-      >
-        {loading ? "Claiming…" : "Claim admin role"}
+      <Button onClick={onClaim} disabled={loading}>
+        <ShieldCheck />
+        {loading ? "Claiming…" : "Claim Admin Role"}
       </Button>
       {err && <p className="text-sm text-red-600">{err}</p>}
     </div>
