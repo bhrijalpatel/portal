@@ -2,9 +2,6 @@ import { requireRole } from "@/lib/auth-helpers";
 import { db } from "@/db/drizzle";
 import { user as authUsers, profiles } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { ButtonDashboard } from "@/components/buttons/ButtonDashboard";
-import { ButtonLogout } from "@/components/buttons/ButtonLogout";
-import { ThemeToggle } from "@/components/context/ThemeToggle";
 
 export default async function AdminPage() {
   await requireRole("admin");
@@ -22,18 +19,13 @@ export default async function AdminPage() {
     .leftJoin(profiles, eq(authUsers.id, profiles.userId));
 
   return (
-    <main className="container mx-auto py-10 space-y-6">
+    <main className="space-y-6">
       <div className="flex justify-between">
         <div>
           <h1 className="text-3xl font-bold">Admin Panel</h1>
           <p className="text-muted-foreground mt-2">
             Manage users and application settings
           </p>
-        </div>
-        <div className="flex flex-row items-center gap-2">
-          <ButtonDashboard />
-          <ButtonLogout />
-          <ThemeToggle />
         </div>
       </div>
 

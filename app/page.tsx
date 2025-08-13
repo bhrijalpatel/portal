@@ -8,8 +8,10 @@ import {
   Wrench,
   Car,
   ClipboardCheck,
+  Sparkle,
 } from "lucide-react";
 import { ThemeToggle } from "@/components/context/ThemeToggle";
+import { Logo } from "@/components/icon/Logo";
 
 export default function HomePage() {
   return (
@@ -22,12 +24,7 @@ export default function HomePage() {
       </div>
 
       <header className="w-full flex items-center justify-between px-6 py-6 md:px-12">
-        <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center">
-            <Sparkles className="h-4 w-4 text-primary-foreground" />
-          </div>
-          <span className="text-xl font-bold tracking-tight">Portal</span>
-        </div>
+        <Logo />
         <nav className="flex items-center gap-3">
           <Button asChild variant="ghost" className="hover:bg-primary/5">
             <Link href="/sign-up" className="flex items-center gap-2">
