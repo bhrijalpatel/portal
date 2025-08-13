@@ -2,7 +2,7 @@
 
 import { authClient } from "@/lib/auth-client";
 import { Button } from "../ui/button";
-import { LogOut } from "lucide-react";
+import { Loader2, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -40,8 +40,8 @@ export function ButtonLogout() {
       disabled={loading}
       className="cursor-pointer"
     >
-      <LogOut />
-      {loading ? "Logging out..." : "Logout"}
+      {loading ? <Loader2 className="animate-spin" /> : <LogOut />}
+      Logout
     </Button>
   );
 }

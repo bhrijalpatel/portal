@@ -20,7 +20,10 @@ export const ButtonAdmin = async () => {
   if (!profile || profile.role !== "admin") return null;
 
   return (
-    <Button asChild variant="outline">
+    <Button
+      asChild
+      className="bg-emerald-300 hover:bg-emerald-300/90 dark:bg-emerald-700 dark:hover:bg-emerald-700/90 text-foreground"
+    >
       <Link href="/admin">
         <ShieldUserIcon />
         Admin
