@@ -4,23 +4,27 @@ import {
   SidebarFooter,
   SidebarHeader,
 } from "@/components/ui/sidebar";
-import { ButtonAdmin } from "../buttons/ButtonAdmin";
 import { Logo } from "../icon/Logo";
 import { NavUser } from "./nav-user";
 import { NavMain } from "./nav-main";
+import type { Session } from "@/lib/auth-helpers";
 
-export function AppSidebar() {
+type AppSidebarProps = {
+  session: Session;
+  userRole: string;
+};
+
+export function AppSidebar({ session, userRole }: AppSidebarProps) {
   return (
     <Sidebar variant="inset">
       <SidebarHeader className="py-4">
         <Logo />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain />
+        <NavMain userRole={userRole} />
       </SidebarContent>
       <SidebarFooter className="flex gap-3">
-        <ButtonAdmin />
-        <NavUser />
+        <NavUser session={session} />
       </SidebarFooter>
     </Sidebar>
   );

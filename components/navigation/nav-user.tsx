@@ -1,8 +1,11 @@
 // Server component wrapper (no "use client")
-import { getSessionOrNull } from "@/lib/auth-helpers";
 import { NavUserClient } from "./nav-user-client";
+import type { Session } from "@/lib/auth-helpers";
 
-export async function NavUser() {
-  const session = await getSessionOrNull();
+type NavUserProps = {
+  session: Session;
+};
+
+export function NavUser({ session }: NavUserProps) {
   return <NavUserClient session={session} />;
 }

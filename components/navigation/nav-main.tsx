@@ -1,55 +1,21 @@
-"use client";
-
-import Link from "next/link";
-import {
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@/components/ui/sidebar";
+// Server component wrapper (no "use client")
 import { NAV_MAIN_ITEMS, NavItem } from "@/constants/nav-main";
-import { usePathname } from "next/navigation";
+import { NavMainClient } from "./nav-main-client";
 
 type NavMainProps = {
+  userRole: string;
   items?: NavItem[]; // optional override; defaults to NAV_MAIN_ITEMS
 };
 
-export function NavMain({ items = NAV_MAIN_ITEMS }: NavMainProps) {
-  const pathname = usePathname();
+export function NavMain({ userRole, items = NAV_MAIN_ITEMS }: NavMainProps) {
+  // Add admin item if user is admin (using string icon identifier)
+  const adminItem: NavItem = {
+    title: "Admin",
+    url: "/admin",
+    icon: "ShieldUserIcon", // Use string identifier
+  };
 
-  return (
-    <SidebarGroup>
-      <SidebarGroupContent className="flex flex-col gap-2">
-        <SidebarMenu>
-          {items.map((item) => {
-            // Active logic: exact match OR current path is within the item's segment (excluding root to avoid false positives)
-            const isActive =
-              item.url === "/"
-                ? pathname === "/"
-                : pathname === item.url || pathname.startsWith(item.url + "/");
-            const Content = (
-              <SidebarMenuButton
-                asChild
-                tooltip={item.title}
-                disabled={item.disabled}
-                isActive={isActive}
-                className={
-                  item.disabled ? "opacity-60 pointer-events-none" : ""
-                }
-              >
-                <Link href={item.url}>
-                  {item.icon && <item.icon className="mr-2 size-4" />}
-                  <span>{item.title}</span>
-                </Link>
-              </SidebarMenuButton>
-            );
-            return <SidebarMenuItem key={item.url}>{Content}</SidebarMenuItem>;
-          })}
-        </SidebarMenu>
-      </SidebarGroupContent>
-    </SidebarGroup>
-  );
+  const allItems = userRole === "admin" ? [...items, adminItem] : items;
+
+  return <NavMainClient items={allItems} />;
 }
-
-// TODO: RBAC: Accept current user / roles and filter items by a roles / permissions field.

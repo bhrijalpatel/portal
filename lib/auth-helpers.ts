@@ -37,6 +37,26 @@ export async function getSessionOrNull(): Promise<Session | null> {
 }
 
 /**
+ * Get session with user role - optimized single DB query
+ * Used in layouts to get both session and role at once
+ */
+export async function getSessionWithRole(): Promise<{
+  session: Session;
+  userRole: string;
+}> {
+  const session = await requireSession();
+
+  const [profile] = await db
+    .select()
+    .from(profiles)
+    .where(eq(profiles.userId, session.user.id))
+    .limit(1);
+
+  const userRole = profile?.role || "user";
+  return { session, userRole };
+}
+
+/**
  * Role-based access control guard
  * Requires both session and specific role(s)
  */
@@ -72,13 +92,23 @@ export async function adminExists(): Promise<boolean> {
 /**
  * Ensure a profile exists for a user, create if missing
  */
-export async function ensureProfile(userId: string, defaults?: { role?: string; displayName?: string }) {
-  const [found] = await db.select().from(profiles).where(eq(profiles.userId, userId)).limit(1);
+export async function ensureProfile(
+  userId: string,
+  defaults?: { role?: string; displayName?: string }
+) {
+  const [found] = await db
+    .select()
+    .from(profiles)
+    .where(eq(profiles.userId, userId))
+    .limit(1);
   if (found) return found;
-  const [created] = await db.insert(profiles).values({
-    userId,
-    role: defaults?.role ?? "user",
-    displayName: defaults?.displayName,
-  }).returning();
+  const [created] = await db
+    .insert(profiles)
+    .values({
+      userId,
+      role: defaults?.role ?? "user",
+      displayName: defaults?.displayName,
+    })
+    .returning();
   return created;
 }

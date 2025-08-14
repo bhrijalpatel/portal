@@ -1,30 +1,31 @@
-import { NextResponse } from "next/server";
-import { adminExists, requireSession } from "@/lib/auth-helpers";
+import { adminExists } from "@/lib/auth-helpers";
+import { withAuth } from "@/lib/api-helpers";
 import { db } from "@/db/drizzle";
 import { profiles } from "@/db/schema";
 
-export async function POST() {
+export const POST = withAuth(async ({ session }) => {
   try {
     // If an admin already exists, do not allow claiming
     if (await adminExists()) {
-      return new NextResponse("Admin already exists", { status: 409 });
+      return Response.json({ error: "Admin already exists" }, { status: 409 });
     }
-
-    // Must be signed in to claim
-    const { user } = await requireSession();
 
     // Promote the current user to admin
     await db
       .insert(profiles)
-      .values({ userId: user.id, role: "admin" })
+      .values({ userId: session.user.id, role: "admin" })
       .onConflictDoUpdate({
         target: profiles.userId,
         set: { role: "admin" },
       });
 
-    return NextResponse.json({ ok: true });
+    return Response.json({ 
+      ok: true, 
+      message: "Admin role assigned successfully",
+      user: session.user.email 
+    });
   } catch (error) {
     console.error("Bootstrap admin error:", error);
-    return new NextResponse("Internal server error", { status: 500 });
+    return Response.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+});
