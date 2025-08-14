@@ -3,12 +3,10 @@ import { Button } from "@/components/ui/button";
 import {
   ArrowRight,
   Shield,
-  Sparkles,
   Users,
   Wrench,
   Car,
   ClipboardCheck,
-  Sparkle,
 } from "lucide-react";
 import { ThemeToggle } from "@/components/context/ThemeToggle";
 import { Logo } from "@/components/icon/Logo";
