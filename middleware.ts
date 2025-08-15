@@ -10,4 +10,6 @@ export function middleware(req: NextRequest) {
   return NextResponse.next();
 }
 
-export const config = { matcher: ["/dashboard", "/admin"] };
+export const config = {
+  matcher: ["/(protected)/(.*)", "/dashboard", "/admin"],
+};

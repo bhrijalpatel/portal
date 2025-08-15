@@ -3,7 +3,7 @@ import { withAuth } from "@/lib/api-helpers";
 import { db } from "@/db/drizzle";
 import { profiles } from "@/db/schema";
 
-export const POST = withAuth(async ({ session }) => {
+export const POST = withAuth(async ({ session }, request) => {
   try {
     // If an admin already exists, do not allow claiming
     if (await adminExists()) {

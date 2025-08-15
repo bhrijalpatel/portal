@@ -7,11 +7,11 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
-export function ButtonLogout() {
+export function ButtonSignOut() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
-  const handleLogout = async () => {
+  const handleSignOut = async () => {
     setLoading(true);
     try {
       await authClient.signOut({
@@ -22,13 +22,13 @@ export function ButtonLogout() {
             setLoading(false);
           },
           onError: () => {
-            toast.error("Logout failed");
+            toast.error("Sign out failed");
             setLoading(false);
           },
         },
       });
     } catch {
-      toast.error("Logout failed");
+      toast.error("Sign out failed");
       setLoading(false);
     }
   };
@@ -36,12 +36,12 @@ export function ButtonLogout() {
   return (
     <Button
       variant="outline"
-      onClick={handleLogout}
+      onClick={handleSignOut}
       disabled={loading}
       className="cursor-pointer"
     >
       {loading ? <Loader2 className="animate-spin" /> : <LogOut />}
-      Logout
+      Sign Out
     </Button>
   );
 }

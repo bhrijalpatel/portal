@@ -46,29 +46,29 @@ type SessionShape = {
 export function NavUserClient({ session }: { session: SessionShape | null }) {
   const { isMobile } = useSidebar();
   const router = useRouter();
-  const [loggingOut, setLoggingOut] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
   const { theme, setTheme } = useTheme(); // added
 
-  const handleLogout = async () => {
-    if (loggingOut) return;
-    setLoggingOut(true);
+  const handleSignOut = async () => {
+    if (signingOut) return;
+    setSigningOut(true);
     try {
       await authClient.signOut({
         fetchOptions: {
           onSuccess: () => {
             toast.success("Signed out");
             router.replace("/");
-            setLoggingOut(false);
+            setSigningOut(false);
           },
           onError: () => {
-            toast.error("Logout failed");
-            setLoggingOut(false);
+            toast.error("Sign out failed");
+            setSigningOut(false);
           },
         },
       });
     } catch {
-      toast.error("Logout failed");
-      setLoggingOut(false);
+      toast.error("Sign out failed");
+      setSigningOut(false);
     }
   };
 
@@ -181,14 +181,14 @@ export function NavUserClient({ session }: { session: SessionShape | null }) {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem
-              disabled={loggingOut}
+              disabled={signingOut}
               onSelect={(e) => {
                 e.preventDefault();
-                handleLogout();
+                handleSignOut();
               }}
             >
-              {loggingOut ? <Loader2 className="animate-spin" /> : <LogOut />}
-              Logout
+              {signingOut ? <Loader2 className="animate-spin" /> : <LogOut />}
+              Sign Out
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

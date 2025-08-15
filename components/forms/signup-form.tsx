@@ -20,7 +20,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-import { signUp } from "@/server/users";
+import { authClient } from "@/lib/auth-client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -51,23 +51,26 @@ export function SignUpForm({
     },
   });
 
-  // 2. Define a submit handler.
+  // Define a submit handler
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
 
-    const { success, message } = await signUp(
-      values.name,
-      values.email,
-      values.password
-    );
-    if (success) {
-      toast.success(message as string);
-      router.push("/sign-in");
-    } else {
-      toast.error(message as string);
+    const { error } = await authClient.signUp.email({
+      name: values.name,
+      email: values.email,
+      password: values.password,
+    });
+
+    if (error) {
+      toast.error(error.message ?? "Sign up failed. Please try again.");
+      setIsLoading(false);
+      return;
     }
 
-    setIsLoading(false);
+    // Success toast and redirect to sign-in
+    toast.success("Account created successfully! Please sign in.");
+    router.push("/sign-in");
+    // Keep loading state active during redirect
   }
 
   return (

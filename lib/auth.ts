@@ -1,18 +1,27 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { db } from "@/db/drizzle"; // Adjust the import path as necessary
 import { nextCookies } from "better-auth/next-js";
+import { db } from "@/db/drizzle";
 import { schema } from "@/db/schema";
 
 export const auth = betterAuth({
+  appName: "Portal",
+  baseURL: process.env.NEXT_PUBLIC_APP_URL,
   emailAndPassword: {
-    enabled: true, // Define your email and password authentication logic here
+    enabled: true,
+    autoSignIn: false,
+    requireEmailVerification: false, // Set to true in production
+    minPasswordLength: 12,
   },
-
-  database: drizzleAdapter(db, {
-    provider: "pg",
-    schema,
-  }),
-
+  session: {
+    expiresIn: 60 * 60 * 24 * 30, // 30 days
+    updateAge: 60 * 60 * 24, // refresh cookie once/day on activity
+  },
+  rateLimit: { enabled: true },
+  advanced: {
+    useSecureCookies: true,
+    cookiePrefix: "Portal",
+  },
+  database: drizzleAdapter(db, { provider: "pg", schema }),
   plugins: [nextCookies()],
 });
