@@ -65,80 +65,72 @@ export function SignInForm({
   }
 
   return (
-    <div
-      className={cn(
-        "flex flex-col gap-6 w-full max-w-md p-8 rounded-2xl bg-gradient-to-br from-primary/5 via-blue-500/5 to-purple-500/5 border border-primary/10 backdrop-blur-sm shadow-lg",
-        className
-      )}
-      {...props}
-    >
-      <Card className="border-0 bg-transparent shadow-none">
-        <CardHeader className="text-center">
-          <CardTitle className="text-xl">Sign In</CardTitle>
-          <CardDescription>Sign in to your account</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+    <Card className="bg-gradient-to-br from-primary/5 via-blue-500/5 to-purple-500/5">
+      <CardHeader className="text-center">
+        <CardTitle className="text-xl">Sign In</CardTitle>
+        <CardDescription>Sign in to your account</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <div className="grid gap-6">
               <div className="grid gap-6">
-                <div className="grid gap-6">
-                  <div className="grid gap-3">
-                    <FormField
-                      control={form.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Email</FormLabel>
-                          <FormControl>
-                            <Input {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  <div className="grid gap-3">
-                    <FormField
-                      control={form.control}
-                      name="password"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Password</FormLabel>
-                          <FormControl>
-                            <Input type="password" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />{" "}
-                    <div className="flex items-center">
-                      {" "}
-                      <a
-                        href="#"
-                        className="ml-auto text-sm underline-offset-4 hover:underline"
-                      >
-                        Forgot your password?
-                      </a>
-                    </div>
-                  </div>
-
-                  <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading ? (
-                      <Loader2 className="animate-spin size-4" />
-                    ) : (
-                      "Login"
+                <div className="grid gap-3">
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
                     )}
-                  </Button>
+                  />
                 </div>
-                <div className="text-center text-xs text-muted-foreground">
-                  If you cannot login, or you want to create a new account,
-                  contact the admin.
+                <div className="grid gap-3">
+                  <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Password</FormLabel>
+                        <FormControl>
+                          <Input type="password" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />{" "}
+                  <div className="flex items-center">
+                    {" "}
+                    <a
+                      href="#"
+                      className="ml-auto text-sm underline-offset-4 hover:underline"
+                    >
+                      Forgot your password?
+                    </a>
+                  </div>
                 </div>
+
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? (
+                    <Loader2 className="animate-spin size-4" />
+                  ) : (
+                    "Login"
+                  )}
+                </Button>
               </div>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
-    </div>
+              <div className="text-center text-xs text-muted-foreground">
+                If you cannot login, or you want to create a new account,
+                contact the admin.
+              </div>
+            </div>
+          </form>
+        </Form>
+      </CardContent>
+    </Card>
   );
 }
