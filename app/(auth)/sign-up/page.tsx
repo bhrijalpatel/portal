@@ -4,7 +4,7 @@ import { ArrowLeft, Sparkles } from "lucide-react";
 
 export default function SignUpPage() {
   return (
-    <div className="relative min-h-svh flex flex-col items-center justify-center gap-6 p-6 md:p-10 bg-gradient-to-br from-background via-background to-secondary/5">
+    <div className="relative min-h-svh flex flex-col items-center justify-center gap-6 p-6 md:p-1">
       {/* Back to Home Link */}
       <Link
         href="/"
@@ -16,12 +16,6 @@ export default function SignUpPage() {
           <span className="font-semibold">Portal</span>
         </div>
       </Link>
-
-      {/* Decorative background elements */}
-      <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute top-1/4 left-1/5 h-96 w-96 rounded-full bg-primary/10 blur-3xl animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/5 h-80 w-80 rounded-full bg-blue-500/10 blur-3xl animate-pulse delay-1000" />
-      </div>
 
       <div className="flex w-full max-w-sm flex-col gap-6">
         <SignUpForm />

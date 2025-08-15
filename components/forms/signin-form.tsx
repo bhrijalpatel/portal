@@ -57,11 +57,11 @@ export function SignInForm({
     if (success) {
       toast.success(message as string);
       router.push("/dashboard");
+      // Keep loading state active during redirect - don't set to false
     } else {
       toast.error(message as string);
+      setIsLoading(false); // Only reset loading on error
     }
-
-    setIsLoading(false);
   }
 
   return (
