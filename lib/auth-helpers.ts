@@ -52,6 +52,22 @@ export async function getSessionWithRole(): Promise<{
 }
 
 /**
+ * Safe version for layouts - returns null if no session
+ * Use this in layouts to avoid redirect loops
+ */
+export async function getSessionWithRoleOrNull(): Promise<{
+  session: Session;
+  userRole: string;
+} | null> {
+  const session = await getSessionOrNull();
+  if (!session) return null;
+  
+  // Use Better Auth user.role as single source of truth (no additional DB query needed)
+  const userRole = session.user.role || "user";
+  return { session, userRole };
+}
+
+/**
  * Role-based access control guard
  * Uses Better Auth user.role as single source of truth
  */

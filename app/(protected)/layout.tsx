@@ -1,17 +1,25 @@
 // app/(protected)/layout.tsx
-import { getSessionWithRole } from "@/lib/auth-helpers";
+import { getSessionWithRoleOrNull } from "@/lib/auth-helpers";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/navigation/app-sidebar";
 import { SiteHeader } from "@/components/layout/site-header";
 import { RoleProvider } from "@/lib/role-context";
+import { redirect } from "next/navigation";
 
 export default async function ProtectedLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  // Single DB query gets both session and user role
-  const { session, userRole } = await getSessionWithRole();
+  // Check for session without causing redirect loop
+  const sessionData = await getSessionWithRoleOrNull();
+  
+  // If no session, redirect to sign-in (this is the real protection)
+  if (!sessionData) {
+    redirect("/sign-in");
+  }
+  
+  const { session, userRole } = sessionData;
 
   return (
     <RoleProvider session={session} userRole={userRole}>

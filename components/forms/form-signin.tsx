@@ -71,7 +71,6 @@ export function SignInForm() {
     // Success toast and redirect
     toast.success("Sign in successful");
     router.push(callbackURL);
-    // Keep loading state active during redirect - don't set to false
   }
 
   return (

@@ -5,6 +5,37 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2025/08/16] - Critical Authentication Fixes & Role Management Migration
+
+### 🚨 **CRITICAL FIX: Sign-In Redirect Loop Resolution**
+
+- **Issue**: Users unable to access protected routes due to infinite redirect loop between `/sign-in` and `/dashboard`
+
+  - **Root Cause**: Cookie configuration mismatch between Better Auth and Next.js middleware
+  - **Better Auth** was setting cookies with custom prefix: `__Secure-Portal.session_token`  
+  - **Middleware** was checking for cookies without matching the prefix configuration
+  - **Result**: Middleware couldn't detect authenticated sessions, causing redirect loops
+
+- **Critical Fixes Applied**:
+
+  - **Middleware Cookie Detection**: Updated `getSessionCookie()` to include `cookiePrefix: "Portal"` matching auth.ts configuration
+  - **Defense-in-Depth**: Implemented `getSessionWithRoleOrNull()` for safer session checking in layouts
+  - **Protected Route Logic**: Updated layout to prevent redirect loops during session validation
+  - **Session Handling**: Eliminated race conditions between middleware and server-side session checks
+
+- **Security Impact**: 
+
+  - **Before**: Authentication system was completely broken - users could not access protected areas
+  - **After**: Robust multi-layer authentication with proper session detection
+  - **Protection**: Defense-in-depth approach prevents similar issues from emerging
+
+### 🔒 **Authentication Flow Now Secured**
+
+- **Sign-In Process**: ✅ Email/password → Session creation → Dashboard access
+- **Middleware Protection**: ✅ Cookie-based route protection with proper prefix matching  
+- **Layout Guards**: ✅ Server-side session validation with graceful fallback
+- **Session Management**: ✅ Consistent session detection across all authentication layers
+
 ## [2025/08/16] - Single Source of Truth Role Management Migration
 
 ### 🔒 **BREAKING CHANGE: Role Management Architecture Overhaul**
