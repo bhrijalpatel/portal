@@ -57,7 +57,14 @@ const banUserSchema = z.object({
   banExpiresIn: z.string().optional(),
 });
 
-type ActionType = "create" | "update" | "setPassword" | "ban" | "unban" | "delete" | "impersonate";
+type ActionType =
+  | "create"
+  | "update"
+  | "setPassword"
+  | "ban"
+  | "unban"
+  | "delete"
+  | "impersonate";
 
 interface User {
   id: string;
@@ -142,13 +149,14 @@ export function UserActionsDialog({
         name: data.name,
         role: data.role,
       });
-      
+
       toast.success("User created successfully");
       createForm.reset();
       onSuccess();
       onClose();
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : "Failed to create user";
+      const message =
+        error instanceof Error ? error.message : "Failed to create user";
       toast.error(message);
     } finally {
       setIsLoading(false);
@@ -157,7 +165,7 @@ export function UserActionsDialog({
 
   const handleUpdateUser = async (data: z.infer<typeof updateUserSchema>) => {
     if (!user) return;
-    
+
     setIsLoading(true);
     try {
       // Update role if it changed using Better Auth admin plugin
@@ -167,31 +175,32 @@ export function UserActionsDialog({
           role: data.role,
         });
       }
-      
+
       // Update name if it changed using our custom endpoint
       if (data.name !== user.name) {
-        const response = await fetch('/api/admin/update-user', {
-          method: 'PATCH',
+        const response = await fetch("/api/admin/update-user", {
+          method: "PATCH",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             userId: user.id,
             name: data.name,
           }),
         });
-        
+
         if (!response.ok) {
           const errorData = await response.json();
-          throw new Error(errorData.error || 'Failed to update user name');
+          throw new Error(errorData.error || "Failed to update user name");
         }
       }
-      
+
       toast.success("User updated successfully");
       onSuccess();
       onClose();
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : "Failed to update user";
+      const message =
+        error instanceof Error ? error.message : "Failed to update user";
       toast.error(message);
     } finally {
       setIsLoading(false);
@@ -200,7 +209,7 @@ export function UserActionsDialog({
 
   const handleSetPassword = async (data: z.infer<typeof setPasswordSchema>) => {
     if (!user) return;
-    
+
     setIsLoading(true);
     try {
       await authClient.admin.setUserPassword({
@@ -212,7 +221,10 @@ export function UserActionsDialog({
       onSuccess();
       onClose();
     } catch (error: unknown) {
-      toast.error((error instanceof Error ? error.message : null) || "Failed to update password");
+      toast.error(
+        (error instanceof Error ? error.message : null) ||
+          "Failed to update password"
+      );
     } finally {
       setIsLoading(false);
     }
@@ -220,20 +232,24 @@ export function UserActionsDialog({
 
   const handleBanUser = async (data: z.infer<typeof banUserSchema>) => {
     if (!user) return;
-    
+
     setIsLoading(true);
     try {
       await authClient.admin.banUser({
         userId: user.id,
         banReason: data.banReason,
-        banExpiresIn: data.banExpiresIn ? parseInt(data.banExpiresIn) * 24 * 60 * 60 : undefined, // Convert days to seconds
+        banExpiresIn: data.banExpiresIn
+          ? parseInt(data.banExpiresIn) * 24 * 60 * 60
+          : undefined, // Convert days to seconds
       });
       toast.success("User banned successfully");
       banForm.reset();
       onSuccess();
       onClose();
     } catch (error: unknown) {
-      toast.error((error instanceof Error ? error.message : null) || "Failed to ban user");
+      toast.error(
+        (error instanceof Error ? error.message : null) || "Failed to ban user"
+      );
     } finally {
       setIsLoading(false);
     }
@@ -241,7 +257,7 @@ export function UserActionsDialog({
 
   const handleUnbanUser = async () => {
     if (!user) return;
-    
+
     setIsLoading(true);
     try {
       await authClient.admin.unbanUser({
@@ -251,7 +267,10 @@ export function UserActionsDialog({
       onSuccess();
       onClose();
     } catch (error: unknown) {
-      toast.error((error instanceof Error ? error.message : null) || "Failed to unban user");
+      toast.error(
+        (error instanceof Error ? error.message : null) ||
+          "Failed to unban user"
+      );
     } finally {
       setIsLoading(false);
     }
@@ -259,7 +278,7 @@ export function UserActionsDialog({
 
   const handleDeleteUser = async () => {
     if (!user) return;
-    
+
     setIsLoading(true);
     try {
       await authClient.admin.removeUser({
@@ -269,7 +288,10 @@ export function UserActionsDialog({
       onSuccess();
       onClose();
     } catch (error: unknown) {
-      toast.error((error instanceof Error ? error.message : null) || "Failed to delete user");
+      toast.error(
+        (error instanceof Error ? error.message : null) ||
+          "Failed to delete user"
+      );
     } finally {
       setIsLoading(false);
     }
@@ -277,7 +299,7 @@ export function UserActionsDialog({
 
   const handleImpersonateUser = async () => {
     if (!user) return;
-    
+
     setIsLoading(true);
     try {
       await authClient.admin.impersonateUser({
@@ -287,7 +309,10 @@ export function UserActionsDialog({
       // Redirect to dashboard as the impersonated user
       window.location.href = "/dashboard";
     } catch (error: unknown) {
-      toast.error((error instanceof Error ? error.message : null) || "Failed to impersonate user");
+      toast.error(
+        (error instanceof Error ? error.message : null) ||
+          "Failed to impersonate user"
+      );
       setIsLoading(false);
     }
   };
@@ -300,7 +325,10 @@ export function UserActionsDialog({
           description: "Add a new user to the system.",
           content: (
             <Form {...createForm}>
-              <form onSubmit={createForm.handleSubmit(handleCreateUser)} className="space-y-4">
+              <form
+                onSubmit={createForm.handleSubmit(handleCreateUser)}
+                className="space-y-4"
+              >
                 <FormField
                   control={createForm.control}
                   name="name"
@@ -321,7 +349,11 @@ export function UserActionsDialog({
                     <FormItem>
                       <FormLabel>Email</FormLabel>
                       <FormControl>
-                        <Input type="email" placeholder="Enter user's email" {...field} />
+                        <Input
+                          type="email"
+                          placeholder="Enter user's email"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -334,7 +366,11 @@ export function UserActionsDialog({
                     <FormItem>
                       <FormLabel>Password</FormLabel>
                       <FormControl>
-                        <Input type="password" placeholder="Enter user's password" {...field} />
+                        <Input
+                          type="password"
+                          placeholder="Enter user's password"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -346,7 +382,10 @@ export function UserActionsDialog({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Role</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select a role" />
@@ -366,7 +405,7 @@ export function UserActionsDialog({
                     Cancel
                   </Button>
                   <Button type="submit" disabled={isLoading}>
-                    {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    {isLoading && <Loader2 className="animate-spin" />}
                     Create User
                   </Button>
                 </DialogFooter>
@@ -381,7 +420,10 @@ export function UserActionsDialog({
           description: `Update details for ${user?.name}.`,
           content: (
             <Form {...updateForm}>
-              <form onSubmit={updateForm.handleSubmit(handleUpdateUser)} className="space-y-4">
+              <form
+                onSubmit={updateForm.handleSubmit(handleUpdateUser)}
+                className="space-y-4"
+              >
                 <FormField
                   control={updateForm.control}
                   name="name"
@@ -401,7 +443,10 @@ export function UserActionsDialog({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Role</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select a role" />
@@ -421,7 +466,9 @@ export function UserActionsDialog({
                     Cancel
                   </Button>
                   <Button type="submit" disabled={isLoading}>
-                    {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    {isLoading && (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    )}
                     Update User
                   </Button>
                 </DialogFooter>
@@ -436,7 +483,10 @@ export function UserActionsDialog({
           description: `Set a new password for ${user?.name}.`,
           content: (
             <Form {...passwordForm}>
-              <form onSubmit={passwordForm.handleSubmit(handleSetPassword)} className="space-y-4">
+              <form
+                onSubmit={passwordForm.handleSubmit(handleSetPassword)}
+                className="space-y-4"
+              >
                 <FormField
                   control={passwordForm.control}
                   name="newPassword"
@@ -444,7 +494,11 @@ export function UserActionsDialog({
                     <FormItem>
                       <FormLabel>New Password</FormLabel>
                       <FormControl>
-                        <Input type="password" placeholder="Enter new password" {...field} />
+                        <Input
+                          type="password"
+                          placeholder="Enter new password"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -455,7 +509,9 @@ export function UserActionsDialog({
                     Cancel
                   </Button>
                   <Button type="submit" disabled={isLoading}>
-                    {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    {isLoading && (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    )}
                     Set Password
                   </Button>
                 </DialogFooter>
@@ -470,7 +526,10 @@ export function UserActionsDialog({
           description: `Ban ${user?.name} from the system.`,
           content: (
             <Form {...banForm}>
-              <form onSubmit={banForm.handleSubmit(handleBanUser)} className="space-y-4">
+              <form
+                onSubmit={banForm.handleSubmit(handleBanUser)}
+                className="space-y-4"
+              >
                 <FormField
                   control={banForm.control}
                   name="banReason"
@@ -478,7 +537,10 @@ export function UserActionsDialog({
                     <FormItem>
                       <FormLabel>Ban Reason</FormLabel>
                       <FormControl>
-                        <Textarea placeholder="Enter reason for ban" {...field} />
+                        <Textarea
+                          placeholder="Enter reason for ban"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -491,10 +553,10 @@ export function UserActionsDialog({
                     <FormItem>
                       <FormLabel>Ban Duration (days)</FormLabel>
                       <FormControl>
-                        <Input 
-                          type="number" 
-                          placeholder="Leave empty for permanent ban" 
-                          {...field} 
+                        <Input
+                          type="number"
+                          placeholder="Leave empty for permanent ban"
+                          {...field}
                         />
                       </FormControl>
                       <FormMessage />
@@ -505,8 +567,14 @@ export function UserActionsDialog({
                   <Button type="button" variant="outline" onClick={onClose}>
                     Cancel
                   </Button>
-                  <Button type="submit" variant="destructive" disabled={isLoading}>
-                    {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  <Button
+                    type="submit"
+                    variant="destructive"
+                    disabled={isLoading}
+                  >
+                    {isLoading && (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    )}
                     Ban User
                   </Button>
                 </DialogFooter>
@@ -529,7 +597,9 @@ export function UserActionsDialog({
                   Cancel
                 </Button>
                 <Button onClick={handleUnbanUser} disabled={isLoading}>
-                  {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  {isLoading && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
                   Unban User
                 </Button>
               </DialogFooter>
@@ -544,14 +614,21 @@ export function UserActionsDialog({
           content: (
             <div className="space-y-4">
               <p className="text-sm text-muted-foreground">
-                This action cannot be undone. This will permanently delete the user account and all associated data.
+                This action cannot be undone. This will permanently delete the
+                user account and all associated data.
               </p>
               <DialogFooter>
                 <Button type="button" variant="outline" onClick={onClose}>
                   Cancel
                 </Button>
-                <Button onClick={handleDeleteUser} variant="destructive" disabled={isLoading}>
-                  {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                <Button
+                  onClick={handleDeleteUser}
+                  variant="destructive"
+                  disabled={isLoading}
+                >
+                  {isLoading && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
                   Delete User
                 </Button>
               </DialogFooter>
@@ -566,14 +643,17 @@ export function UserActionsDialog({
           content: (
             <div className="space-y-4">
               <p className="text-sm text-muted-foreground">
-                This will create a session as the selected user. The session will remain active for 1 hour or until you stop impersonating.
+                This will create a session as the selected user. The session
+                will remain active for 1 hour or until you stop impersonating.
               </p>
               <DialogFooter>
                 <Button type="button" variant="outline" onClick={onClose}>
                   Cancel
                 </Button>
                 <Button onClick={handleImpersonateUser} disabled={isLoading}>
-                  {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  {isLoading && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
                   Start Impersonation
                 </Button>
               </DialogFooter>

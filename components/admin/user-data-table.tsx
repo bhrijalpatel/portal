@@ -35,6 +35,7 @@ import {
 import { UserActionsDialog } from "./user-actions-dialog";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
+import { CacheRefreshButton } from "./button-refresh-user-cache";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -57,10 +58,10 @@ export function DataTable<TData, TValue>({
   );
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = React.useState({});
   const [globalFilter, setGlobalFilter] = React.useState("");
   const [createDialogOpen, setCreateDialogOpen] = React.useState(false);
-  const [isStoppingImpersonation, setIsStoppingImpersonation] = React.useState(false);
+  const [isStoppingImpersonation, setIsStoppingImpersonation] =
+    React.useState(false);
 
   const table = useReactTable({
     data,
@@ -72,13 +73,11 @@ export function DataTable<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
     onGlobalFilterChange: setGlobalFilter,
     state: {
       sorting,
       columnFilters,
       columnVisibility,
-      rowSelection,
       globalFilter,
     },
   });
@@ -91,7 +90,8 @@ export function DataTable<TData, TValue>({
       // Refresh the page to return to admin session
       window.location.reload();
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : "Failed to stop impersonation";
+      const message =
+        error instanceof Error ? error.message : "Failed to stop impersonation";
       toast.error(message);
       setIsStoppingImpersonation(false);
     }
@@ -138,24 +138,23 @@ export function DataTable<TData, TValue>({
             />
           </div>
           {title && (
-            <p className="text-sm font-medium text-muted-foreground">
-              {title}
-            </p>
+            <p className="text-sm font-medium text-muted-foreground">{title}</p>
           )}
         </div>
         <div className="flex items-center space-x-2">
           <Button
             onClick={() => setCreateDialogOpen(true)}
             disabled={isLoading}
-            className="flex items-center space-x-2"
           >
-            <Plus className="h-4 w-4" />
+            <Plus />
             <span>Create User</span>
           </Button>
+          <CacheRefreshButton />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" disabled={isLoading}>
-                Columns <ChevronDown className="ml-2 h-4 w-4" />
+                <ChevronDown />
+                Columns
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -218,10 +217,12 @@ export function DataTable<TData, TValue>({
                     <Skeleton className="h-4 w-24" /> {/* Display Name */}
                   </TableCell>
                   <TableCell>
-                    <Skeleton className="h-5 w-16 rounded-full" /> {/* Role Badge */}
+                    <Skeleton className="h-5 w-16 rounded-full" />{" "}
+                    {/* Role Badge */}
                   </TableCell>
                   <TableCell>
-                    <Skeleton className="h-5 w-16 rounded-full" /> {/* Status Badge */}
+                    <Skeleton className="h-5 w-16 rounded-full" />{" "}
+                    {/* Status Badge */}
                   </TableCell>
                   <TableCell>
                     <Skeleton className="h-4 w-20" /> {/* Created Date */}
@@ -236,10 +237,7 @@ export function DataTable<TData, TValue>({
               ))
             ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
+                <TableRow key={row.id}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(
@@ -264,10 +262,7 @@ export function DataTable<TData, TValue>({
         </Table>
       </div>
       <div className="flex items-center justify-between space-x-2 py-4">
-        <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
-        </div>
+        <div className="flex-1"></div>
         <div className="space-x-2">
           <Button
             variant="outline"
