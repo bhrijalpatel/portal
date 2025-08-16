@@ -1,4 +1,4 @@
-import { ButtonDashboard } from "@/components/buttons/ButtonDashboard";
+import { ButtonDashboard } from "@/components/buttons/button-dashboard";
 import { Button } from "@/components/ui/button";
 import { getSessionOrNull } from "@/lib/auth-helpers";
 import Link from "next/link";

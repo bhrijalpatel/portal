@@ -1,4 +1,4 @@
-import { SignUpForm } from "@/components/forms/signup-form";
+import { SignUpForm } from "@/components/forms/form-signup";
 import Link from "next/link";
 import { ArrowLeft, Sparkles } from "lucide-react";
 

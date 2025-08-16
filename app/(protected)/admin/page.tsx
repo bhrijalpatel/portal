@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { UserTable } from "@/components/admin/UserTable";
-import { UserTableSkeleton } from "@/components/admin/UserTableSkeleton";
-import { CacheRefreshButton } from "@/components/admin/CacheRefreshButton";
+import { UserTableSkeleton } from "@/components/admin/user-table-skeleton";
+import { CacheRefreshButton } from "@/components/admin/button-refresh-user-cache";
 
 export default function AdminPage() {
   // No role check needed - already validated in layout

@@ -32,10 +32,11 @@ This is a **Next.js 15 App Router** application with **Better Auth** for authent
 - **Framework:** Next.js 15 with App Router
 - **Authentication:** Better Auth with email/password authentication and "Remember me" functionality
 - **Database:** PostgreSQL with Drizzle ORM
-- **UI:** Tailwind CSS + shadcn/ui components
+- **UI:** Tailwind CSS + shadcn/ui components (including data tables with TanStack Table)
 - **Forms:** React Hook Form with Zod validation
 - **State:** React built-in state management
 - **Notifications:** Sonner for toast notifications
+- **Data Tables:** SHADCN UI data tables with TanStack Table for sorting, filtering, pagination
 
 ### Project Structure:
 
@@ -57,22 +58,28 @@ This is a **Next.js 15 App Router** application with **Better Auth** for authent
 - `profiles` table - User profiles with roles and display names
 
 **UI Components:**
-- `/components/ui/` - shadcn/ui base components (Button, Card, Form, Input, Checkbox, etc.)
+
+*File Naming Convention: All components use kebab-case naming for consistency*
+
+- `/components/ui/` - shadcn/ui base components (Button, Card, Form, Input, Checkbox, Table, Badge, Skeleton, etc.)
 - `/components/forms/` - Auth forms using React Hook Form + Zod validation:
-  - `signin-form.tsx` - Sign in form with "Remember me" functionality
-  - `signup-form.tsx` - Sign up form
+  - `form-signin.tsx` - Sign in form with "Remember me" functionality  
+  - `form-signup.tsx` - Sign up form
 - `/components/buttons/` - Action button components:
-  - `ButtonSignOut.tsx` - Sign out component with loading states
-  - `ButtonAdmin.tsx` - Admin access button (role-restricted)
-  - `ButtonDashboard.tsx` - Dashboard navigation button
+  - `button-signout.tsx` - Sign out component with loading states
+  - `button-admin.tsx` - Admin access button (role-restricted)
+  - `button-dashboard.tsx` - Dashboard navigation button
 - `/components/navigation/` - Navigation components:
   - `app-sidebar.tsx` - Main application sidebar
   - `nav-main.tsx` - Main navigation menu
   - `nav-user.tsx` - User navigation dropdown
   - `nav-user-client.tsx` - Client-side user navigation with theme toggle
 - `/components/admin/` - Admin-specific components:
-  - `UserTable.tsx` - Admin user management table
-  - `CacheRefreshButton.tsx` - Admin cache management
+  - `UserTable.tsx` - Server component orchestrator for user management
+  - `user-columns.tsx` - TanStack Table column definitions for user data
+  - `user-data-table.tsx` - SHADCN UI data table component with search, filtering, pagination
+  - `user-table-skeleton.tsx` - Loading skeleton matching data table structure
+  - `button-refresh-user-cache.tsx` - Admin cache management button
 
 **Pages:**
 - `/app/page.tsx` - Landing page
@@ -100,7 +107,7 @@ The app uses **Better Auth** with **client-side authentication** and **server-si
 
 **Better Auth Configuration:**
 - Email/password authentication enabled with "Remember me" functionality
-- 30-day sessions with daily refresh cycles
+- 30-day sessions with daily refresh cycles and cookie cache (5-minute duration)
 - Rate limiting and secure cookies enabled
 - Drizzle adapter for PostgreSQL persistence
 - Client-side authentication using `authClient.signIn.email()` and `authClient.signUp.email()`
@@ -111,6 +118,47 @@ The app uses **Better Auth** with **client-side authentication** and **server-si
 - "Remember me" creates persistent cookies vs session-only cookies
 - Form-based sign-in/sign-up with React Hook Form + Zod validation
 - Consistent "Sign In/Sign Out" terminology throughout application
+
+### Data Table Architecture:
+
+The application uses **SHADCN UI data tables** with **TanStack Table** for all data-heavy interfaces:
+
+**Data Table Components:**
+- **Column Definitions** (`*-columns.tsx`) - Define table structure, sorting, filtering, and cell rendering
+- **Data Table Component** (`*-data-table.tsx`) - Reusable table with search, pagination, column visibility
+- **Skeleton Component** (`*-table-skeleton.tsx`) - Loading states that match table structure
+- **Orchestrator Component** (`*.tsx`) - Server component that fetches data and renders table
+
+**Features:**
+- **Global Search** - Search across all columns with search icon
+- **Column Management** - Show/hide columns via dropdown
+- **Sorting** - Click headers to sort data (asc/desc)
+- **Pagination** - Previous/Next navigation with row counts
+- **Row Selection** - Checkboxes for bulk operations
+- **Row Actions** - Dropdown menus for individual row operations
+- **Loading States** - Skeleton components with disabled controls
+- **Responsive Design** - Mobile-friendly layout and interactions
+
+**Implementation Pattern:**
+```typescript
+// Server component fetches data
+export async function DataOrchestrator() {
+  const data = await fetchData()
+  return <DataTable columns={columns} data={data} />
+}
+
+// Column definitions with sorting, filtering, actions
+export const columns: ColumnDef<DataType>[] = [
+  // Select, sortable columns, actions, etc.
+]
+
+// Reusable data table component
+export function DataTable<TData, TValue>({
+  columns, data, isLoading?, title?
+}: DataTableProps<TData, TValue>) {
+  // TanStack Table logic with state management
+}
+```
 
 **IMPORTANT - Middleware Maintenance:**
 When adding new protected pages under `app/(protected)/`, the middleware matcher in `/middleware.ts` already includes the pattern. Current matcher:
@@ -153,6 +201,14 @@ After completing any code changes or new features, you MUST immediately update t
 - TypeScript with strict mode enabled
 - ESLint with Next.js configuration
 - Language consistency: "Sign In/Sign Out" terminology throughout codebase
+
+**Component Organization Principles:**
+- **App Directory**: Only contains `page.tsx` and `layout.tsx` files
+- **Component Directory**: All components organized by feature/domain
+- **Naming Convention**: kebab-case for all component files (e.g., `user-data-table.tsx`)
+- **Feature Grouping**: Page-specific components go in `components/[feature]/` directories
+- **Reusable Components**: Shared UI components in `components/ui/` and `components/buttons/`
+- **Data Tables**: Follow `*-columns.tsx`, `*-data-table.tsx`, `*-table-skeleton.tsx` pattern
 
 **Authentication Best Practices:**
 - Use `authClient.signIn.email()` and `authClient.signUp.email()` for client-side auth

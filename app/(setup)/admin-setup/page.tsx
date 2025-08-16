@@ -1,6 +1,6 @@
 import { adminExists, requireSession, ensureProfile } from "@/lib/auth-helpers";
 import ClaimAdmin from "./claim";
-import { ButtonDashboard } from "@/components/buttons/ButtonDashboard";
+import { ButtonDashboard } from "@/components/buttons/button-dashboard";
 
 export default async function AdminSetupPage() {
   // Only accessible when NO admin exists
