@@ -1,28 +1,33 @@
-import { adminExists } from "@/lib/auth-helpers";
+import { adminExists, syncUserRoleToProfile } from "@/lib/auth-helpers-unified";
 import { withAuth } from "@/lib/api-helpers";
 import { db } from "@/db/drizzle";
-import { profiles } from "@/db/schema";
+import { user as authUsers } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
-export const POST = withAuth(async ({ session }, request) => {
+export const POST = withAuth(async ({ session }) => {
   try {
     // If an admin already exists, do not allow claiming
     if (await adminExists()) {
       return Response.json({ error: "Admin already exists" }, { status: 409 });
     }
 
-    // Promote the current user to admin
+    // Promote the current user to admin in Better Auth user table (single source of truth)
     await db
-      .insert(profiles)
-      .values({ userId: session.user.id, role: "admin" })
-      .onConflictDoUpdate({
-        target: profiles.userId,
-        set: { role: "admin" },
-      });
+      .update(authUsers)
+      .set({ 
+        role: "admin",
+        updatedAt: new Date(),
+      })
+      .where(eq(authUsers.id, session.user.id));
+
+    // Sync the role to profile table for consistency
+    await syncUserRoleToProfile(session.user.id, "admin");
 
     return Response.json({ 
       ok: true, 
       message: "Admin role assigned successfully",
-      user: session.user.email 
+      user: session.user.email,
+      note: "Role updated in Better Auth user table as single source of truth"
     });
   } catch (error) {
     console.error("Bootstrap admin error:", error);

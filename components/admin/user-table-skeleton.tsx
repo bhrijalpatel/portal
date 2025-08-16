@@ -1,4 +1,3 @@
-import { Skeleton } from "@/components/ui/skeleton";
 import { DataTable } from "@/components/admin/user-data-table";
 
 export function UserTableSkeleton() {

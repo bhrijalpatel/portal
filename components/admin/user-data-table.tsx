@@ -13,7 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ChevronDown, Search } from "lucide-react";
+import { ChevronDown, Search, Plus, Shield } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -32,12 +32,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { UserActionsDialog } from "./user-actions-dialog";
+import { authClient } from "@/lib/auth-client";
+import { toast } from "sonner";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   isLoading?: boolean;
   title?: string;
+  onDataChange?: () => void;
 }
 
 export function DataTable<TData, TValue>({
@@ -45,6 +49,7 @@ export function DataTable<TData, TValue>({
   data,
   isLoading = false,
   title,
+  onDataChange,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -54,6 +59,8 @@ export function DataTable<TData, TValue>({
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
   const [globalFilter, setGlobalFilter] = React.useState("");
+  const [createDialogOpen, setCreateDialogOpen] = React.useState(false);
+  const [isStoppingImpersonation, setIsStoppingImpersonation] = React.useState(false);
 
   const table = useReactTable({
     data,
@@ -76,8 +83,48 @@ export function DataTable<TData, TValue>({
     },
   });
 
+  const handleStopImpersonation = async () => {
+    setIsStoppingImpersonation(true);
+    try {
+      await authClient.admin.stopImpersonating();
+      toast.success("Stopped impersonation");
+      // Refresh the page to return to admin session
+      window.location.reload();
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Failed to stop impersonation";
+      toast.error(message);
+      setIsStoppingImpersonation(false);
+    }
+  };
+
+  // Check if we're currently impersonating
+  const { data: session } = authClient.useSession();
+  const isImpersonating = session?.session?.impersonatedBy;
+
   return (
     <div className="w-full">
+      {/* Impersonation banner */}
+      {isImpersonating && (
+        <div className="mb-4 p-3 bg-orange-100 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <Shield className="h-4 w-4 text-orange-600" />
+              <span className="text-sm font-medium text-orange-800 dark:text-orange-200">
+                You are currently impersonating a user
+              </span>
+            </div>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={handleStopImpersonation}
+              disabled={isStoppingImpersonation}
+            >
+              {isStoppingImpersonation ? "Stopping..." : "Stop Impersonation"}
+            </Button>
+          </div>
+        </div>
+      )}
+
       <div className="flex items-center justify-between py-4">
         <div className="flex items-center space-x-4">
           <div className="relative max-w-sm">
@@ -96,32 +143,42 @@ export function DataTable<TData, TValue>({
             </p>
           )}
         </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" disabled={isLoading}>
-              Columns <ChevronDown className="ml-2 h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                );
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="flex items-center space-x-2">
+          <Button
+            onClick={() => setCreateDialogOpen(true)}
+            disabled={isLoading}
+            className="flex items-center space-x-2"
+          >
+            <Plus className="h-4 w-4" />
+            <span>Create User</span>
+          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" disabled={isLoading}>
+                Columns <ChevronDown className="ml-2 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide())
+                .map((column) => {
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className="capitalize"
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) =>
+                        column.toggleVisibility(!!value)
+                      }
+                    >
+                      {column.id}
+                    </DropdownMenuCheckboxItem>
+                  );
+                })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
       <div className="rounded-md border">
         <Table>
@@ -162,6 +219,9 @@ export function DataTable<TData, TValue>({
                   </TableCell>
                   <TableCell>
                     <Skeleton className="h-5 w-16 rounded-full" /> {/* Role Badge */}
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-5 w-16 rounded-full" /> {/* Status Badge */}
                   </TableCell>
                   <TableCell>
                     <Skeleton className="h-4 w-20" /> {/* Created Date */}
@@ -227,6 +287,16 @@ export function DataTable<TData, TValue>({
           </Button>
         </div>
       </div>
+
+      {/* Create User Dialog */}
+      <UserActionsDialog
+        isOpen={createDialogOpen}
+        onClose={() => setCreateDialogOpen(false)}
+        action="create"
+        onSuccess={() => {
+          onDataChange?.();
+        }}
+      />
     </div>
   );
 }

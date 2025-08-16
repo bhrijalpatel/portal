@@ -1,6 +1,5 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -36,10 +35,7 @@ const formSchema = z.object({
   password: z.string().min(12, "Password must be at least 12 characters"),
 });
 
-export function SignUpForm({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+export function SignUpForm() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
