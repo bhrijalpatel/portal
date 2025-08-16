@@ -1,4 +1,4 @@
-import { adminExists, requireSession, ensureProfile } from "@/lib/auth-helpers";
+import { adminExists, requireSession } from "@/lib/auth-helpers";
 import ClaimAdmin from "./claim";
 import { ButtonDashboard } from "@/components/buttons/button-dashboard";
 
@@ -18,8 +18,7 @@ export default async function AdminSetupPage() {
   }
 
   const { user } = await requireSession();
-  // Make sure the current user has a profile row (role=user initially)
-  await ensureProfile(user.id);
+  // Note: No longer need ensureProfile since role is managed in Better Auth user.role
 
   return (
     <main className="flex flex-col items-center justify-center max-w-md mx-auto gap-3 h-screen">

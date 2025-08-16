@@ -1,6 +1,5 @@
 // lib/api-helpers.ts
 import { requireSession, requireRole, Session } from "@/lib/auth-helpers";
-import { profiles } from "@/db/schema";
 import { NextRequest } from "next/server";
 
 type Handler = (
@@ -8,10 +7,8 @@ type Handler = (
   request: Request | NextRequest
 ) => Promise<Response>;
 
-type ProfileType = typeof profiles.$inferSelect;
-
 type AdminHandler = (
-  ctx: { session: Session; profile: ProfileType },
+  ctx: { session: Session; userRole: string },
   request: Request | NextRequest
 ) => Promise<Response>;
 
@@ -24,7 +21,7 @@ export function withAuth(handler: Handler) {
 
 export function withAdminAuth(handler: AdminHandler) {
   return async (request: Request | NextRequest) => {
-    const { session, profile } = await requireRole("admin");
-    return handler({ session, profile }, request);
+    const { session, userRole } = await requireRole("admin");
+    return handler({ session, userRole }, request);
   };
 }

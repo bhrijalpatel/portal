@@ -1,4 +1,4 @@
-import { adminExists, syncUserRoleToProfile } from "@/lib/auth-helpers-unified";
+import { adminExists } from "@/lib/auth-helpers";
 import { withAuth } from "@/lib/api-helpers";
 import { db } from "@/db/drizzle";
 import { user as authUsers } from "@/db/schema";
@@ -19,9 +19,6 @@ export const POST = withAuth(async ({ session }) => {
         updatedAt: new Date(),
       })
       .where(eq(authUsers.id, session.user.id));
-
-    // Sync the role to profile table for consistency
-    await syncUserRoleToProfile(session.user.id, "admin");
 
     return Response.json({ 
       ok: true, 

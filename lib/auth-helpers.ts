@@ -3,7 +3,7 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { db } from "@/db/drizzle";
-import { profiles } from "@/db/schema";
+import { user } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
 // Reusable Session type from your Better-Auth instance
@@ -37,7 +37,7 @@ export async function getSessionOrNull(): Promise<Session | null> {
 }
 
 /**
- * Get session with user role - optimized single DB query
+ * Get session with user role - uses Better Auth user.role as single source of truth
  * Used in layouts to get both session and role at once
  */
 export async function getSessionWithRole(): Promise<{
@@ -45,70 +45,42 @@ export async function getSessionWithRole(): Promise<{
   userRole: string;
 }> {
   const session = await requireSession();
-
-  const [profile] = await db
-    .select()
-    .from(profiles)
-    .where(eq(profiles.userId, session.user.id))
-    .limit(1);
-
-  const userRole = profile?.role || "user";
+  
+  // Use Better Auth user.role as single source of truth (no additional DB query needed)
+  const userRole = session.user.role || "user";
   return { session, userRole };
 }
 
 /**
  * Role-based access control guard
- * Requires both session and specific role(s)
+ * Uses Better Auth user.role as single source of truth
  */
 export async function requireRole(role: string | string[]) {
   const session = await requireSession();
   const roles = Array.isArray(role) ? role : [role];
-
-  const [p] = await db
-    .select()
-    .from(profiles)
-    .where(eq(profiles.userId, session.user.id))
-    .limit(1);
-
-  if (!p || !roles.includes(p.role)) redirect("/403");
-  return { session, profile: p };
+  
+  // Use Better Auth user.role as single source of truth (no additional DB query needed)
+  const userRole = session.user.role || "user";
+  
+  if (!roles.includes(userRole)) redirect("/403");
+  return { session, userRole };
 }
 
 // --- Bootstrap admin helpers ---
 
 /**
- * Check if any admin profile exists in the system
+ * Check if any admin exists in the system using Better Auth user.role
  */
 export async function adminExists(): Promise<boolean> {
-  // True if any admin profile exists
-  const rows = await db
-    .select({ role: profiles.role })
-    .from(profiles)
-    .where(eq(profiles.role, "admin"))
+  // Check Better Auth user table for admin role (single source of truth)
+  const adminUser = await db
+    .select({ id: user.id })
+    .from(user)
+    .where(eq(user.role, "admin"))
     .limit(1);
-  return rows.length > 0;
+  return adminUser.length > 0;
 }
 
-/**
- * Ensure a profile exists for a user, create if missing
- */
-export async function ensureProfile(
-  userId: string,
-  defaults?: { role?: string; displayName?: string }
-) {
-  const [found] = await db
-    .select()
-    .from(profiles)
-    .where(eq(profiles.userId, userId))
-    .limit(1);
-  if (found) return found;
-  const [created] = await db
-    .insert(profiles)
-    .values({
-      userId,
-      role: defaults?.role ?? "user",
-      displayName: defaults?.displayName,
-    })
-    .returning();
-  return created;
-}
+// Note: ensureProfile function temporarily removed as we migrate to user.role as single source of truth
+// Profile table will become supplementary data only (displayName, avatarUrl, etc.)
+// All role management now handled through Better Auth user.role field
