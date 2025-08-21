@@ -18,7 +18,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -72,7 +71,6 @@ function ActionsCell({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
-          <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuItem
             onClick={() => navigator.clipboard.writeText(user.id)}
           >
@@ -231,6 +229,7 @@ export function createColumns(onUserUpdate: () => void): ColumnDef<User>[] {
     },
     {
       id: "actions",
+      header: "Actions",
       enableHiding: false,
       cell: ({ row }) => {
         return <ActionsCell user={row.original} onUserUpdate={onUserUpdate} />;

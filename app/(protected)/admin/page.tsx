@@ -8,9 +8,9 @@ export default function AdminPage() {
     <main className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-semibold">Admin Panel</h1>
+          <h1 className="text-2xl font-semibold">User Management</h1>
           <p className="text-muted-foreground mt-2">
-            Manage users and application settings
+            Create and manage users in your application.
           </p>
         </div>
       </div>

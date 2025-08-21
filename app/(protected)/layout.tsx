@@ -13,12 +13,12 @@ export default async function ProtectedLayout({
 }) {
   // Check for session without causing redirect loop
   const sessionData = await getSessionWithRoleOrNull();
-  
+
   // If no session, redirect to sign-in (this is the real protection)
   if (!sessionData) {
     redirect("/sign-in");
   }
-  
+
   const { session, userRole } = sessionData;
 
   return (

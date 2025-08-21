@@ -10,7 +10,7 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const { userRole } = useRole();
-  
+
   useEffect(() => {
     if (userRole !== "admin") {
       redirect("/403");

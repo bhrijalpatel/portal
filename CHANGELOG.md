@@ -5,6 +5,53 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2025/08/21] - UI Polish & Dependency Updates
+
+### 🎨 UI/UX Improvements
+
+- **Theme-Aware Toast Notifications**: Created custom ToasterTheme component
+  - Toast notifications now respect system/user theme settings (light/dark mode)
+  - Rich colored toasts automatically adapt to current theme
+  - Improved visual consistency across the application
+  - Enhanced accessibility with proper contrast ratios in both themes
+
+- **Admin Panel Refinements**:
+  - Updated admin page title from "Admin Panel" to "User Management" for clarity
+  - Refined subtitle to "Create and manage users in your application" for better context
+  - Removed "Actions" label from dropdown menu for cleaner interface
+  - Reordered column visibility dropdown - "Columns" text now appears before chevron icon
+
+### 🔧 Code Quality Improvements
+
+- **Code Formatting**: Applied consistent formatting across modified files
+  - Fixed trailing whitespace and inconsistent line endings
+  - Standardized component spacing and indentation
+  - Improved code readability and maintainability
+
+### 📦 Dependency Updates
+
+- **Better Auth**: Updated from 1.3.4 to 1.3.7
+  - Enhanced security and performance improvements
+  - Bug fixes and stability enhancements
+  
+- **UI Libraries**:
+  - @radix-ui/react-dialog: 1.1.14 → 1.1.15
+  - @radix-ui/react-dropdown-menu: 2.1.15 → 2.1.16
+  - @radix-ui/react-tooltip: 1.2.7 → 1.2.8
+  - lucide-react: 0.539.0 → 0.540.0
+  
+- **Framework Updates**:
+  - Next.js: 15.4.6 → 15.5.0
+  - React: 19.1.0 → 19.1.1
+  - React-DOM: 19.1.0 → 19.1.1
+  
+- **Development Tools**:
+  - TypeScript: 5.x → 5.9.2
+  - ESLint: Updated to 9.33.0
+  - @types/node: 20.x → 24.3.0
+  - @types/react: Updated to 19.1.10
+  - Various build tool updates for improved development experience
+
 ## [2025/08/16] - Critical Authentication Fixes & Role Management Migration
 
 ### 🚨 **CRITICAL FIX: Sign-In Redirect Loop Resolution**
