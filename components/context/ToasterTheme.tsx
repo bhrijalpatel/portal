@@ -7,6 +7,10 @@ export function Toaster() {
   const { resolvedTheme } = useTheme();
 
   return (
-    <SonnerToaster richColors theme={resolvedTheme as ToasterProps["theme"]} />
+    <SonnerToaster
+      richColors
+      closeButton
+      theme={resolvedTheme as ToasterProps["theme"]}
+    />
   );
 }

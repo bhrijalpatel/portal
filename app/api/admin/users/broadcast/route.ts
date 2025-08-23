@@ -1,6 +1,6 @@
 import { withAdminAuth } from "@/lib/api-helpers";
-import { broadcastUserUpdate } from "../stream/route";
-import { fetchUsersWithRetry } from "../list/route";
+import { broadcastUserUpdate } from "@/lib/admin-broadcast";
+import { fetchUsersWithRetry } from "@/lib/db-utils";
 
 export const POST = withAdminAuth(async ({ session }, request) => {
   try {
@@ -26,11 +26,11 @@ export const POST = withAdminAuth(async ({ session }, request) => {
       eventType,
       connectedClients: "check server logs" // Can't access count here
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error broadcasting update:", error);
     return Response.json({ 
       error: "Failed to broadcast update",
-      details: error.message 
+      details: error instanceof Error ? error.message : "Unknown error" 
     }, { status: 500 });
   }
 });

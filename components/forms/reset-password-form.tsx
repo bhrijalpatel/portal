@@ -80,7 +80,7 @@ export function ResetPasswordForm({
     setIsLoading(true);
 
     try {
-      const { data, error } = await authClient.resetPassword({
+      const { error } = await authClient.resetPassword({
         newPassword: values.newPassword,
         token,
       });
@@ -120,13 +120,13 @@ export function ResetPasswordForm({
   if (tokenStatus === 'invalid') {
     return (
       <div className={cn(
-        "flex flex-col gap-6 w-full max-w-md p-8 rounded-2xl bg-gradient-to-br from-red-500/5 via-orange-500/5 to-yellow-500/5 border border-red-500/10 backdrop-blur-sm shadow-lg",
+        "flex flex-col gap-6 w-full max-w-md p-8 rounded-2xl bg-gradient-to-br from-rose-500/5 via-orange-500/5 to-amber-500/5 border border-rose-500/10 backdrop-blur-sm shadow-lg",
         className
       )} {...props}>
         <Card className="border-0 bg-transparent shadow-none">
           <CardHeader className="text-center">
             <div className="flex justify-center mb-4">
-              <XCircle className="h-12 w-12 text-red-500" />
+              <XCircle className="h-12 w-12 text-rose-500 dark:text-rose-400" />
             </div>
             <CardTitle className="text-xl">Invalid Reset Link</CardTitle>
             <CardDescription>

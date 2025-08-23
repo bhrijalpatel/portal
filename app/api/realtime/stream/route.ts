@@ -1,19 +1,27 @@
-import { withAdminAuth } from "@/lib/api-helpers";
-import { connectedClients } from "@/lib/admin-broadcast";
+import { withAuth } from "@/lib/api-helpers";
+import { connectedClients } from "@/lib/realtime-broadcast";
 
-export const GET = withAdminAuth(async ({ session }) => {
-  console.log(`🔄 Admin SSE connection: ${session.user.email}`);
+export const GET = withAuth(async ({ session }) => {
+  const userRole = session.user.role || 'user';
+  console.log(`🔄 Real-time connection: ${session.user.email} (${userRole})`);
   
   // Create a readable stream for Server-Sent Events
-  // Variables to track controller and client ID
+  // Variables to track controller and client ID  
   let currentClientId: string;
 
   const stream = new ReadableStream<Uint8Array>({
     start(controller) {
       currentClientId = `${session.user.id}-${Date.now()}`;
-      connectedClients.set(currentClientId, controller);
       
-      console.log(`✅ SSE client connected: ${currentClientId} (${connectedClients.size} total)`);
+      // Store client info with role for permission filtering
+      connectedClients.set(currentClientId, {
+        controller,
+        userId: session.user.id,
+        userRole,
+        userEmail: session.user.email
+      });
+      
+      console.log(`✅ Real-time client connected: ${currentClientId} (${userRole}) - Total: ${connectedClients.size}`);
       
       // Send initial connection confirmation
       const initialMessage = {
@@ -21,6 +29,7 @@ export const GET = withAdminAuth(async ({ session }) => {
         data: {
           message: 'Real-time updates connected',
           clientId: currentClientId,
+          userRole,
           connectedAt: new Date().toISOString()
         }
       };
@@ -36,7 +45,7 @@ export const GET = withAdminAuth(async ({ session }) => {
       // Remove this specific client
       if (currentClientId) {
         connectedClients.delete(currentClientId);
-        console.log(`❌ SSE client disconnected: ${currentClientId} (${connectedClients.size} remaining)`);
+        console.log(`❌ Real-time client disconnected: ${currentClientId} (${connectedClients.size} remaining)`);
       }
     }
   });

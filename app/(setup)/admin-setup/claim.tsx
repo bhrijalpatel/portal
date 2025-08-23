@@ -63,7 +63,7 @@ export default function ClaimAdmin() {
               },
             },
           });
-        } catch (error) {
+        } catch {
           // Fallback - force redirect to sign-in
           toast.info("Please sign in again to access the admin panel");
           window.location.href = "/sign-in";
@@ -102,7 +102,7 @@ export default function ClaimAdmin() {
           }}
         />
         {err && (
-          <p className="text-sm text-red-600 dark:text-red-400 flex items-start gap-1">
+          <p className="text-sm text-rose-600 dark:text-rose-400 flex items-start gap-1">
             <span className="text-xs">⚠️</span>
             <span>{err}</span>
           </p>

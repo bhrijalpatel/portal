@@ -20,7 +20,7 @@ export default function ForgotPasswordPage() {
       {/* Decorative background elements */}
       <div className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute top-1/4 left-1/5 h-96 w-96 rounded-full bg-amber-500/10 blur-3xl animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/5 h-80 w-80 rounded-full bg-yellow-500/10 blur-3xl animate-pulse delay-1000" />
+        <div className="absolute bottom-1/4 right-1/5 h-80 w-80 rounded-full bg-amber-500/10 blur-3xl animate-pulse delay-1000" />
       </div>
 
       <div className="flex w-full max-w-sm flex-col gap-6">

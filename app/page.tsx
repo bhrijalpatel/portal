@@ -17,8 +17,8 @@ export default function HomePage() {
       {/* Enhanced decorative elements */}
       <div className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute top-1/4 left-1/5 h-96 w-96 rounded-full bg-primary/10 blur-3xl animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/5 h-80 w-80 rounded-full bg-blue-500/10 blur-3xl animate-pulse delay-1000" />
-        <div className="absolute top-3/4 left-1/3 h-64 w-64 rounded-full bg-purple-500/10 blur-3xl animate-pulse delay-500" />
+        <div className="absolute bottom-1/4 right-1/5 h-80 w-80 rounded-full bg-sky-500/10 blur-3xl animate-pulse delay-1000" />
+        <div className="absolute top-3/4 left-1/3 h-64 w-64 rounded-full bg-violet-500/10 blur-3xl animate-pulse delay-500" />
       </div>
 
       <header className="w-full flex items-center justify-between px-6 py-6 md:px-12">

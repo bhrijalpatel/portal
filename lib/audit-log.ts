@@ -21,7 +21,7 @@ export interface AuditLogEntry {
   action: AdminAction;
   targetUserId?: string;
   targetEmail?: string;
-  details?: Record<string, any>;
+  details?: Record<string, unknown>;
   ipAddress?: string;
   userAgent?: string;
   success: boolean;

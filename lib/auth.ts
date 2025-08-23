@@ -17,11 +17,10 @@ export const auth = betterAuth({
     minPasswordLength: 12,
     maxPasswordLength: 128,
     // Send password reset email using Resend
-    sendResetPassword: async ({ user, url, token }, request) => {
+    sendResetPassword: async ({ user, url }) => {
       try {
         await sendPasswordResetEmail({
           to: user.email,
-          token,
           url,
         });
         
@@ -42,7 +41,7 @@ export const auth = betterAuth({
       }
     },
     // Callback when password is successfully reset
-    onPasswordReset: async ({ user }, request) => {
+    onPasswordReset: async ({ user }) => {
       
       // Log successful password reset
       await createAuditLog({
@@ -60,11 +59,10 @@ export const auth = betterAuth({
   },
   // Email verification configuration
   emailVerification: {
-    sendVerificationEmail: async ({ user, url, token }, request) => {
+    sendVerificationEmail: async ({ user, url }) => {
       try {
         await sendVerificationEmail({
           to: user.email,
-          token,
           url,
         });
         

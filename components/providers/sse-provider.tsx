@@ -7,6 +7,7 @@ interface SSEContextType {
   isConnected: boolean;
   connect: () => void;
   disconnect: () => void;
+  userRole: string | null;
 }
 
 const SSEContext = createContext<SSEContextType | undefined>(undefined);
@@ -25,24 +26,63 @@ interface SSEProviderProps {
 
 export function SSEProvider({ children }: SSEProviderProps) {
   const [isConnected, setIsConnected] = useState(false);
+  const [userRole, setUserRole] = useState<string | null>(null);
   const eventSourceRef = useRef<EventSource | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const lastToastRef = useRef<{ message: string; timestamp: number } | null>(null);
   const [shouldConnect, setShouldConnect] = useState(false);
+
+  // Helper function to prevent duplicate toasts
+  const showToast = (message: string, type: 'success' | 'info' | 'warning' | 'error' = 'info') => {
+    const now = Date.now();
+    const lastToast = lastToastRef.current;
+    
+    // Prevent duplicate toasts within 3 seconds
+    if (lastToast && lastToast.message === message && (now - lastToast.timestamp) < 3000) {
+      console.log(`🚫 Duplicate toast prevented: ${message}`);
+      return;
+    }
+    
+    // Show the toast
+    lastToastRef.current = { message, timestamp: now };
+    
+    switch (type) {
+      case 'success':
+        toast.success(message, { duration: 2000 });
+        break;
+      case 'warning':
+        toast.warning(message);
+        break;
+      case 'error':
+        toast.error(message);
+        break;
+      default:
+        toast.info(message);
+        break;
+    }
+  };
 
   const connect = () => {
     if (eventSourceRef.current?.readyState === EventSource.OPEN) {
-      console.log("🔄 SSE already connected");
+      console.log("🔄 Real-time connection already active");
+      return;
+    }
+    
+    // Prevent multiple simultaneous connection attempts
+    if (eventSourceRef.current?.readyState === EventSource.CONNECTING) {
+      console.log("🔄 Real-time connection already in progress");
       return;
     }
 
-    console.log("🔄 Setting up global SSE connection...");
+    console.log("🔄 Setting up universal real-time connection...");
     setShouldConnect(true);
     
-    const eventSource = new EventSource('/api/admin/users/stream');
+    // Use the universal realtime endpoint instead of admin-specific
+    const eventSource = new EventSource('/api/realtime/stream');
     eventSourceRef.current = eventSource;
     
     eventSource.onopen = () => {
-      console.log("✅ Global SSE connection established");
+      console.log("✅ Universal real-time connection established");
       setIsConnected(true);
       
       // Clear any reconnection attempts
@@ -55,44 +95,157 @@ export function SSEProvider({ children }: SSEProviderProps) {
     eventSource.onmessage = (event) => {
       try {
         const message = JSON.parse(event.data);
-        console.log("📡 Global SSE message received:", message.type);
+        console.log("📡 Real-time message received:", message.type);
         
         switch (message.type) {
           case 'connected':
-            toast.success("Real-time updates connected", { duration: 2000 });
+            setUserRole(message.data.userRole);
+            const capitalizedRole = message.data.userRole ? 
+              message.data.userRole.charAt(0).toUpperCase() + message.data.userRole.slice(1) : 
+              'User';
+            showToast(`Real-time updates connected (${capitalizedRole})`, 'success');
             break;
             
+          // User Management Events
           case 'user-updated':
           case 'user-created': 
           case 'user-deleted':
-            console.log(`🔄 User ${message.type.split('-')[1]} by ${message.data.updatedBy}`);
-            toast.info(`User data updated (${message.data.users.length} users)`);
+            console.log(`👤 ${message.type} by ${message.data.triggeredBy}`);
+            // Don't show toast here - let individual components handle their own notifications
             
-            // Broadcast to all components that need to refresh
-            window.dispatchEvent(new CustomEvent('sse-user-update', {
+            window.dispatchEvent(new CustomEvent('realtime-user-update', {
               detail: { 
                 type: message.type, 
-                users: message.data.users,
-                updatedBy: message.data.updatedBy 
+                data: message.data,
+                triggeredBy: message.data.triggeredBy 
+              }
+            }));
+            break;
+            
+          // Job Card Events  
+          case 'job-card-created':
+          case 'job-card-updated':
+          case 'job-card-completed':
+            console.log(`💼 ${message.type} by ${message.data.triggeredBy}`);
+            toast.info(`Job card ${message.type.split('-')[2]}`);
+            
+            window.dispatchEvent(new CustomEvent('realtime-job-card-update', {
+              detail: { 
+                type: message.type, 
+                data: message.data,
+                triggeredBy: message.data.triggeredBy 
+              }
+            }));
+            break;
+            
+          // Inventory Events
+          case 'inventory-updated':
+          case 'stock-low':
+          case 'stock-out':
+            console.log(`📦 ${message.type} by ${message.data.triggeredBy}`);
+            
+            if (message.type === 'stock-out') {
+              showToast(`Stock out: ${message.data.itemName || 'Item'}`, 'error');
+            } else if (message.type === 'stock-low') {
+              showToast(`Low stock: ${message.data.itemName || 'Item'}`, 'warning');
+            } else {
+              showToast('Inventory updated');
+            }
+            
+            window.dispatchEvent(new CustomEvent('realtime-inventory-update', {
+              detail: { 
+                type: message.type, 
+                data: message.data,
+                triggeredBy: message.data.triggeredBy 
+              }
+            }));
+            break;
+            
+          // Financial Events
+          case 'salary-updated':
+          case 'payment-processed':
+          case 'invoice-generated':
+            console.log(`💰 ${message.type} by ${message.data.triggeredBy}`);
+            toast.info(`Finance: ${message.type.replace('-', ' ')}`);
+            
+            window.dispatchEvent(new CustomEvent('realtime-financial-update', {
+              detail: { 
+                type: message.type, 
+                data: message.data,
+                triggeredBy: message.data.triggeredBy 
+              }
+            }));
+            break;
+            
+          // Task Events
+          case 'task-assigned':
+          case 'task-completed':
+          case 'task-overdue':
+            console.log(`📋 ${message.type} by ${message.data.triggeredBy}`);
+            
+            if (message.type === 'task-assigned') {
+              toast.info('New task assigned');
+            } else if (message.type === 'task-overdue') {
+              toast.warning('Task overdue');
+            } else {
+              toast.success('Task completed');
+            }
+            
+            window.dispatchEvent(new CustomEvent('realtime-task-update', {
+              detail: { 
+                type: message.type, 
+                data: message.data,
+                triggeredBy: message.data.triggeredBy 
+              }
+            }));
+            break;
+            
+          // Notification Events
+          case 'notification-sent':
+          case 'system-announcement':
+            console.log(`🔔 ${message.type} by ${message.data.triggeredBy}`);
+            toast.info(message.data.message || 'New notification');
+            
+            window.dispatchEvent(new CustomEvent('realtime-notification', {
+              detail: { 
+                type: message.type, 
+                data: message.data,
+                triggeredBy: message.data.triggeredBy 
+              }
+            }));
+            break;
+            
+          // Order Events
+          case 'order-created':
+          case 'order-updated':
+          case 'order-cancelled':
+            console.log(`🛒 ${message.type} by ${message.data.triggeredBy}`);
+            toast.info(`Order ${message.type.split('-')[1]}`);
+            
+            window.dispatchEvent(new CustomEvent('realtime-order-update', {
+              detail: { 
+                type: message.type, 
+                data: message.data,
+                triggeredBy: message.data.triggeredBy 
               }
             }));
             break;
             
           default:
-            console.log("📡 Unknown SSE message type:", message.type);
+            console.log("📡 Unknown real-time message type:", message.type);
         }
       } catch (error) {
-        console.error("Error parsing SSE message:", error);
+        console.error("Error parsing real-time message:", error);
       }
     };
     
     eventSource.onerror = (error) => {
-      console.error("❌ Global SSE connection error:", error);
+      console.error("❌ Real-time connection error:", error);
       setIsConnected(false);
       
       // Only attempt reconnection if we should still be connected
       if (shouldConnect && eventSource.readyState === EventSource.CLOSED) {
-        console.log("🔄 Attempting to reconnect SSE in 5 seconds...");
+        console.log("🔄 Attempting to reconnect real-time updates in 5 seconds...");
         reconnectTimeoutRef.current = setTimeout(() => {
           if (shouldConnect) {
             connect();
@@ -103,7 +256,7 @@ export function SSEProvider({ children }: SSEProviderProps) {
   };
 
   const disconnect = () => {
-    console.log("🛑 Disconnecting global SSE connection");
+    console.log("🛑 Disconnecting real-time connection");
     setShouldConnect(false);
     
     if (reconnectTimeoutRef.current) {
@@ -117,6 +270,7 @@ export function SSEProvider({ children }: SSEProviderProps) {
     }
     
     setIsConnected(false);
+    setUserRole(null);
   };
 
   // Cleanup on unmount
@@ -130,6 +284,7 @@ export function SSEProvider({ children }: SSEProviderProps) {
     isConnected,
     connect,
     disconnect,
+    userRole,
   };
 
   return (

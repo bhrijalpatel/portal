@@ -11,11 +11,15 @@ import {
   UserX,
   Eye,
   User as UserIcon,
-  CheckCircle,
-  XCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -26,12 +30,18 @@ import {
 import { UserActionsDialog } from "./user-actions-dialog";
 import { useState } from "react";
 
+// Helper function to capitalize roles - exported for use in other components
+export function capitalizeRole(role: string | null): string {
+  const roleStr = role || "user";
+  return roleStr.charAt(0).toUpperCase() + roleStr.slice(1);
+}
+
 // User type based on Better Auth user table only (single source of truth)
 export type User = {
   id: string;
   email: string;
   name: string | null;
-  emailVerified: boolean;  // Better Auth: NOT NULL with default false
+  emailVerified: boolean; // Better Auth: NOT NULL with default false
   role: string | null;
   banned: boolean | null;
   banReason: string | null;
@@ -164,22 +174,12 @@ export function createColumns(onUserUpdate: () => void): ColumnDef<User>[] {
       header: "Verified",
       cell: ({ row }) => {
         const verified = row.getValue("emailVerified") as boolean;
-        
+
         // Better Auth uses boolean with default false (never null)
         if (verified === true) {
-          return (
-            <div className="flex items-center gap-1">
-              <CheckCircle className="h-4 w-4 text-green-600" />
-              <span className="text-sm text-green-600">Verified</span>
-            </div>
-          );
+          return <Badge variant="success-outline">Verified</Badge>;
         } else {
-          return (
-            <div className="flex items-center gap-1">
-              <XCircle className="h-4 w-4 text-amber-600" />
-              <span className="text-sm text-amber-600">Unverified</span>
-            </div>
-          );
+          return <Badge variant="warning">Unverified</Badge>;
         }
       },
     },
@@ -189,8 +189,8 @@ export function createColumns(onUserUpdate: () => void): ColumnDef<User>[] {
       cell: ({ row }) => {
         const role = (row.getValue("role") as string) || "user";
         return (
-          <Badge variant={role === "admin" ? "destructive" : "secondary"}>
-            {role}
+          <Badge variant={role === "admin" ? "success" : "outline"}>
+            {capitalizeRole(role)}
           </Badge>
         );
       },
@@ -201,17 +201,48 @@ export function createColumns(onUserUpdate: () => void): ColumnDef<User>[] {
       cell: ({ row }) => {
         const banned = row.getValue("banned") as boolean;
         const banExpires = row.original.banExpires;
+        const banReason = row.original.banReason;
 
         if (banned) {
           const isExpired = banExpires && new Date(banExpires) < new Date();
+          const formattedExpiry = banExpires
+            ? new Date(banExpires).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+              })
+            : "Indefinite Ban";
+
           return (
-            <Badge variant="destructive">
-              {isExpired ? "Ban Expired" : "Banned"}
-            </Badge>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Badge variant="error">
+                    {isExpired ? "Ban Expired" : "Banned"}
+                  </Badge>
+                </TooltipTrigger>
+                <TooltipContent className="max-w-xs">
+                  <div className="space-y-1">
+                    {banReason && (
+                      <div>
+                        <span className="font-semibold">Reason:</span>{" "}
+                        {banReason}
+                      </div>
+                    )}
+                    <div>
+                      <span className="font-semibold">Expires:</span>{" "}
+                      {formattedExpiry}
+                    </div>
+                  </div>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           );
         }
 
-        return <Badge variant="outline">Active</Badge>;
+        return <Badge variant="success-outline">Active</Badge>;
       },
     },
     {

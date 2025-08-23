@@ -26,13 +26,13 @@ export default async function AdminSetupPage() {
   if (!accessCheck.allowed) {
     return (
       <main className="flex flex-col items-center justify-center max-w-md mx-auto gap-3 h-screen">
-        <Card className="border-red-500/20 bg-red-50/10">
+        <Card className="border-rose-500/20 bg-rose-50/10 dark:bg-rose-950/10">
           <CardHeader>
             <div className="flex items-center gap-2">
-              <ShieldAlert className="h-5 w-5 text-red-500" />
+              <ShieldAlert className="h-5 w-5 text-rose-500 dark:text-rose-400" />
               <CardTitle>Admin Setup Disabled</CardTitle>
             </div>
-            <CardDescription className="text-red-600 dark:text-red-400">
+            <CardDescription className="text-rose-600 dark:text-rose-400">
               {accessCheck.reason}
             </CardDescription>
           </CardHeader>
@@ -66,7 +66,7 @@ export default async function AdminSetupPage() {
         <Card>
           <CardContent>
             <CardHeader>
-              <Lock className="h-5 w-5 text-green-500" />
+              <Lock className="h-5 w-5 text-emerald-500 dark:text-emerald-400" />
               <CardTitle>Setup Complete</CardTitle>
             </CardHeader>
             <CardDescription>

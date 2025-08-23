@@ -56,7 +56,7 @@ export function ForgotPasswordForm({
 
       setIsSuccess(true);
       toast.success("Password reset email sent!");
-    } catch (error: any) {
+    } catch {
       // Better Auth returns success even if email doesn't exist (security)
       // So we always show success message
       setIsSuccess(true);
@@ -69,17 +69,17 @@ export function ForgotPasswordForm({
   if (isSuccess) {
     return (
       <div className={cn(
-        "flex flex-col gap-6 w-full max-w-md p-8 rounded-2xl bg-gradient-to-br from-green-500/5 via-emerald-500/5 to-teal-500/5 border border-green-500/10 backdrop-blur-sm shadow-lg",
+        "flex flex-col gap-6 w-full max-w-md p-8 rounded-2xl bg-gradient-to-br from-emerald-500/5 via-emerald-500/5 to-teal-500/5 border border-emerald-500/10 backdrop-blur-sm shadow-lg",
         className
       )} {...props}>
         <Card className="border-0 bg-transparent shadow-none">
           <CardHeader className="text-center">
             <div className="flex justify-center mb-4">
-              <CheckCircle className="h-12 w-12 text-green-500" />
+              <CheckCircle className="h-12 w-12 text-emerald-500 dark:text-emerald-400" />
             </div>
             <CardTitle className="text-xl">Check Your Email</CardTitle>
             <CardDescription>
-              We've sent a password reset link to your email address
+              We&apos;ve sent a password reset link to your email address
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -94,7 +94,7 @@ export function ForgotPasswordForm({
             
             <div className="space-y-2">
               <p className="text-xs text-muted-foreground text-center">
-                Didn't receive the email? Check your spam folder or
+                Didn&apos;t receive the email? Check your spam folder or
               </p>
               <Button 
                 variant="outline"
@@ -137,7 +137,7 @@ export function ForgotPasswordForm({
           </div>
           <CardTitle className="text-xl">Forgot Password?</CardTitle>
           <CardDescription>
-            Enter your email and we'll send you a reset link
+            Enter your email and we&apos;ll send you a reset link
           </CardDescription>
         </CardHeader>
         <CardContent>

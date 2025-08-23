@@ -150,7 +150,7 @@ export function UserActionsDialog({
         role: data.role,
       });
 
-      toast.success("User created successfully");
+      toast.success("User created successfully", { id: 'create-user' });
       createForm.reset();
       onSuccess();
       onClose();
@@ -195,7 +195,7 @@ export function UserActionsDialog({
         }
       }
 
-      toast.success("User updated successfully");
+      toast.success("User updated successfully", { id: `update-user-${user.id}` });
       onSuccess();
       onClose();
     } catch (error: unknown) {
@@ -216,7 +216,7 @@ export function UserActionsDialog({
         userId: user.id,
         newPassword: data.newPassword,
       });
-      toast.success("Password updated successfully");
+      toast.success("Password updated successfully", { id: `update-password-${user.id}` });
       passwordForm.reset();
       onSuccess();
       onClose();
@@ -242,7 +242,7 @@ export function UserActionsDialog({
           ? parseInt(data.banExpiresIn) * 24 * 60 * 60
           : undefined, // Convert days to seconds
       });
-      toast.success("User banned successfully");
+      toast.success("User banned successfully", { id: `ban-user-${user.id}` });
       banForm.reset();
       onSuccess();
       onClose();
@@ -263,7 +263,7 @@ export function UserActionsDialog({
       await authClient.admin.unbanUser({
         userId: user.id,
       });
-      toast.success("User unbanned successfully");
+      toast.success("User unbanned successfully", { id: `unban-user-${user.id}` });
       onSuccess();
       onClose();
     } catch (error: unknown) {
@@ -284,7 +284,7 @@ export function UserActionsDialog({
       await authClient.admin.removeUser({
         userId: user.id,
       });
-      toast.success("User deleted successfully");
+      toast.success("User deleted successfully", { id: `delete-user-${user.id}` });
       onSuccess();
       onClose();
     } catch (error: unknown) {
@@ -305,7 +305,7 @@ export function UserActionsDialog({
       await authClient.admin.impersonateUser({
         userId: user.id,
       });
-      toast.success(`Now impersonating ${user.name || user.email}`);
+      toast.success(`Now impersonating ${user.name || user.email}`, { id: `impersonate-${user.id}` });
       // Redirect to dashboard as the impersonated user
       window.location.href = "/dashboard";
     } catch (error: unknown) {

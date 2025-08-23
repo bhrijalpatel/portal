@@ -13,7 +13,7 @@ interface ClientUserTableProps {
 export function UserTableClient({ initialUsers }: ClientUserTableProps) {
   const [users, setUsers] = useState<User[]>(initialUsers);
   const [isLoading, setIsLoading] = useState(false);
-  const { isConnected, connect } = useSSE();
+  const { connect } = useSSE();
 
   // Function to fetch fresh data from API
   const refreshUsers = useCallback(async (showToast: boolean = false) => {
@@ -36,76 +36,89 @@ export function UserTableClient({ initialUsers }: ClientUserTableProps) {
         console.log(`📊 Data comparison: ${prevUsers.length} → ${newUsers.length} users`);
         
         if (showToast) {
-          toast.success("User data refreshed successfully");
+          toast.success("User data refreshed successfully", { id: 'manual-refresh' });
         } else if (dataChanged) {
           console.log("🔄 Data changed, showing update notification");
-          toast.info(`User data updated (${newUsers.length} users)`);
+          // Use a unique ID to prevent multiple identical table update toasts
+          const toastId = 'user-data-updated';
+          toast.info(`User data updated (${newUsers.length} users)`, { 
+            id: toastId,
+            duration: 2000 
+          });
         }
         
         return newUsers;
       });
 
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error refreshing users:", error);
 
       // Show more helpful error messages
       if (
-        error.message?.includes("timeout") ||
-        error.message?.includes("starting up")
+        error instanceof Error && (
+          error.message?.includes("timeout") ||
+          error.message?.includes("starting up")
+        )
       ) {
         toast.error("Database is waking up, please try again in a moment", {
           duration: 5000,
         });
       } else if (showToast) {
-        toast.error(error.message || "Failed to refresh user data");
+        toast.error(error instanceof Error ? error.message : "Failed to refresh user data");
       }
     } finally {
       setIsLoading(false);
     }
   }, []);
 
-  // Listen for global SSE user updates
+  // Listen for universal real-time user updates
   useEffect(() => {
-    const handleSSEUserUpdate = (event: CustomEvent) => {
-      const { users: updatedUsers } = event.detail;
-      console.log("📡 Received global SSE user update, updating table");
-      setUsers(updatedUsers);
+    const handleRealtimeUserUpdate = () => {
+      console.log("📡 Received real-time user update, refreshing data");
+      // Refresh user data when any user management event occurs
+      refreshUsers(false);
     };
 
-    // Listen for the global SSE events
-    window.addEventListener('sse-user-update', handleSSEUserUpdate as EventListener);
+    // Listen for the new universal real-time events
+    window.addEventListener('realtime-user-update', handleRealtimeUserUpdate as EventListener);
 
     return () => {
-      window.removeEventListener('sse-user-update', handleSSEUserUpdate as EventListener);
+      window.removeEventListener('realtime-user-update', handleRealtimeUserUpdate as EventListener);
     };
-  }, []);
+  }, [refreshUsers]);
 
-  // Auto-connect to SSE when component mounts (only for admin pages)
+  // Auto-connect to real-time updates when component mounts
   useEffect(() => {
     connect();
   }, [connect]);
 
-  // Broadcast user operations to other admins
+  // Broadcast user operations to all eligible users
   const handleDataChange = useCallback(async () => {
-    console.log("👤 User operation detected, broadcasting to other admins...");
+    console.log("👤 User operation detected, broadcasting to all eligible users...");
     
     try {
-      // Broadcast the change to all connected admins
-      const response = await fetch('/api/admin/users/broadcast', {
+      // Use the new universal broadcast endpoint
+      const response = await fetch('/api/realtime/broadcast', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          eventType: 'user-updated', // Generic update event
-          userId: null, // Don't have specific user ID context here
-          userData: null
+          eventType: 'user-updated',
+          data: {
+            message: 'User data has been updated'
+          },
+          targetEntity: {
+            type: 'user',
+            name: 'User Management'
+          }
         })
       });
       
       if (!response.ok) {
-        throw new Error('Failed to broadcast update');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to broadcast update');
       }
       
-      console.log("📡 Update broadcasted successfully");
+      console.log("📡 Update broadcasted successfully to all eligible users");
     } catch (error) {
       console.error("Failed to broadcast update:", error);
       // Fallback to local refresh if broadcast fails
@@ -114,9 +127,9 @@ export function UserTableClient({ initialUsers }: ClientUserTableProps) {
   }, [refreshUsers]);
 
   // Manual refresh button
-  const handleForceRefresh = useCallback(() => {
+  const handleForceRefresh = useCallback(async () => {
     console.log("🔄 Manual refresh requested...");
-    refreshUsers(true); // Show toast for manual refresh
+    await refreshUsers(true); // Show toast for manual refresh
   }, [refreshUsers]);
 
   // Create columns with data change handler

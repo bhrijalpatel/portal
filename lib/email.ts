@@ -6,18 +6,17 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 // Email configuration
 const EMAIL_FROM = process.env.EMAIL_FROM || "Portal <noreply@example.com>";
 const APP_NAME = process.env.APP_NAME || "Portal";
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+// APP_URL is defined but not used in this file - commented out to fix linting
+// const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
 /**
  * Send verification email using Resend
  */
 export async function sendVerificationEmail({
   to,
-  token,
   url,
 }: {
   to: string;
-  token: string;
   url: string;
 }) {
   try {
@@ -101,11 +100,9 @@ export async function sendVerificationEmail({
  */
 export async function sendPasswordResetEmail({
   to,
-  token,
   url,
 }: {
   to: string;
-  token: string;
   url: string;
 }) {
   try {
@@ -223,24 +220,16 @@ export async function sendEmail({
       throw new Error("Either html or text content must be provided");
     }
 
-    const emailOptions: any = {
+    // Ensure we always have text content
+    const finalText = text || (html ? `This email requires HTML support. Please view it in a modern email client.` : "");
+
+    const emailOptions = {
       from: EMAIL_FROM,
       to,
       subject,
+      text: finalText,
+      ...(html && { html }),
     };
-
-    // Add html if provided
-    if (html) {
-      emailOptions.html = html;
-    }
-
-    // Add text if provided (Resend prefers text to be always present)
-    if (text) {
-      emailOptions.text = text;
-    } else if (html) {
-      // If only HTML is provided, create a simple text fallback
-      emailOptions.text = `This email requires HTML support. Please view it in a modern email client.`;
-    }
 
     const { data, error } = await resend.emails.send(emailOptions);
 
