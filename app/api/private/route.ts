@@ -1,5 +1,5 @@
 // app/api/private/route.ts
-import { withAuth } from "@/lib/api-helpers";
+import { withAuth } from "@/helpers/api-helpers";
 
 export const GET = withAuth(async ({ session }) => {
   return Response.json({

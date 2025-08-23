@@ -3,7 +3,7 @@ import { getSessionWithRoleOrNull } from "@/lib/auth-helpers";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/navigation/app-sidebar";
 import { SiteHeader } from "@/components/layout/site-header";
-import { RoleProvider } from "@/lib/role-context";
+import { RoleProvider } from "@/providers/role-provider";
 import { redirect } from "next/navigation";
 
 export default async function ProtectedLayout({

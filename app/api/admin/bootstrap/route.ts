@@ -1,9 +1,9 @@
 import { adminExists } from "@/lib/auth-helpers";
-import { withAuth } from "@/lib/api-helpers";
+import { withAuth } from "@/helpers/api-helpers";
 import { db } from "@/db/drizzle";
 import { user as authUsers } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { validateBootstrapAccess, validateSetupSecret } from "@/lib/admin-security";
+import { validateBootstrapAccess, validateSetupSecret } from "@/helpers/admin-security";
 import { logBootstrapAttempt } from "@/lib/audit-log";
 import { headers } from "next/headers";
 

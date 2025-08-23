@@ -1,4 +1,4 @@
-import { withAdminAuth } from "@/lib/api-helpers";
+import { withAdminAuth } from "@/helpers/api-helpers";
 import { db } from "@/db/drizzle";
 import { user as authUsers } from "@/db/schema";
 import { eq } from "drizzle-orm";

@@ -202,6 +202,44 @@ After completing any code changes or new features, you MUST immediately update t
 - ESLint with Next.js configuration
 - Language consistency: "Sign In/Sign Out" terminology throughout codebase
 
+### Design System & Color Convention:
+
+**CRITICAL - Uniform Color Scheme:**
+The application follows a strict color convention for all UI feedback, notifications, and status indicators:
+
+- **Success**: `emerald` - Used for successful operations, positive feedback, active states
+- **Error**: `rose` - Used for errors, failures, destructive actions, critical warnings
+- **Warning**: `amber` - Used for warnings, caution states, pending actions
+- **Info**: `sky` - Used for informational messages, neutral feedback, general notifications
+- **Secondary**: `violet` - Used for secondary actions, supplementary information
+
+**Implementation Guidelines:**
+- **Toast Notifications**: Use Sonner with `richColors` enabled - automatically applies correct color variants
+- **Badge Components**: Use standardized badge variants (`success`, `success-outline`, `warning`, `error`) from `/components/ui/badge.tsx`
+- **Button States**: Apply consistent color classes across all interactive elements
+- **Status Indicators**: Follow color convention for all status displays (user roles, connection states, etc.)
+- **Form Validation**: Error states use `rose`, success states use `emerald`
+
+**Example Usage:**
+```typescript
+// Toast notifications (handled by Sonner richColors)
+toast.success("Operation successful") // emerald
+toast.error("Operation failed")       // rose
+toast.warning("Warning message")      // amber
+toast.info("Information")             // sky
+
+// Badge components
+<Badge variant="success">Active</Badge>     // emerald
+<Badge variant="error">Banned</Badge>       // rose
+<Badge variant="warning">Pending</Badge>    // amber
+```
+
+**Color Consistency Rules:**
+1. NEVER mix color schemes - always use the designated color for each semantic meaning
+2. Ensure accessibility compliance with proper contrast ratios
+3. Test color combinations in both light and dark themes
+4. Maintain consistency across all components, pages, and features
+
 **Component Organization Principles:**
 - **App Directory**: Only contains `page.tsx` and `layout.tsx` files
 - **Component Directory**: All components organized by feature/domain

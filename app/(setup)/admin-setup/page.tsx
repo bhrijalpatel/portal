@@ -1,7 +1,7 @@
 import { adminExists, requireSession } from "@/lib/auth-helpers";
 import ClaimAdmin from "./claim";
 import { ButtonDashboard } from "@/components/buttons/button-dashboard";
-import { validateBootstrapAccess } from "@/lib/admin-security";
+import { validateBootstrapAccess } from "@/helpers/admin-security";
 import { headers } from "next/headers";
 import {
   Card,

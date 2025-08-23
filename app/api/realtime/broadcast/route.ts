@@ -1,5 +1,5 @@
-import { withAuth } from "@/lib/api-helpers";
-import { broadcastRealtimeUpdate, RealtimeEventType } from "@/lib/realtime-broadcast";
+import { withAuth } from "@/helpers/api-helpers";
+import { broadcastRealtimeUpdate, RealtimeEventType } from "@/helpers/realtime-broadcast";
 // import { z } from "zod"; // Currently unused but kept for future validation
 
 // Schema for broadcast requests - currently unused but kept for future validation

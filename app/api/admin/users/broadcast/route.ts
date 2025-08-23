@@ -1,6 +1,6 @@
-import { withAdminAuth } from "@/lib/api-helpers";
-import { broadcastUserUpdate } from "@/lib/admin-broadcast";
-import { fetchUsersWithRetry } from "@/lib/db-utils";
+import { withAdminAuth } from "@/helpers/api-helpers";
+import { broadcastRealtimeUpdate } from "@/helpers/realtime-broadcast";
+import { fetchUsersWithRetry } from "@/utils/db-utils";
 
 export const POST = withAdminAuth(async ({ session }, request) => {
   try {
@@ -13,12 +13,12 @@ export const POST = withAdminAuth(async ({ session }, request) => {
     const users = await fetchUsersWithRetry();
     
     // Broadcast the update with fresh data
-    await broadcastUserUpdate(eventType, {
+    await broadcastRealtimeUpdate(eventType, {
       users,
       updatedBy: session.user.email,
       userId,
       userData,
-    });
+    }, session.user.email);
     
     return Response.json({ 
       success: true, 

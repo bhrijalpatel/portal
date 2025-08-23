@@ -1,7 +1,7 @@
 "use client";
 
 import { redirect } from "next/navigation";
-import { useRole } from "@/lib/role-context";
+import { useRole } from "@/providers/role-provider";
 import { useEffect } from "react";
 
 export default function AdminLayout({

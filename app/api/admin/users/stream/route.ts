@@ -1,5 +1,5 @@
-import { withAdminAuth } from "@/lib/api-helpers";
-import { connectedClients } from "@/lib/admin-broadcast";
+import { withAdminAuth } from "@/helpers/api-helpers";
+import { connectedClients } from "@/helpers/realtime-broadcast";
 
 export const GET = withAdminAuth(async ({ session }) => {
   console.log(`🔄 Admin SSE connection: ${session.user.email}`);
@@ -11,7 +11,12 @@ export const GET = withAdminAuth(async ({ session }) => {
   const stream = new ReadableStream<Uint8Array>({
     start(controller) {
       currentClientId = `${session.user.id}-${Date.now()}`;
-      connectedClients.set(currentClientId, controller);
+      connectedClients.set(currentClientId, {
+        controller,
+        userId: session.user.id,
+        userRole: session.user.role || 'admin',
+        userEmail: session.user.email
+      });
       
       console.log(`✅ SSE client connected: ${currentClientId} (${connectedClients.size} total)`);
       

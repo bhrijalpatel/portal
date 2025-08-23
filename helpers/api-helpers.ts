@@ -1,4 +1,4 @@
-// lib/api-helpers.ts
+// helpers/api-helpers.ts
 import { requireSession, requireRole, Session } from "@/lib/auth-helpers";
 import { NextRequest } from "next/server";
 

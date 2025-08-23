@@ -1,5 +1,5 @@
-import { withAuth } from "@/lib/api-helpers";
-import { connectedClients } from "@/lib/realtime-broadcast";
+import { withAuth } from "@/helpers/api-helpers";
+import { connectedClients } from "@/helpers/realtime-broadcast";
 
 export const GET = withAuth(async ({ session }) => {
   const userRole = session.user.role || 'user';

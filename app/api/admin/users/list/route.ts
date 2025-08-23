@@ -1,5 +1,5 @@
-import { withAdminAuth } from "@/lib/api-helpers";
-import { fetchUsersWithRetry } from "@/lib/db-utils";
+import { withAdminAuth } from "@/helpers/api-helpers";
+import { fetchUsersWithRetry } from "@/utils/db-utils";
 
 export const GET = withAdminAuth(async () => {
   try {
