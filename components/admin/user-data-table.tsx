@@ -35,7 +35,7 @@ import {
 import { UserActionsDialog } from "./user-actions-dialog";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
-import { CacheRefreshButton } from "./button-refresh-user-cache";
+import { RefreshButton } from "./button-refresh-data";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -43,6 +43,7 @@ interface DataTableProps<TData, TValue> {
   isLoading?: boolean;
   title?: string;
   onDataChange?: () => void;
+  onRefresh?: () => Promise<void>;
 }
 
 export function DataTable<TData, TValue>({
@@ -51,6 +52,7 @@ export function DataTable<TData, TValue>({
   isLoading = false,
   title,
   onDataChange,
+  onRefresh,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -141,7 +143,7 @@ export function DataTable<TData, TValue>({
             <p className="text-sm font-medium text-muted-foreground">{title}</p>
           )}
         </div>
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center gap-3">
           <Button
             onClick={() => setCreateDialogOpen(true)}
             disabled={isLoading}
@@ -149,7 +151,7 @@ export function DataTable<TData, TValue>({
             <Plus />
             <span>Create User</span>
           </Button>
-          <CacheRefreshButton />
+          {onRefresh && <RefreshButton onRefresh={onRefresh} isLoading={isLoading} />}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" disabled={isLoading}>

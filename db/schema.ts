@@ -89,5 +89,23 @@ export const profiles = pgTable("profiles", {
     .notNull(),
 });
 
+/** Admin Audit Logs for Security Tracking */
+export const adminAuditLogs = pgTable("admin_audit_logs", {
+  id: text("id").primaryKey(),
+  adminUserId: text("admin_user_id"),
+  adminEmail: text("admin_email"),
+  action: text("action").notNull(),
+  targetUserId: text("target_user_id"),
+  targetEmail: text("target_email"),
+  details: text("details"),
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  success: boolean("success").notNull().default(true),
+  errorMessage: text("error_message"),
+  createdAt: timestamp("created_at")
+    .$defaultFn(() => new Date())
+    .notNull(),
+});
+
 /** Optional: central export for tooling */
-export const schema = { user, session, account, verification, profiles };
+export const schema = { user, session, account, verification, profiles, adminAuditLogs };

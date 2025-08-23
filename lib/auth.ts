@@ -4,6 +4,8 @@ import { nextCookies } from "better-auth/next-js";
 import { admin } from "better-auth/plugins";
 import { db } from "@/db/drizzle";
 import { schema } from "@/db/schema";
+import { sendVerificationEmail, sendPasswordResetEmail } from "@/lib/email";
+import { createAuditLog } from "@/lib/audit-log";
 
 export const auth = betterAuth({
   appName: "Portal",
@@ -11,8 +13,67 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     autoSignIn: false,
-    requireEmailVerification: false, // Set to true in production
+    requireEmailVerification: process.env.NODE_ENV === 'production', // Require in production
     minPasswordLength: 12,
+    maxPasswordLength: 128,
+    // Send password reset email using Resend
+    sendResetPassword: async ({ user, url, token }, request) => {
+      try {
+        await sendPasswordResetEmail({
+          to: user.email,
+          token,
+          url,
+        });
+        
+        // Log password reset request
+        await createAuditLog({
+          adminUserId: user.id,
+          adminEmail: user.email,
+          action: 'PASSWORD_RESET',
+          details: {
+            timestamp: new Date().toISOString(),
+            emailSent: true,
+          },
+          success: true,
+        });
+      } catch (error) {
+        console.error('Failed to send password reset email:', error);
+        throw error;
+      }
+    },
+    // Callback when password is successfully reset
+    onPasswordReset: async ({ user }, request) => {
+      
+      // Log successful password reset
+      await createAuditLog({
+        adminUserId: user.id,
+        adminEmail: user.email,
+        action: 'PASSWORD_RESET',
+        details: {
+          timestamp: new Date().toISOString(),
+          completed: true,
+        },
+        success: true,
+      });
+    },
+    resetPasswordTokenExpiresIn: 3600, // 1 hour
+  },
+  // Email verification configuration
+  emailVerification: {
+    sendVerificationEmail: async ({ user, url, token }, request) => {
+      try {
+        await sendVerificationEmail({
+          to: user.email,
+          token,
+          url,
+        });
+        
+      } catch (error) {
+        console.error('Failed to send verification email:', error);
+        throw error;
+      }
+    },
+    sendOnSignUp: true, // Automatically send verification email on sign up
   },
   session: {
     expiresIn: 60 * 60 * 24 * 30, // 30 days

@@ -4,6 +4,7 @@ import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { usePathname } from "next/navigation";
 import { useMemo } from "react";
+import { SSEStatusIndicator } from "./sse-status-indicator";
 
 function usePageTitle() {
   const pathname = usePathname();
@@ -41,7 +42,9 @@ export function SiteHeader() {
           className="data-[orientation=vertical]:h-4"
         />
         <h1 className="text-base font-medium">{pageTitle}</h1>
-        <div className="ml-auto flex items-center gap-2"></div>
+        <div className="ml-auto flex items-center gap-2">
+          <SSEStatusIndicator />
+        </div>
       </div>
     </header>
   );

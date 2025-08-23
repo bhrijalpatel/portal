@@ -15,7 +15,6 @@ const updateUserSchema = z.object({
 export const PATCH = withAdminAuth(async ({ session }, request) => {
   try {
     const body = await request.json();
-    console.log("🔍 Update user request:", body);
     
     // Validate request body
     const validatedData = updateUserSchema.parse(body);
@@ -41,7 +40,6 @@ export const PATCH = withAdminAuth(async ({ session }, request) => {
       updateData.email = validatedData.email;
     }
     
-    console.log("📝 Updating user with data:", updateData);
     
     // Update user in database
     const result = await db
@@ -66,7 +64,6 @@ export const PATCH = withAdminAuth(async ({ session }, request) => {
     // Invalidate cache to refresh user list
     revalidateTag("admin-users-unified");
     
-    console.log("✅ User updated successfully:", result[0]);
     
     return Response.json({
       success: true,

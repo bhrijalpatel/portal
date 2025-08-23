@@ -11,6 +11,8 @@ import {
   UserX,
   Eye,
   User as UserIcon,
+  CheckCircle,
+  XCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -24,12 +26,12 @@ import {
 import { UserActionsDialog } from "./user-actions-dialog";
 import { useState } from "react";
 
-// User type based on current database schema with admin plugin fields
+// User type based on Better Auth user table only (single source of truth)
 export type User = {
   id: string;
   email: string;
   name: string | null;
-  displayName: string | null;
+  emailVerified: boolean;  // Better Auth: NOT NULL with default false
   role: string | null;
   banned: boolean | null;
   banReason: string | null;
@@ -156,6 +158,30 @@ export function createColumns(onUserUpdate: () => void): ColumnDef<User>[] {
       cell: ({ row }) => (
         <div className="lowercase">{row.getValue("email")}</div>
       ),
+    },
+    {
+      accessorKey: "emailVerified",
+      header: "Verified",
+      cell: ({ row }) => {
+        const verified = row.getValue("emailVerified") as boolean;
+        
+        // Better Auth uses boolean with default false (never null)
+        if (verified === true) {
+          return (
+            <div className="flex items-center gap-1">
+              <CheckCircle className="h-4 w-4 text-green-600" />
+              <span className="text-sm text-green-600">Verified</span>
+            </div>
+          );
+        } else {
+          return (
+            <div className="flex items-center gap-1">
+              <XCircle className="h-4 w-4 text-amber-600" />
+              <span className="text-sm text-amber-600">Unverified</span>
+            </div>
+          );
+        }
+      },
     },
     {
       accessorKey: "role",
