@@ -10,11 +10,11 @@ type RoleContextType = {
 
 const RoleContext = createContext<RoleContextType | null>(null);
 
-export function RoleProvider({ 
-  children, 
-  session, 
-  userRole 
-}: { 
+export function RoleProvider({
+  children,
+  session,
+  userRole,
+}: {
   children: React.ReactNode;
   session: Session;
   userRole: string;

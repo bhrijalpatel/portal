@@ -42,17 +42,17 @@ Based on comprehensive admin flow analysis, the following critical issues requir
   export const POST = withAuth(async ({ session, request }) => {
     // 1. Check environment permissions
     if (!process.env.ADMIN_SETUP_ENABLED) return 403;
-    
+
     // 2. Validate setup secret
     const { setupSecret, otpCode } = await request.json();
     if (setupSecret !== process.env.ADMIN_SETUP_SECRET) return 401;
-    
+
     // 3. Verify OTP/email confirmation
     if (!(await verifyBootstrapOTP(session.user.email, otpCode))) return 401;
-    
+
     // 4. Check admin exists
     if (await adminExists()) return 409;
-    
+
     // 5. Promote with audit logging
     await promoteToAdminWithAudit(session.user.id, request);
   });
@@ -73,16 +73,17 @@ Based on comprehensive admin flow analysis, the following critical issues requir
     - Delete User: 3 per hour per admin
 
 - [ ] **Rate Limiting Implementation**
+
   ```typescript
   // Target: /lib/rate-limit.ts
   import { Ratelimit } from "@upstash/ratelimit";
-  
+
   export const adminRateLimit = new Ratelimit({
     redis: redis,
     limiter: Ratelimit.slidingWindow(10, "1 h"), // 10 requests per hour
     analytics: true,
   });
-  
+
   export const bootstrapRateLimit = new Ratelimit({
     redis: redis,
     limiter: Ratelimit.slidingWindow(3, "1 h"), // 3 attempts per hour
@@ -117,21 +118,22 @@ Based on comprehensive admin flow analysis, the following critical issues requir
 - [ ] **Multi-Level Admin System**
   - [ ] Design admin hierarchy: `super-admin`, `user-admin`, `read-only-admin`
   - [ ] Create permission matrix for each admin level:
+
     ```typescript
     enum AdminPermissions {
       CREATE_USER = "create_user",
-      DELETE_USER = "delete_user", 
+      DELETE_USER = "delete_user",
       RESET_PASSWORD = "reset_password",
       IMPERSONATE = "impersonate",
       PROMOTE_ADMIN = "promote_admin",
       MANAGE_BANS = "manage_bans",
-      VIEW_AUDIT_LOGS = "view_audit_logs"
+      VIEW_AUDIT_LOGS = "view_audit_logs",
     }
-    
+
     const PERMISSION_MATRIX = {
       "super-admin": Object.values(AdminPermissions),
       "user-admin": [CREATE_USER, RESET_PASSWORD, MANAGE_BANS],
-      "read-only-admin": [VIEW_AUDIT_LOGS]
+      "read-only-admin": [VIEW_AUDIT_LOGS],
     };
     ```
 
@@ -224,15 +226,15 @@ Based on comprehensive admin flow analysis, the following critical issues requir
 
 ## 🚀 Implementation Priority Matrix
 
-| Task Category | Priority | Security Impact | Implementation Effort | Timeline |
-|---------------|----------|-----------------|----------------------|----------|
-| Admin Bootstrap Security | 🔴 CRITICAL | System Takeover Prevention | High | Week 1 |
-| Rate Limiting | 🔴 CRITICAL | API Abuse Prevention | Medium | Week 1 |
-| Enhanced Validation | 🔴 HIGH | Data Integrity | Medium | Week 1-2 |
-| Permission System | 🟡 MEDIUM | Privilege Escalation | High | Week 2 |
-| Audit Logging | 🟡 MEDIUM | Accountability | Medium | Week 2 |
-| Self-Protection | 🟡 MEDIUM | Admin Safety | Low | Week 2 |
-| Advanced Features | 🟢 LOW | Defense in Depth | High | Week 3 |
+| Task Category            | Priority    | Security Impact            | Implementation Effort | Timeline |
+| ------------------------ | ----------- | -------------------------- | --------------------- | -------- |
+| Admin Bootstrap Security | 🔴 CRITICAL | System Takeover Prevention | High                  | Week 1   |
+| Rate Limiting            | 🔴 CRITICAL | API Abuse Prevention       | Medium                | Week 1   |
+| Enhanced Validation      | 🔴 HIGH     | Data Integrity             | Medium                | Week 1-2 |
+| Permission System        | 🟡 MEDIUM   | Privilege Escalation       | High                  | Week 2   |
+| Audit Logging            | 🟡 MEDIUM   | Accountability             | Medium                | Week 2   |
+| Self-Protection          | 🟡 MEDIUM   | Admin Safety               | Low                   | Week 2   |
+| Advanced Features        | 🟢 LOW      | Defense in Depth           | High                  | Week 3   |
 
 ---
 
@@ -263,6 +265,7 @@ Based on comprehensive admin flow analysis, the following critical issues requir
 ## 📋 Dependencies & Requirements
 
 ### Required Packages
+
 ```json
 {
   "@upstash/ratelimit": "^0.4.4",
@@ -274,6 +277,7 @@ Based on comprehensive admin flow analysis, the following critical issues requir
 ```
 
 ### Environment Variables
+
 ```env
 # Admin Security Configuration
 ADMIN_SETUP_ENABLED=false
@@ -292,8 +296,9 @@ UPSTASH_REDIS_REST_TOKEN=your_redis_token
 ```
 
 ### Database Migrations Required
+
 - Admin audit logs table
-- Admin permissions table  
+- Admin permissions table
 - Password history table
 - Session monitoring table
 
@@ -302,6 +307,7 @@ UPSTASH_REDIS_REST_TOKEN=your_redis_token
 ## 🎯 Success Metrics
 
 ### Security KPIs
+
 - [ ] **Zero** unauthorized admin access attempts
 - [ ] **100%** admin actions logged and auditable
 - [ ] **< 1 second** rate limit response time
@@ -309,6 +315,7 @@ UPSTASH_REDIS_REST_TOKEN=your_redis_token
 - [ ] **100%** admin bootstrap attempts requiring MFA
 
 ### Monitoring Dashboards
+
 - [ ] Admin activity monitoring dashboard
 - [ ] Security event alert system
 - [ ] Rate limiting metrics and analytics

@@ -62,7 +62,7 @@ export function DataTable<TData, TValue>({
     },
   ]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
+    [],
   );
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -157,7 +157,9 @@ export function DataTable<TData, TValue>({
             <Plus />
             <span>Create User</span>
           </Button>
-          {onRefresh && <RefreshButton onRefresh={onRefresh} isLoading={isLoading} />}
+          {onRefresh && (
+            <RefreshButton onRefresh={onRefresh} isLoading={isLoading} />
+          )}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" disabled={isLoading}>
@@ -199,7 +201,7 @@ export function DataTable<TData, TValue>({
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )}
                     </TableHead>
                   );
@@ -250,7 +252,7 @@ export function DataTable<TData, TValue>({
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}

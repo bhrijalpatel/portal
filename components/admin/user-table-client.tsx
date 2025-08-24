@@ -28,43 +28,50 @@ export function UserTableClient({ initialUsers }: ClientUserTableProps) {
 
       const data = await response.json();
       const newUsers = data.users;
-      
+
       // Update state and check for changes using functional update
-      setUsers(prevUsers => {
-        const dataChanged = JSON.stringify(prevUsers) !== JSON.stringify(newUsers);
-        
-        console.log(`📊 Data comparison: ${prevUsers.length} → ${newUsers.length} users`);
-        
+      setUsers((prevUsers) => {
+        const dataChanged =
+          JSON.stringify(prevUsers) !== JSON.stringify(newUsers);
+
+        console.log(
+          `📊 Data comparison: ${prevUsers.length} → ${newUsers.length} users`,
+        );
+
         if (showToast) {
-          toast.success("User data refreshed successfully", { id: 'manual-refresh' });
+          toast.success("User data refreshed successfully", {
+            id: "manual-refresh",
+          });
         } else if (dataChanged) {
           console.log("🔄 Data changed, showing update notification");
           // Use a unique ID to prevent multiple identical table update toasts
-          const toastId = 'user-data-updated';
-          toast.info(`User data updated (${newUsers.length} users)`, { 
+          const toastId = "user-data-updated";
+          toast.info(`User data updated (${newUsers.length} users)`, {
             id: toastId,
-            duration: 2000 
+            duration: 2000,
           });
         }
-        
+
         return newUsers;
       });
-
     } catch (error) {
       console.error("Error refreshing users:", error);
 
       // Show more helpful error messages
       if (
-        error instanceof Error && (
-          error.message?.includes("timeout") ||
-          error.message?.includes("starting up")
-        )
+        error instanceof Error &&
+        (error.message?.includes("timeout") ||
+          error.message?.includes("starting up"))
       ) {
         toast.error("Database is waking up, please try again in a moment", {
           duration: 5000,
         });
       } else if (showToast) {
-        toast.error(error instanceof Error ? error.message : "Failed to refresh user data");
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : "Failed to refresh user data",
+        );
       }
     } finally {
       setIsLoading(false);
@@ -80,10 +87,16 @@ export function UserTableClient({ initialUsers }: ClientUserTableProps) {
     };
 
     // Listen for the new universal real-time events
-    window.addEventListener('realtime-user-update', handleRealtimeUserUpdate as EventListener);
+    window.addEventListener(
+      "realtime-user-update",
+      handleRealtimeUserUpdate as EventListener,
+    );
 
     return () => {
-      window.removeEventListener('realtime-user-update', handleRealtimeUserUpdate as EventListener);
+      window.removeEventListener(
+        "realtime-user-update",
+        handleRealtimeUserUpdate as EventListener,
+      );
     };
   }, [refreshUsers]);
 
@@ -91,30 +104,32 @@ export function UserTableClient({ initialUsers }: ClientUserTableProps) {
 
   // Broadcast user operations to all eligible users
   const handleDataChange = useCallback(async () => {
-    console.log("👤 User operation detected, broadcasting to all eligible users...");
-    
+    console.log(
+      "👤 User operation detected, broadcasting to all eligible users...",
+    );
+
     try {
       // Use the new universal broadcast endpoint
-      const response = await fetch('/api/realtime/broadcast', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/realtime/broadcast", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          eventType: 'user-updated',
+          eventType: "user-updated",
           data: {
-            message: 'User data has been updated'
+            message: "User data has been updated",
           },
           targetEntity: {
-            type: 'user',
-            name: 'User Management'
-          }
-        })
+            type: "user",
+            name: "User Management",
+          },
+        }),
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || 'Failed to broadcast update');
+        throw new Error(errorData.error || "Failed to broadcast update");
       }
-      
+
       console.log("📡 Update broadcasted successfully to all eligible users");
     } catch (error) {
       console.error("Failed to broadcast update:", error);

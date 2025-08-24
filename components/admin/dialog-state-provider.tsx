@@ -1,8 +1,14 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from "react";
 
-type DialogAction = "update" | "delete" | "ban" | "unban" | "make-admin" | "remove-admin";
+type DialogAction =
+  | "update"
+  | "delete"
+  | "ban"
+  | "unban"
+  | "make-admin"
+  | "remove-admin";
 
 interface DialogState {
   isOpen: boolean;
@@ -38,7 +44,7 @@ export function DialogStateProvider({ children }: { children: ReactNode }) {
     console.log(`🎭 Closing dialog for user ${dialogState.userId}`);
     setDialogState({
       isOpen: false,
-      action: "update", 
+      action: "update",
       userId: null,
     });
   };
@@ -53,7 +59,7 @@ export function DialogStateProvider({ children }: { children: ReactNode }) {
 export function useDialogState() {
   const context = useContext(DialogContext);
   if (context === undefined) {
-    throw new Error('useDialogState must be used within a DialogStateProvider');
+    throw new Error("useDialogState must be used within a DialogStateProvider");
   }
   return context;
 }

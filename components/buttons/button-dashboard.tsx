@@ -5,7 +5,7 @@ import { getSessionOrNull } from "@/lib/auth-helpers";
 
 export const ButtonDashboard = async () => {
   const session = await getSessionOrNull();
-  
+
   if (!session) return null;
 
   return (

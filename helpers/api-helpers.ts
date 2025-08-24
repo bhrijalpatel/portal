@@ -4,12 +4,12 @@ import { NextRequest } from "next/server";
 
 type Handler = (
   ctx: { session: Session },
-  request: Request | NextRequest
+  request: Request | NextRequest,
 ) => Promise<Response>;
 
 type AdminHandler = (
   ctx: { session: Session; userRole: string },
-  request: Request | NextRequest
+  request: Request | NextRequest,
 ) => Promise<Response>;
 
 export function withAuth(handler: Handler) {

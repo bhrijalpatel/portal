@@ -1,19 +1,19 @@
 import { db } from "@/db/drizzle";
 import { sql } from "drizzle-orm";
 
-export type AdminAction = 
-  | 'ADMIN_BOOTSTRAP_ATTEMPT'
-  | 'ADMIN_BOOTSTRAP_SUCCESS'
-  | 'ADMIN_BOOTSTRAP_FAILED'
-  | 'USER_CREATED'
-  | 'USER_UPDATED'
-  | 'USER_DELETED'
-  | 'USER_BANNED'
-  | 'USER_UNBANNED'
-  | 'PASSWORD_RESET'
-  | 'ROLE_CHANGED'
-  | 'IMPERSONATION_START'
-  | 'IMPERSONATION_END';
+export type AdminAction =
+  | "ADMIN_BOOTSTRAP_ATTEMPT"
+  | "ADMIN_BOOTSTRAP_SUCCESS"
+  | "ADMIN_BOOTSTRAP_FAILED"
+  | "USER_CREATED"
+  | "USER_UPDATED"
+  | "USER_DELETED"
+  | "USER_BANNED"
+  | "USER_UNBANNED"
+  | "PASSWORD_RESET"
+  | "ROLE_CHANGED"
+  | "IMPERSONATION_START"
+  | "IMPERSONATION_END";
 
 export interface AuditLogEntry {
   adminUserId: string;
@@ -66,18 +66,18 @@ export async function createAuditLog(entry: AuditLogEntry): Promise<void> {
     `);
 
     // Also log to console in development
-    if (process.env.NODE_ENV === 'development') {
-      console.log('🔒 Admin Audit Log:', {
+    if (process.env.NODE_ENV === "development") {
+      console.log("🔒 Admin Audit Log:", {
         timestamp: new Date().toISOString(),
         ...entry,
       });
     }
   } catch (error) {
     // Don't throw errors from audit logging - log to console instead
-    console.error('Failed to create audit log:', error);
-    
+    console.error("Failed to create audit log:", error);
+
     // In production, you might want to send this to an external logging service
-    if (process.env.NODE_ENV === 'production') {
+    if (process.env.NODE_ENV === "production") {
       // Send to external service like Sentry, LogRocket, etc.
     }
   }
@@ -92,12 +92,12 @@ export async function logBootstrapAttempt(
   success: boolean,
   ipAddress?: string,
   userAgent?: string,
-  errorReason?: string
+  errorReason?: string,
 ): Promise<void> {
   await createAuditLog({
     adminUserId: userId,
     adminEmail: userEmail,
-    action: success ? 'ADMIN_BOOTSTRAP_SUCCESS' : 'ADMIN_BOOTSTRAP_FAILED',
+    action: success ? "ADMIN_BOOTSTRAP_SUCCESS" : "ADMIN_BOOTSTRAP_FAILED",
     details: {
       attemptTime: new Date().toISOString(),
       errorReason,

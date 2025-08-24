@@ -5,7 +5,7 @@ import { UserTableClient } from "./user-table-client";
 // Always fetch fresh data - no caching
 async function fetchUsers() {
   console.log("🔍 Fetching fresh users from database...");
-  
+
   return await db
     .select({
       id: authUsers.id,

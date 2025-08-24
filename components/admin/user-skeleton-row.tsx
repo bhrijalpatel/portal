@@ -15,7 +15,7 @@ export function UserSkeletonRow({ creatingAdmin }: UserSkeletonRowProps) {
       <TableCell>
         <Skeleton className="h-4 w-4 rounded-sm" />
       </TableCell>
-      
+
       {/* Name */}
       <TableCell>
         <div className="flex items-center gap-2">
@@ -25,32 +25,32 @@ export function UserSkeletonRow({ creatingAdmin }: UserSkeletonRowProps) {
           </Badge>
         </div>
       </TableCell>
-      
+
       {/* Email */}
       <TableCell>
         <Skeleton className="h-4 w-32" />
       </TableCell>
-      
+
       {/* Email Verified */}
       <TableCell>
         <Skeleton className="h-5 w-16 rounded-full" />
       </TableCell>
-      
+
       {/* Role */}
       <TableCell>
         <Skeleton className="h-5 w-14 rounded-full" />
       </TableCell>
-      
+
       {/* Status */}
       <TableCell>
         <Skeleton className="h-5 w-16 rounded-full" />
       </TableCell>
-      
+
       {/* Created */}
       <TableCell>
         <Skeleton className="h-4 w-20" />
       </TableCell>
-      
+
       {/* Actions */}
       <TableCell>
         <div className="flex items-center justify-between">

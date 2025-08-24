@@ -85,12 +85,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 1. **Database Persistence Layer**: All collaborative state stored in database tables with proper expiry and ownership tracking
 2. **SSE State Management**: Real-time state maintained in React Context with database synchronization
-3. **Session Restoration**: Automatic state restoration from database on page load/refresh/reconnection  
+3. **Session Restoration**: Automatic state restoration from database on page load/refresh/reconnection
 4. **Periodic Synchronization**: Regular sync intervals to maintain consistency between client and server
 5. **Real-time Broadcasting**: Instant updates via SSE to all connected clients for immediate collaboration
 6. **Navigation-Based Refresh**: State fetching triggered on page navigation for consistent experience
 
 **APPLICABLE TO FUTURE COLLABORATIVE PAGES**:
+
 - **Inventory Management**: Real-time stock updates, concurrent editing prevention, change tracking
 - **Job Card System**: Live job status updates, technician assignment conflicts, progress synchronization
 - **Order Management**: Concurrent order editing, status change broadcasting, customer update coordination
@@ -173,7 +174,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### 🏗️ **COMPLETE FOLDER STRUCTURE REORGANIZATION**
 
 - **Better Auth Compliance**: Restructured project to follow Better Auth documentation standards and Next.js best practices
-
   - **Lib Directory Cleanup**: `/lib/` now contains only Better Auth core files (auth.ts, auth-client.ts, auth-helpers.ts, audit-log.ts, email.ts)
   - **New Directory Structure**: Created organized, purpose-driven directory hierarchy for maintainability
   - **Clear Separation**: Better Auth framework files separated from custom application logic
@@ -182,16 +182,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
   ```
   /lib/           # Better Auth core files only
-  /utils/         # Generic utilities (cn.ts, db-utils.ts)  
+  /utils/         # Generic utilities (cn.ts, db-utils.ts)
   /helpers/       # Business logic helpers (admin-security.ts, api-helpers.ts, realtime-broadcast.ts)
   /hooks/         # All custom React hooks (use-mobile.ts, use-realtime.ts)
   /providers/     # Context providers (role-provider.tsx)
   ```
 
 - **Universal Import Path Updates**: Comprehensive codebase-wide import statement modernization
-
   - **Global Search & Replace**: Updated all import paths across 100+ files using automated scripts
-  - **New Import Patterns**: 
+  - **New Import Patterns**:
     - `@/lib/utils` → `@/utils/cn`
     - `@/lib/api-helpers` → `@/helpers/api-helpers`
     - `@/lib/admin-security` → `@/helpers/admin-security`
@@ -200,13 +199,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Configuration Updates**: Updated `components.json` alias paths to match new structure
 
 - **Build Compliance Fixes**: Resolved TypeScript compilation issues caused by reorganization
-
   - **Type Safety**: Fixed SSE stream controller types for universal realtime system integration
   - **Function Signatures**: Updated `connectedClients.set()` calls to match new object structure requirements
   - **Zero Errors**: Achieved clean build with no TypeScript or linting errors after reorganization
 
 - **Legacy File Cleanup**: Removed deprecated and duplicate files for cleaner codebase
-
   - **Removed Files**: Old utility files, legacy broadcast implementations, and redundant helpers
   - **Eliminated Duplication**: Consolidated admin-broadcast functionality into universal realtime system
   - **Clean Architecture**: Single source of truth for all shared functionality
@@ -214,14 +211,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### 🎨 **ENHANCED CLAUDE.MD DOCUMENTATION**
 
 - **Design System Documentation**: Added comprehensive color convention guidelines to project documentation
-
   - **Official Color Scheme**: Documented uniform color palette (success: emerald, error: rose, warning: amber, info: sky, secondary: violet)
   - **Implementation Guidelines**: Clear instructions for toast notifications, badge components, button states, and status indicators
   - **Code Examples**: TypeScript examples showing proper usage patterns for consistent styling
   - **Accessibility Requirements**: Color contrast and theme compatibility guidelines for all UI elements
 
 - **Architecture Standards**: Updated CLAUDE.md with new directory structure and development guidelines
-
   - **File Organization Principles**: Clear rules for where different types of files should be placed
   - **Import Path Standards**: Documented new import patterns and path mapping conventions
   - **Better Auth Integration**: Guidelines for maintaining Better Auth compliance in custom code
@@ -246,7 +241,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ```
 /portal/
 ├── lib/              # Better Auth core files only
-├── utils/            # Generic utilities & database helpers  
+├── utils/            # Generic utilities & database helpers
 ├── helpers/          # Business logic & API helpers
 ├── hooks/            # All React hooks
 ├── providers/        # Context providers
@@ -260,7 +255,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### 🎨 **UNIFORM DESIGN SYSTEM & UI POLISH**
 
 - **Color Scheme Standardization**: Implemented unified color palette across entire application
-  
   - **Standard Colors**: `success: emerald`, `error: rose`, `warning: amber`, `info: sky`, `secondary: violet`
   - **Component Updates**: Email verification icons, form success/error states, admin setup pages, decorative backgrounds
   - **Dark Mode Support**: All colors include proper dark mode variants with consistent contrast ratios
@@ -268,17 +262,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Badge System**: Extended badge component with new variants (`success`, `success-outline`, `warning`, `error`)
 
 - **User Table Design Revolution**: Normalized styling and enhanced functionality across admin user management
-
   - **Badge Standardization**: Removed all status icons, implemented consistent badge-based status indication
   - **Email Verification**: `Verified` (green bordered), `Unverified` (amber bordered) badges
-  - **User Status**: `Active` (green bordered), `Banned` (solid rose with white text) badges  
+  - **User Status**: `Active` (green bordered), `Banned` (solid rose with white text) badges
   - **Role Management**: `User` (bordered), `Admin` (solid emerald with white text) badges
   - **Capitalization Helper**: Created `capitalizeRole()` utility for consistent role display throughout app
   - **Default Sorting**: Implemented alphabetical sorting on name column that persists across page loads
   - **Enhanced Tooltips**: Ban status badges show detailed ban reason and expiration on hover
 
 - **Real-Time Status Indicators**: Beautiful animated status indicators with role display
-
   - **Pulsing Animation**: Emerald (connected) and rose (disconnected) animated pulsing indicators
   - **Role Display**: Capitalized user role shown next to status indicator
   - **Visual Polish**: Replaced basic dot with sophisticated pulsing animation system
@@ -287,44 +279,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### 🚀 **ENTERPRISE REAL-TIME COLLABORATION SYSTEM**
 
 - **Complete SSE Architecture**: Implemented comprehensive Server-Sent Events system for real-time updates
-
   - **Universal Coverage**: Real-time updates for all business operations (users, job cards, inventory, financial, tasks, notifications, orders)
   - **Role-Based Permissions**: Event filtering system ensures users only receive relevant updates based on their role
   - **Multi-Session Support**: Concurrent admin sessions with instant synchronization across all connected clients
   - **Performance Optimized**: Efficient client management with automatic cleanup of disconnected sessions
 
 - **Real-Time User Management**: Eliminated caching issues with live synchronization
-
   - **Problem Solved**: Multi-admin sessions previously showed inconsistent data due to cache mismatches
   - **Solution Implemented**: Real-time broadcasting ensures all admin sessions see identical user data instantly
   - **Cache Removal**: Eliminated all session-based caching in favor of real-time synchronization
   - **Live Updates**: When one admin bans/unbans a user, all other admins see the change immediately
 
 - **Toast Deduplication System**: Professional notification management
-
   - **Duplicate Prevention**: Implemented comprehensive toast deduplication using unique IDs
-  - **SSE Integration**: Removed duplicate toasts from SSE provider, let components handle their own notifications  
+  - **SSE Integration**: Removed duplicate toasts from SSE provider, let components handle their own notifications
   - **User Actions**: All user operations (ban, unban, create, update, delete) use unique toast IDs
   - **Clean Experience**: Single toast per action with proper timing and no spam
 
 ### 🏗️ **SYSTEM ARCHITECTURE IMPROVEMENTS**
 
 - **Build Compliance**: Achieved 100% Next.js build compliance with route export standards
-
   - **Utility Separation**: Moved shared functions from route files to dedicated utility modules
   - **Route Compliance**: All route files now only export valid Next.js handlers (`GET`, `POST`)
   - **Module Organization**: Created `/lib/db-utils.ts`, `/lib/admin-broadcast.ts`, `/lib/realtime-broadcast.ts`
   - **Import Updates**: All imports updated to use proper utility module paths
 
 - **TypeScript Excellence**: Achieved complete TypeScript compliance with production build success
-
   - **Type Safety**: Replaced all `any` types with proper TypeScript types (`unknown`, `ReadableStreamDefaultController<Uint8Array>`)
   - **Error Handling**: Enhanced error handling with `instanceof Error` checks throughout
   - **Stream Controllers**: Proper SSE implementation with `TextEncoder` for binary stream compatibility
   - **Email Types**: Improved email service types to match Resend API requirements
 
 - **Linting Perfection**: Achieved zero ESLint errors and warnings across entire codebase
-
   - **Code Quality**: Fixed unused variables, imports, and parameters
   - **React Hooks**: Resolved React hooks rules violations with proper hook ordering
   - **JSX Compliance**: Fixed unescaped entities with proper HTML entity encoding
@@ -336,18 +322,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
   ```typescript
   // Event types covering all business operations
-  type RealtimeEventType = 
-    | 'user-created' | 'user-updated' | 'user-deleted'
-    | 'job-card-created' | 'job-card-updated' | 'job-card-completed'  
-    | 'inventory-updated' | 'stock-low' | 'stock-out'
-    | 'salary-updated' | 'payment-processed' | 'invoice-generated'
-    | 'task-assigned' | 'task-completed' | 'task-overdue'
-    | 'notification-sent' | 'system-announcement'
-    | 'order-created' | 'order-updated' | 'order-cancelled';
+  type RealtimeEventType =
+    | "user-created"
+    | "user-updated"
+    | "user-deleted"
+    | "job-card-created"
+    | "job-card-updated"
+    | "job-card-completed"
+    | "inventory-updated"
+    | "stock-low"
+    | "stock-out"
+    | "salary-updated"
+    | "payment-processed"
+    | "invoice-generated"
+    | "task-assigned"
+    | "task-completed"
+    | "task-overdue"
+    | "notification-sent"
+    | "system-announcement"
+    | "order-created"
+    | "order-updated"
+    | "order-cancelled";
   ```
 
 - **Permission Matrix**: Role-based event filtering ensures data security and relevance
-
   - **User Management**: Admin-only events for sensitive user operations
   - **Job Cards**: All roles (admin, user, manager, technician) receive updates
   - **Inventory**: Limited to admin, manager, technician roles for operational relevance
@@ -355,7 +353,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Notifications**: Universal delivery to all authenticated users as appropriate
 
 - **Connection Management**: Robust client connection handling with automatic cleanup
-
   - **Client Tracking**: Each connection tracked with user ID, role, and email for precise targeting
   - **Disconnection Handling**: Automatic cleanup of stale connections prevents memory leaks
   - **Debug Logging**: Comprehensive logging for connection events and message delivery
@@ -372,7 +369,7 @@ Conducted comprehensive compliance audit against official Better Auth documentat
   - Environment variables properly configured
 
 - **Email/Password Authentication** ✅ ([Better Auth Email/Password](https://www.better-auth.com/docs/authentication/email-password))
-  - Security-compliant 12-character minimum password requirements  
+  - Security-compliant 12-character minimum password requirements
   - Production email verification with environment-based controls
   - Custom email handlers properly implemented
   - Password reset token expiration properly configured
@@ -419,7 +416,7 @@ Conducted comprehensive compliance audit against official Better Auth documentat
 ### 🔧 **TECHNICAL IMPROVEMENTS**
 
 - **Memory Management**: Proper cleanup of SSE connections and event listeners prevents memory leaks
-- **Error Recovery**: Robust error handling with automatic reconnection for SSE connections  
+- **Error Recovery**: Robust error handling with automatic reconnection for SSE connections
 - **Performance Optimization**: Efficient real-time updates without polling or excessive API calls
 - **Type Safety**: Full TypeScript coverage for all real-time event types and handlers
 - **Testing Verified**: All functionality tested with multiple concurrent admin sessions
@@ -447,15 +444,13 @@ Conducted comprehensive compliance audit against official Better Auth documentat
 ### 🚨 **CRITICAL SECURITY ROADMAP IMPLEMENTATION**
 
 - **Admin Bootstrap Security Hardening**: Implemented comprehensive security controls for admin setup flow
-  
   - **Environment-Based Access Control**: Added `ADMIN_SETUP_ENABLED` environment variable for production lockdown
-  - **Secret Token Protection**: Implemented `ADMIN_SETUP_SECRET` for secure admin claiming process  
+  - **Secret Token Protection**: Implemented `ADMIN_SETUP_SECRET` for secure admin claiming process
   - **IP Whitelisting**: Added `ADMIN_SETUP_IP_WHITELIST` for network-level access restrictions
   - **Constant-Time Comparison**: Secure secret validation preventing timing attacks
   - **Production Safety**: Admin setup automatically disabled in production unless explicitly enabled
 
 - **Comprehensive Audit Logging System**: Full security event tracking and monitoring
-
   - **New Database Schema**: Added `admin_audit_logs` table for comprehensive security tracking
   - **Event Coverage**: Logs admin bootstrap, password resets, user management, and security events
   - **Structured Logging**: JSON-formatted audit entries with timestamps, IP addresses, user agents
@@ -463,7 +458,6 @@ Conducted comprehensive compliance audit against official Better Auth documentat
   - **Production Ready**: Database-persistent audit trail for security compliance and forensics
 
 - **Enhanced Admin Bootstrap API Security**: Hardened admin claiming process
-
   - **Multi-Layer Validation**: Environment checks → Secret validation → IP logging → Role assignment
   - **Attack Prevention**: Rate limiting, audit logging, and conflict detection
   - **Security Monitoring**: All bootstrap attempts logged with detailed metadata
@@ -472,14 +466,12 @@ Conducted comprehensive compliance audit against official Better Auth documentat
 ### 📧 **COMPLETE EMAIL SYSTEM INTEGRATION**
 
 - **Professional Email Infrastructure**: Resend integration with Better Auth alignment
-
   - **Resend Service Integration**: Added `resend@^6.0.1` dependency for professional email delivery
   - **Email Configuration**: Environment-based email configuration (`RESEND_API_KEY`, `EMAIL_FROM`)
   - **Domain Verification**: Production-ready domain verification workflow with Resend
   - **Template System**: Professional HTML email templates with responsive design
 
 - **Password Reset System**: Complete implementation following Better Auth documentation
-
   - **Forgot Password Flow**: `/forgot-password` page with email input and validation
   - **Reset Password Flow**: `/reset-password?token=X` page with secure token validation
   - **Better Auth Integration**: Direct integration with `sendResetPassword` and `onPasswordReset` hooks
@@ -487,14 +479,12 @@ Conducted comprehensive compliance audit against official Better Auth documentat
   - **Professional Templates**: Branded email templates with security notices and IP tracking
 
 - **Email Verification System**: Complete user verification workflow
-
   - **Verification Email Flow**: Automated email sending on user registration
   - **Professional Templates**: Branded verification emails with 24-hour token expiry
   - **Better Auth Compliance**: Direct integration with `sendVerificationEmail` callback
   - **Production Configuration**: Conditional verification requirements based on environment
 
 - **Email Template Design**: Professional, accessible email templates
-
   - **Responsive Design**: Mobile-friendly HTML templates with proper viewport handling
   - **Brand Consistency**: Portal branding with gradient headers and professional styling
   - **Security Indicators**: Clear security notices, IP address logging, and action context
@@ -504,7 +494,6 @@ Conducted comprehensive compliance audit against official Better Auth documentat
 ### 🔒 **ENHANCED AUTHENTICATION ARCHITECTURE**
 
 - **Better Auth Extended Configuration**: Production-ready authentication settings
-
   - **Email/Password Enhanced**: 12-character minimum passwords, 128-character maximum
   - **Security Settings**: Rate limiting enabled, secure cookies, proper cookie prefix
   - **Session Management**: 30-day sessions with daily refresh cycles, 5-minute cookie cache
@@ -512,7 +501,6 @@ Conducted comprehensive compliance audit against official Better Auth documentat
   - **Token Management**: Secure token expiry (1 hour for password reset, 24 hours for verification)
 
 - **Database Schema Extensions**: New tables for security and audit tracking
-
   - **Admin Audit Logs Table**: Comprehensive logging schema with all necessary fields
   - **Schema Migration**: Added `adminAuditLogs` to main schema export for tooling integration
   - **Database Migration**: Generated and applied migration `0003_omniscient_kate_bishop.sql`
@@ -521,21 +509,18 @@ Conducted comprehensive compliance audit against official Better Auth documentat
 ### 🛡️ **SECURITY HARDENING & VULNERABILITY FIXES**
 
 - **Admin Bootstrap Vulnerability Remediation**: Fixed critical security flaw where any authenticated user could claim admin role
-
   - **Before**: Any authenticated user could access `/api/admin/bootstrap` and claim admin role
   - **After**: Multi-layer security checks, environment controls, and audit logging
   - **Impact**: Prevents unauthorized privilege escalation in production environments
   - **Monitoring**: All bootstrap attempts logged with IP, user agent, and outcome
 
 - **Database Connection Security**: Enhanced connection reliability and security
-
   - **Connection Hardening**: Increased timeout from 10 to 30 seconds with exponential backoff retry
   - **Error Handling**: Comprehensive error handling for connection failures
   - **Development Testing**: Automatic connection validation on startup in development
   - **Production Stability**: Retry logic prevents transient connection failures
 
 - **Security-Hardened Logging**: Removed security-threatening console logs
-
   - **Removed Dangerous Logs**: Eliminated logs exposing email addresses, successful operations, and system internals
   - **Retained Security Logs**: Kept critical security monitoring logs for admin bootstrap and audit events
   - **Development Only**: Security-sensitive logs only visible in development environment
@@ -544,21 +529,18 @@ Conducted comprehensive compliance audit against official Better Auth documentat
 ### 🔄 **ADMIN BOOTSTRAP SESSION REFRESH FIX**
 
 - **Critical Session State Fix**: Resolved admin role claiming session inconsistency
-
   - **Issue**: After claiming admin role, user's existing session remained as "user" role despite database update
   - **Root Cause**: Better Auth sessions are immutable - role changes don't automatically update active sessions
   - **Solution**: Automatic sign-out after successful admin claiming to force session refresh
   - **User Flow**: Claim admin → Database update → Auto sign-out → Redirect to sign-in → Fresh session with admin role
 
 - **Enhanced User Experience**: Clear messaging and guidance through role transition process
-
   - **Progress Indicators**: "Admin role successfully claimed! Signing you out to refresh your session..."
   - **User Guidance**: "Please sign in again to access the admin panel" with toast notifications
   - **Updated Documentation**: Admin setup now clearly indicates sign-out requirement
   - **Fallback Handling**: Robust error handling ensures redirect happens even if sign-out fails
 
 - **Security Improvements**: Ensures proper admin privilege activation
-
   - **Session Consistency**: Prevents session state mismatches between database and active session
   - **Clean Transition**: Forces complete session refresh with updated role permissions
   - **Admin Access**: Guarantees admin panel access works immediately after successful claiming
@@ -567,7 +549,6 @@ Conducted comprehensive compliance audit against official Better Auth documentat
 ### 🔧 **TECHNICAL IMPROVEMENTS**
 
 - **Form Components**: New authentication-related forms with comprehensive validation
-
   - **Forgot Password Form**: Email input with validation and success states
   - **Reset Password Form**: Token validation, password strength requirements, confirmation matching
   - **React Hook Form Integration**: Consistent form patterns with Zod validation
@@ -575,14 +556,12 @@ Conducted comprehensive compliance audit against official Better Auth documentat
   - **Toast Notifications**: Success/error feedback using Sonner integration
 
 - **Admin Security Library**: Centralized security configuration management
-
   - **Environment Validation**: `adminBootstrapConfig` for centralized security settings
   - **IP Whitelisting**: Network-level access controls with configuration validation
   - **Security Helpers**: Reusable functions for admin security checks
   - **Production Controls**: Environment-aware security policy enforcement
 
 - **Enhanced Error Handling**: Comprehensive error handling across email and auth systems
-
   - **Email Service Errors**: Detailed error logging and user-friendly error messages
   - **Database Errors**: Connection timeout handling and retry logic
   - **Authentication Errors**: Better Auth integration with proper error propagation
@@ -619,6 +598,7 @@ Conducted comprehensive compliance audit against official Better Auth documentat
 ### 🔄 **DEPLOYMENT NOTES**
 
 - **Environment Variables Required**:
+
   ```bash
   RESEND_API_KEY=your_resend_api_key
   EMAIL_FROM="Portal <noreply@yourdomain.com>"
@@ -634,7 +614,7 @@ Conducted comprehensive compliance audit against official Better Auth documentat
 ### 📈 **PERFORMANCE IMPROVEMENTS**
 
 - **Database Connection**: Enhanced connection reliability with retry logic
-- **Email Delivery**: Professional email service integration for improved deliverability  
+- **Email Delivery**: Professional email service integration for improved deliverability
 - **Audit Logging**: Efficient database logging with structured JSON storage
 - **Security Monitoring**: Real-time security event tracking in development
 
@@ -668,18 +648,15 @@ Conducted comprehensive compliance audit against official Better Auth documentat
 - **Better Auth**: Updated from 1.3.4 to 1.3.7
   - Enhanced security and performance improvements
   - Bug fixes and stability enhancements
-  
 - **UI Libraries**:
   - @radix-ui/react-dialog: 1.1.14 → 1.1.15
   - @radix-ui/react-dropdown-menu: 2.1.15 → 2.1.16
   - @radix-ui/react-tooltip: 1.2.7 → 1.2.8
   - lucide-react: 0.539.0 → 0.540.0
-  
 - **Framework Updates**:
   - Next.js: 15.4.6 → 15.5.0
   - React: 19.1.0 → 19.1.1
   - React-DOM: 19.1.0 → 19.1.1
-  
 - **Development Tools**:
   - TypeScript: 5.x → 5.9.2
   - ESLint: Updated to 9.33.0
@@ -692,21 +669,18 @@ Conducted comprehensive compliance audit against official Better Auth documentat
 ### 🚨 **CRITICAL FIX: Sign-In Redirect Loop Resolution**
 
 - **Issue**: Users unable to access protected routes due to infinite redirect loop between `/sign-in` and `/dashboard`
-
   - **Root Cause**: Cookie configuration mismatch between Better Auth and Next.js middleware
-  - **Better Auth** was setting cookies with custom prefix: `__Secure-Portal.session_token`  
+  - **Better Auth** was setting cookies with custom prefix: `__Secure-Portal.session_token`
   - **Middleware** was checking for cookies without matching the prefix configuration
   - **Result**: Middleware couldn't detect authenticated sessions, causing redirect loops
 
 - **Critical Fixes Applied**:
-
   - **Middleware Cookie Detection**: Updated `getSessionCookie()` to include `cookiePrefix: "Portal"` matching auth.ts configuration
   - **Defense-in-Depth**: Implemented `getSessionWithRoleOrNull()` for safer session checking in layouts
   - **Protected Route Logic**: Updated layout to prevent redirect loops during session validation
   - **Session Handling**: Eliminated race conditions between middleware and server-side session checks
 
-- **Security Impact**: 
-
+- **Security Impact**:
   - **Before**: Authentication system was completely broken - users could not access protected areas
   - **After**: Robust multi-layer authentication with proper session detection
   - **Protection**: Defense-in-depth approach prevents similar issues from emerging
@@ -714,7 +688,7 @@ Conducted comprehensive compliance audit against official Better Auth documentat
 ### 🔒 **Authentication Flow Now Secured**
 
 - **Sign-In Process**: ✅ Email/password → Session creation → Dashboard access
-- **Middleware Protection**: ✅ Cookie-based route protection with proper prefix matching  
+- **Middleware Protection**: ✅ Cookie-based route protection with proper prefix matching
 - **Layout Guards**: ✅ Server-side session validation with graceful fallback
 - **Session Management**: ✅ Consistent session detection across all authentication layers
 
@@ -723,21 +697,18 @@ Conducted comprehensive compliance audit against official Better Auth documentat
 ### 🔒 **BREAKING CHANGE: Role Management Architecture Overhaul**
 
 - **Critical Security Fix**: Eliminated dual source of truth vulnerability between `profiles.role` and `user.role`
-
   - **Before**: Role validation checked both Better Auth `user.role` AND `profiles.role` tables
   - **After**: `user.role` in Better Auth table is now the single authoritative source for all role decisions
   - **Security Impact**: Prevents role conflicts and inconsistencies that could lead to privilege escalation
   - **Performance Impact**: Reduced role validation database queries by ~50%
 
 - **Better Auth Admin Plugin Full Compliance**: Complete migration to Better Auth's recommended architecture
-
   - Updated all auth helpers to read role directly from Better Auth session data
   - `getSessionWithRole()` now uses `session.user.role` with zero additional database queries
   - `requireRole()` eliminates profiles table lookup for role validation
   - `adminExists()` checks Better Auth user table exclusively
 
 - **Streamlined Authentication Architecture**: Unified role management system
-
   - **Primary Role Storage**: `user.role` (Better Auth table) - authoritative source
   - **Secondary Profile Data**: `profiles` table for supplementary metadata only (displayName, avatarUrl, etc.)
   - **Admin Operations**: All role changes write directly to Better Auth user table
@@ -746,14 +717,12 @@ Conducted comprehensive compliance audit against official Better Auth documentat
 ### 🚀 **Performance & Architecture Improvements**
 
 - **Database Query Optimization**: Significant performance improvements for role-based operations
-
   - Layout-level session validation now includes role data in single Better Auth call
   - Admin panel loads with ~50% fewer database queries
   - Role checks throughout application eliminated secondary table lookups
   - Cache efficiency improved due to simplified data model
 
 - **Code Architecture Simplification**: Cleaner, more maintainable codebase
-
   - Removed `lib/auth-helpers-unified.ts` in favor of streamlined `lib/auth-helpers.ts`
   - Updated API helpers to work with unified `{ session, userRole }` pattern
   - Eliminated obsolete `ensureProfile()` function for role management
@@ -762,14 +731,12 @@ Conducted comprehensive compliance audit against official Better Auth documentat
 ### 🛡️ **Security & Compliance Enhancements**
 
 - **Single Source of Truth**: Authoritative role management through Better Auth
-
   - All admin operations now update `user.role` field directly
   - Role validation occurs through Better Auth session data exclusively
   - Eliminated potential for role conflicts between multiple tables
   - Enhanced audit trail through Better Auth's built-in session management
 
 - **Production-Ready Security**: Comprehensive testing and validation
-
   - ✅ **Migration Tested**: Admin claim flow verified to write to `user.role` correctly
   - ✅ **Role Validation**: Admin panel access properly controlled by Better Auth role
   - ✅ **Bootstrap Security**: Admin setup locks correctly after first admin creation
@@ -778,14 +745,12 @@ Conducted comprehensive compliance audit against official Better Auth documentat
 ### 🧹 **Code Quality & Maintainability**
 
 - **Eliminated Technical Debt**: Removed dual-table complexity throughout application
-
   - Consolidated role checking logic to single pattern across all components
-  - Updated admin bootstrap API to eliminate profile sync requirements  
+  - Updated admin bootstrap API to eliminate profile sync requirements
   - Simplified component props by removing profile table dependencies
   - Enhanced type safety with unified role data structure
 
 - **Developer Experience**: Cleaner, more predictable authentication patterns
-
   - Consistent `userRole` parameter across all auth-protected components
   - Simplified debugging with single role data source
   - Better code documentation reflecting Better Auth best practices
@@ -794,7 +759,7 @@ Conducted comprehensive compliance audit against official Better Auth documentat
 ### 📊 **Migration Impact Summary**
 
 - **Performance**: ~50% reduction in role validation queries
-- **Security**: Eliminated dual source of truth vulnerability  
+- **Security**: Eliminated dual source of truth vulnerability
 - **Compliance**: Full Better Auth admin plugin alignment
 - **Maintainability**: Simplified authentication architecture
 - **Backward Compatibility**: Zero breaking changes to user functionality
@@ -811,21 +776,18 @@ Conducted comprehensive compliance audit against official Better Auth documentat
 ### 🛠️ Code Quality & Type Safety Improvements
 
 - **ESLint Compliance**: Achieved zero linting errors across entire codebase
-
   - Removed all unused imports, variables, and parameters
   - Fixed all `any` types with proper TypeScript type annotations
   - Enhanced error handling with proper `unknown` type checking
   - Removed empty interface issues and unused request parameters
 
 - **TypeScript Build Fixes**: Resolved all build compilation errors
-
   - Fixed admin API handler type signatures for Request/NextRequest compatibility
   - Corrected ZodError handling using `error.issues` instead of `error.errors`
   - Resolved User type mismatches between components and database schema
   - Aligned nullable field types (`null` vs `undefined`) throughout application
 
 - **Database Schema Type Alignment**: Consistent type definitions across components
-
   - Updated User types to match actual database schema with proper nullable fields
   - Fixed `banned: boolean | null` vs `banned?: boolean` type mismatches
   - Ensured component interfaces align with Drizzle ORM inferred types
@@ -840,14 +802,12 @@ Conducted comprehensive compliance audit against official Better Auth documentat
 ### 🔧 Better Auth Admin Plugin Integration - Complete User Management System
 
 - **Better Auth Admin Plugin Implementation**: Full integration of Better Auth's official admin plugin
-
   - Added admin plugin to server auth configuration with role-based access control
   - Integrated admin client plugin for comprehensive user management capabilities
   - Enhanced database schema with admin plugin fields: role, banned, banReason, banExpires, impersonatedBy
   - Created migration for seamless upgrade from custom role system to Better Auth admin plugin
 
 - **Comprehensive User Management Interface**: Professional admin panel with full CRUD operations
-
   - **Create User**: Admin dialog for creating new users with email, password, name, and role assignment
   - **Update User**: Edit user details and role management with real-time validation
   - **Password Management**: Secure password reset functionality for any user account
@@ -856,7 +816,6 @@ Conducted comprehensive compliance audit against official Better Auth documentat
   - **User Deletion**: Hard delete users with confirmation dialogs and cascade cleanup
 
 - **Enhanced Data Table with Admin Capabilities**: Extended SHADCN data table with admin-specific features
-
   - **Status Column**: Real-time user status display (Active, Banned, Ban Expired) with color-coded badges
   - **Enhanced Actions Menu**: Comprehensive dropdown with Create, Edit, Set Password, Ban/Unban, Impersonate, Delete
   - **Create User Button**: Prominent create user functionality integrated into table header
@@ -874,14 +833,12 @@ Conducted comprehensive compliance audit against official Better Auth documentat
 ### 🔒 Enhanced Security & Session Management
 
 - **Impersonation Security**: Secure admin impersonation with automatic session limits
-
   - 1-hour impersonation sessions with automatic expiry
   - Visual impersonation indicators throughout the application
   - Secure stop impersonation functionality with session restoration
   - Admin audit trail for impersonation activities
 
 - **Database Schema Updates**: Better Auth admin plugin field integration
-
   - Added role, banned, banReason, banExpires fields to user table
   - Added impersonatedBy field to session table for impersonation tracking
   - Backward compatibility with existing custom profiles table
@@ -896,7 +853,6 @@ Conducted comprehensive compliance audit against official Better Auth documentat
 ### 🎨 UI/UX Enhancements
 
 - **Professional Admin Interface**: Enterprise-grade user management experience
-
   - **Enhanced Action Icons**: Contextual icons for all admin operations (Shield, Ban, Key, UserX, Eye)
   - **Status Indicators**: Clear visual representation of user account status
   - **Responsive Dialogs**: Mobile-friendly admin dialogs with proper form layouts
@@ -912,14 +868,12 @@ Conducted comprehensive compliance audit against official Better Auth documentat
 ### 🛠️ Technical Improvements
 
 - **Component Architecture**: Clean separation of concerns for admin functionality
-
   - **UserActionsDialog**: Comprehensive dialog component for all admin operations
   - **ClientUserTable**: Client-side wrapper for server action integration
   - **Enhanced User Columns**: Updated column definitions with admin plugin data
   - **Server Action Integration**: Proper server/client boundary for admin operations
 
 - **Type Safety**: Complete TypeScript integration for admin plugin
-
   - Extended User type with admin plugin fields (banned, banReason, banExpires)
   - Proper form validation schemas for all admin operations
   - Type-safe admin client integration with Better Auth
@@ -932,7 +886,6 @@ Conducted comprehensive compliance audit against official Better Auth documentat
 ### 📊 SHADCN UI Data Table Implementation & Code Organization Revolution
 
 - **Complete Data Table Architecture**: Implemented professional SHADCN UI data table for admin user management
-
   - Added TanStack Table with comprehensive features: sorting, filtering, pagination, row selection
   - Global search functionality across all columns (email, name, role, date, ID)
   - Column visibility controls with dropdown toggle interface
@@ -940,7 +893,6 @@ Conducted comprehensive compliance audit against official Better Auth documentat
   - Responsive design with proper mobile handling and loading states
 
 - **Component Organization Standardization**: Restructured codebase for maintainability and consistency
-
   - **File Naming Convention**: All components renamed to kebab-case for consistency
     - `CacheRefreshButton.tsx` → `button-refresh-user-cache.tsx`
     - `ButtonSignOut.tsx` → `button-signout.tsx`
@@ -954,7 +906,6 @@ Conducted comprehensive compliance audit against official Better Auth documentat
     - App directory now only contains `page.tsx` and `layout.tsx` files
 
 - **SHADCN Skeleton Integration**: Professional loading states throughout data table
-
   - Replaced custom `UserTableSkeleton.tsx` with integrated SHADCN skeleton components
   - Loading states match exact table structure with proper column widths
   - Disabled controls during loading (search, pagination, column filters)
@@ -970,14 +921,12 @@ Conducted comprehensive compliance audit against official Better Auth documentat
 ### 🔧 Performance & Architecture Improvements
 
 - **Better Auth Cookie Cache**: Enabled Better Auth's built-in session caching for optimal performance
-
   - Added `cookieCache` configuration with 5-minute cache duration
   - Reduces database queries by ~80% for session validation
   - Maintains security while significantly improving performance
   - Proper cache expiry ensures session changes reflected within 5 minutes
 
 - **Date Formatting Consistency**: Fixed hydration issues with proper date handling
-
   - Consistent date formatting using `toLocaleDateString("en-US")` with explicit locale
   - Proper Date object conversion to handle string/Date input variations
   - Eliminated hydration mismatches between server and client rendering
@@ -991,21 +940,18 @@ Conducted comprehensive compliance audit against official Better Auth documentat
 ### 🎨 Authentication & Language Consistency Revolution
 
 - **Complete Authentication Architecture Overhaul**: Migrated from server actions to Better Auth client API
-
   - Replaced all server action authentication calls with `authClient.signIn.email()` and `authClient.signUp.email()`
   - Eliminated potential cookie timing issues by using client-side Better Auth API
   - Enhanced reliability and consistency across all authentication flows
   - Removed `server/users.ts` file as authentication now uses client API exclusively
 
 - **"Remember Me" Functionality**: Full implementation of persistent session management
-
   - Added "Remember Me" checkbox to sign-in form with proper Better Auth integration
   - Persistent cookies when checked vs session-only cookies when unchecked
   - Integrated with Better Auth's built-in session management system
   - Enhanced user experience with flexible session duration options
 
 - **Language Consistency Standardization**: Unified terminology across entire application
-
   - Renamed `ButtonLogout.tsx` → `ButtonSignOut.tsx` with updated component function names
   - Standardized all UI text: "Login" → "Sign In", "Logout" → "Sign Out"
   - Updated error messages: "Logout failed" → "Sign out failed"
@@ -1021,14 +967,12 @@ Conducted comprehensive compliance audit against official Better Auth documentat
 ### 🔒 Enhanced Security & API Improvements
 
 - **Comprehensive API Validation**: Advanced request validation and security
-
   - Added Zod schemas for all admin API endpoints with detailed error responses
   - Implemented content-type validation (415 errors) and method validation (405 errors)
   - Enhanced error handling with validation details and proper HTTP status codes
   - Fixed TypeScript issues in API helpers with proper Request/NextRequest type handling
 
 - **Security Headers Implementation**: Production-ready security configuration
-
   - Added comprehensive security headers in `next.config.ts`
   - Implemented X-Frame-Options, X-Content-Type-Options, Referrer-Policy
   - Added Permissions-Policy for enhanced browser security
@@ -1043,14 +987,12 @@ Conducted comprehensive compliance audit against official Better Auth documentat
 ### 🛠️ Code Quality & Architecture Improvements
 
 - **Form Structure Consistency**: Unified form patterns across authentication
-
   - Both signin and signup forms now use identical React Hook Form structure
   - Consistent error handling, loading states, and toast notifications
   - Enhanced accessibility features and password manager compatibility
   - Improved user experience with better form validation and feedback
 
 - **Documentation Overhaul**: Comprehensive architecture documentation updates
-
   - Completely updated `CLAUDE.md` with current file structure and component names
   - Corrected all file paths and component references to match actual codebase
   - Added detailed authentication best practices and development guidelines

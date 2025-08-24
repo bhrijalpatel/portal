@@ -221,7 +221,11 @@ export async function sendEmail({
     }
 
     // Ensure we always have text content
-    const finalText = text || (html ? `This email requires HTML support. Please view it in a modern email client.` : "");
+    const finalText =
+      text ||
+      (html
+        ? `This email requires HTML support. Please view it in a modern email client.`
+        : "");
 
     const emailOptions = {
       from: EMAIL_FROM,

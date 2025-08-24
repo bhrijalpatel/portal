@@ -94,13 +94,13 @@ function ActionsCell({
       : false;
 
     console.log(
-      `🔓 Starting edit mode for user ${user.id}, currently editing: ${isCurrentlyEditing}`
+      `🔓 Starting edit mode for user ${user.id}, currently editing: ${isCurrentlyEditing}`,
     );
 
     // Don't proceed if session is still loading or already editing
     if (isPending || !currentUserEmail || isCurrentlyEditing) {
       console.log(
-        `⏳ Cannot start edit mode. isPending=${isPending}, email=${currentUserEmail}, isCurrentlyEditing=${isCurrentlyEditing}`
+        `⏳ Cannot start edit mode. isPending=${isPending}, email=${currentUserEmail}, isCurrentlyEditing=${isCurrentlyEditing}`,
       );
       return;
     }
@@ -118,7 +118,7 @@ function ActionsCell({
         startEditingSession(user.id, currentUserEmail);
         setIsLockPending(false);
         console.log(
-          `✅ Edit session started in SSE provider for user ${user.id}`
+          `✅ Edit session started in SSE provider for user ${user.id}`,
         );
       } else {
         console.log(`❌ Failed to enter edit mode for user ${user.id}`);
@@ -141,7 +141,7 @@ function ActionsCell({
 
   const handleAction = async (action: typeof dialogAction) => {
     console.log(
-      `🎯 HandleAction called: ${action} for user ${user.id} (edit mode active)`
+      `🎯 HandleAction called: ${action} for user ${user.id} (edit mode active)`,
     );
 
     // Since we're in edit mode, user is already locked - directly open dialog
@@ -158,7 +158,7 @@ function ActionsCell({
   // Handle successful user update - stay in edit mode (don't unlock)
   const handleUserUpdateSuccess = () => {
     console.log(
-      `🎉 User update successful for ${user.id}, staying in edit mode`
+      `🎉 User update successful for ${user.id}, staying in edit mode`,
     );
     // Keep isEditing=true and lock in place - admin can continue editing
     // The table refresh will happen but our local state should persist
@@ -186,7 +186,7 @@ function ActionsCell({
       lockInfo.lockedBy !== currentUserEmail
     ) {
       console.log(
-        `👥 Another admin (${lockInfo.lockedBy}) has locked user ${user.id}`
+        `👥 Another admin (${lockInfo.lockedBy}) has locked user ${user.id}`,
       );
       // Don't change our edit state - just let the UI show the conflict
     }
@@ -202,7 +202,7 @@ function ActionsCell({
   useEffect(() => {
     if (dialogOpen) {
       console.log(
-        `📊 Dialog OPENED for user ${user.id}: action=${dialogAction}`
+        `📊 Dialog OPENED for user ${user.id}: action=${dialogAction}`,
       );
     }
   }, [dialogOpen, dialogAction, user.id]);
@@ -211,24 +211,24 @@ function ActionsCell({
   console.log(
     `🔑 Session debug for user ${user.id}: isPending=${isPending}, session=`,
     session,
-    `email=${currentUserEmail}`
+    `email=${currentUserEmail}`,
   );
 
   // Don't show loading spinner, just disable functionality until session loads
 
   // Debug rendering state
   console.log(
-    `🎨 Rendering user ${user.id}: isEditing=${isEditing}, isLockPending=${isLockPending}, isLocked=${lockInfo.isLocked}, lockedBy=${lockInfo.lockedBy}, currentUser=${currentUserEmail}`
+    `🎨 Rendering user ${user.id}: isEditing=${isEditing}, isLockPending=${isLockPending}, isLocked=${lockInfo.isLocked}, lockedBy=${lockInfo.lockedBy}, currentUser=${currentUserEmail}`,
   );
   console.log(
-    `🎨 Lock analysis: isLockedByCurrentUser=${isLockedByCurrentUser}, isLockedByOtherAdmin=${isLockedByOtherAdmin}`
+    `🎨 Lock analysis: isLockedByCurrentUser=${isLockedByCurrentUser}, isLockedByOtherAdmin=${isLockedByOtherAdmin}`,
   );
 
   // Debug button rendering decision
   if (!isEditing && !isLockPending) {
     if (isLockedByOtherAdmin) {
       console.log(
-        `🔒 User ${user.id}: Showing LOCKED indicator (locked by ${lockInfo.lockedBy})`
+        `🔒 User ${user.id}: Showing LOCKED indicator (locked by ${lockInfo.lockedBy})`,
       );
     } else {
       console.log(`📝 User ${user.id}: Showing EDIT button (ready for click)`);
@@ -237,7 +237,7 @@ function ActionsCell({
     console.log(`⏳ User ${user.id}: Showing LOADING spinner (creating lock)`);
   } else {
     console.log(
-      `⚙️ User ${user.id}: Showing DROPDOWN + CLOSE buttons (edit mode active)`
+      `⚙️ User ${user.id}: Showing DROPDOWN + CLOSE buttons (edit mode active)`,
     );
   }
 

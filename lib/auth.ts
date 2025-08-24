@@ -13,7 +13,7 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     autoSignIn: false,
-    requireEmailVerification: process.env.NODE_ENV === 'production', // Require in production
+    requireEmailVerification: process.env.NODE_ENV === "production", // Require in production
     minPasswordLength: 12,
     maxPasswordLength: 128,
     // Send password reset email using Resend
@@ -23,12 +23,12 @@ export const auth = betterAuth({
           to: user.email,
           url,
         });
-        
+
         // Log password reset request
         await createAuditLog({
           adminUserId: user.id,
           adminEmail: user.email,
-          action: 'PASSWORD_RESET',
+          action: "PASSWORD_RESET",
           details: {
             timestamp: new Date().toISOString(),
             emailSent: true,
@@ -36,18 +36,17 @@ export const auth = betterAuth({
           success: true,
         });
       } catch (error) {
-        console.error('Failed to send password reset email:', error);
+        console.error("Failed to send password reset email:", error);
         throw error;
       }
     },
     // Callback when password is successfully reset
     onPasswordReset: async ({ user }) => {
-      
       // Log successful password reset
       await createAuditLog({
         adminUserId: user.id,
         adminEmail: user.email,
-        action: 'PASSWORD_RESET',
+        action: "PASSWORD_RESET",
         details: {
           timestamp: new Date().toISOString(),
           completed: true,
@@ -65,9 +64,8 @@ export const auth = betterAuth({
           to: user.email,
           url,
         });
-        
       } catch (error) {
-        console.error('Failed to send verification email:', error);
+        console.error("Failed to send verification email:", error);
         throw error;
       }
     },
@@ -83,7 +81,7 @@ export const auth = betterAuth({
   },
   rateLimit: { enabled: true },
   advanced: {
-    useSecureCookies: process.env.NODE_ENV === 'production',
+    useSecureCookies: process.env.NODE_ENV === "production",
     cookiePrefix: "Portal",
   },
   database: drizzleAdapter(db, { provider: "pg", schema }),

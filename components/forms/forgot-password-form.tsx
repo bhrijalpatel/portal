@@ -37,7 +37,7 @@ export function ForgotPasswordForm({
 }: React.ComponentProps<"div">) {
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  
+
   const form = useForm<z.infer<typeof forgotPasswordSchema>>({
     resolver: zodResolver(forgotPasswordSchema),
     defaultValues: {
@@ -60,7 +60,9 @@ export function ForgotPasswordForm({
       // Better Auth returns success even if email doesn't exist (security)
       // So we always show success message
       setIsSuccess(true);
-      toast.success("If an account exists, a password reset email has been sent.");
+      toast.success(
+        "If an account exists, a password reset email has been sent.",
+      );
     } finally {
       setIsLoading(false);
     }
@@ -68,10 +70,13 @@ export function ForgotPasswordForm({
 
   if (isSuccess) {
     return (
-      <div className={cn(
-        "flex flex-col gap-6 w-full max-w-md p-8 rounded-2xl bg-gradient-to-br from-emerald-500/5 via-emerald-500/5 to-teal-500/5 border border-emerald-500/10 backdrop-blur-sm shadow-lg",
-        className
-      )} {...props}>
+      <div
+        className={cn(
+          "flex flex-col gap-6 w-full max-w-md p-8 rounded-2xl bg-gradient-to-br from-emerald-500/5 via-emerald-500/5 to-teal-500/5 border border-emerald-500/10 backdrop-blur-sm shadow-lg",
+          className,
+        )}
+        {...props}
+      >
         <Card className="border-0 bg-transparent shadow-none">
           <CardHeader className="text-center">
             <div className="flex justify-center mb-4">
@@ -85,20 +90,22 @@ export function ForgotPasswordForm({
           <CardContent className="space-y-4">
             <div className="bg-muted/50 p-4 rounded-lg space-y-2">
               <p className="text-sm text-muted-foreground">
-                If an account exists for <strong>{form.getValues('email')}</strong>, you will receive an email with instructions to reset your password.
+                If an account exists for{" "}
+                <strong>{form.getValues("email")}</strong>, you will receive an
+                email with instructions to reset your password.
               </p>
               <p className="text-xs text-muted-foreground">
                 The link will expire in 1 hour for security reasons.
               </p>
             </div>
-            
+
             <div className="space-y-2">
               <p className="text-xs text-muted-foreground text-center">
                 Didn&apos;t receive the email? Check your spam folder or
               </p>
-              <Button 
+              <Button
                 variant="outline"
-                className="w-full" 
+                className="w-full"
                 onClick={() => {
                   setIsSuccess(false);
                   form.reset();
@@ -107,9 +114,9 @@ export function ForgotPasswordForm({
                 Try Again
               </Button>
             </div>
-            
+
             <div className="text-center">
-              <Link 
+              <Link
                 href="/sign-in"
                 className="text-sm text-primary hover:underline"
               >
@@ -126,7 +133,7 @@ export function ForgotPasswordForm({
     <div
       className={cn(
         "flex flex-col gap-6 w-full max-w-md p-8 rounded-2xl bg-gradient-to-br from-primary/5 via-blue-500/5 to-purple-500/5 border border-primary/10 backdrop-blur-sm shadow-lg",
-        className
+        className,
       )}
       {...props}
     >
@@ -150,11 +157,11 @@ export function ForgotPasswordForm({
                   <FormItem>
                     <FormLabel>Email Address</FormLabel>
                     <FormControl>
-                      <Input 
+                      <Input
                         type="email"
                         placeholder="Enter your email"
                         disabled={isLoading}
-                        {...field} 
+                        {...field}
                       />
                     </FormControl>
                     <FormMessage />
@@ -180,7 +187,7 @@ export function ForgotPasswordForm({
                 <p className="text-sm text-muted-foreground">
                   Remember your password?
                 </p>
-                <Link 
+                <Link
                   href="/sign-in"
                   className="text-sm text-primary hover:underline font-medium"
                 >

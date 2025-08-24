@@ -15,33 +15,39 @@ const lockSchema = z.object({
 export const GET = withAdminAuth(async ({ session }) => {
   try {
     console.log(`👀 Fetching active locks for session: ${session.user.email}`);
-    
+
     // ONLY clean up expired locks that belong to disconnected sessions
     // First, get list of currently connected client sessions from SSE
     const currentlyConnectedSessions = new Set<string>();
     for (const [, client] of connectedClients.entries()) {
       currentlyConnectedSessions.add(client.userId);
     }
-    
-    console.log(`🔗 Currently connected sessions: ${Array.from(currentlyConnectedSessions).join(', ')}`);
-    
+
+    console.log(
+      `🔗 Currently connected sessions: ${Array.from(currentlyConnectedSessions).join(", ")}`,
+    );
+
     // Clean up expired locks ONLY for sessions that are no longer connected
     const expiredLocks = await db
       .select()
       .from(userLocks)
       .where(lte(userLocks.expiresAt, new Date()));
-      
-    const locksToDelete = expiredLocks.filter(lock => 
-      !currentlyConnectedSessions.has(lock.lockedByAdminId)
+
+    const locksToDelete = expiredLocks.filter(
+      (lock) => !currentlyConnectedSessions.has(lock.lockedByAdminId),
     );
-    
+
     if (locksToDelete.length > 0) {
-      console.log(`🧹 Cleaning ${locksToDelete.length} expired locks from disconnected sessions`);
+      console.log(
+        `🧹 Cleaning ${locksToDelete.length} expired locks from disconnected sessions`,
+      );
       for (const lock of locksToDelete) {
         await db.delete(userLocks).where(eq(userLocks.id, lock.id));
-        
+
         // Broadcast unlock event for each cleaned lock
-        console.log(`📡 Broadcasting cleanup unlock for user ${lock.lockedUserId}`);
+        console.log(
+          `📡 Broadcasting cleanup unlock for user ${lock.lockedUserId}`,
+        );
         const unlockEvent = JSON.stringify({
           type: "user-edit-unlock",
           data: {
@@ -49,16 +55,23 @@ export const GET = withAdminAuth(async ({ session }) => {
             reason: "session_disconnected",
             previousAdmin: lock.lockedByAdminEmail,
           },
-          triggeredBy: "system_cleanup"
+          triggeredBy: "system_cleanup",
         });
-        
+
         for (const [clientId, client] of connectedClients) {
-          if (client.userRole === 'admin') {
+          if (client.userRole === "admin") {
             try {
-              client.controller.enqueue(new TextEncoder().encode(`data: ${unlockEvent}\n\n`));
-              console.log(`📤 Sent cleanup unlock event to ${client.userEmail}`);
+              client.controller.enqueue(
+                new TextEncoder().encode(`data: ${unlockEvent}\n\n`),
+              );
+              console.log(
+                `📤 Sent cleanup unlock event to ${client.userEmail}`,
+              );
             } catch (error) {
-              console.log(`❌ Failed to send cleanup unlock to ${clientId}:`, error);
+              console.log(
+                `❌ Failed to send cleanup unlock to ${clientId}:`,
+                error,
+              );
               connectedClients.delete(clientId);
             }
           }
@@ -79,10 +92,7 @@ export const GET = withAdminAuth(async ({ session }) => {
     });
   } catch (error) {
     console.error("Error fetching locks:", error);
-    return Response.json(
-      { error: "Failed to fetch locks" },
-      { status: 500 }
-    );
+    return Response.json({ error: "Failed to fetch locks" }, { status: 500 });
   }
 });
 
@@ -99,39 +109,48 @@ export const POST = withAdminAuth(async ({ session }, request) => {
         .from(userLocks)
         .where(eq(userLocks.lockedUserId, userId))
         .limit(1);
-      
-      console.log(`🔍 Found ${existingLock.length} existing locks for user ${userId}`);
+
+      console.log(
+        `🔍 Found ${existingLock.length} existing locks for user ${userId}`,
+      );
 
       if (existingLock.length > 0) {
         const lockExpired = new Date(existingLock[0].expiresAt) < new Date();
         console.log(`🕐 Lock expired: ${lockExpired}`);
-        
+
         if (!lockExpired) {
           // Active lock exists
           if (existingLock[0].lockedByAdminId === session.user.id) {
             // Same admin - extend the lock expiry to 15 minutes
-            console.log(`🔄 Extending lock for same admin: ${session.user.email}`);
+            console.log(
+              `🔄 Extending lock for same admin: ${session.user.email}`,
+            );
             await db
               .update(userLocks)
-              .set({ 
-                expiresAt: new Date(Date.now() + 15 * 60 * 1000) 
+              .set({
+                expiresAt: new Date(Date.now() + 15 * 60 * 1000),
               })
               .where(eq(userLocks.id, existingLock[0].id));
-              
+
             return Response.json({
               success: true,
               lock: existingLock[0],
               extended: true,
             });
           }
-          
+
           // Someone else has the lock - REJECT
-          console.log(`❌ User locked by another admin: ${existingLock[0].lockedByAdminEmail}`);
-          return Response.json({
-            success: false,
-            error: "User is already being edited",
-            lockedBy: existingLock[0].lockedByAdminEmail,
-          }, { status: 409 });
+          console.log(
+            `❌ User locked by another admin: ${existingLock[0].lockedByAdminEmail}`,
+          );
+          return Response.json(
+            {
+              success: false,
+              error: "User is already being edited",
+              lockedBy: existingLock[0].lockedByAdminEmail,
+            },
+            { status: 409 },
+          );
         } else {
           // Expired lock - clean it up
           console.log(`🧹 Cleaning up expired lock: ${existingLock[0].id}`);
@@ -142,7 +161,9 @@ export const POST = withAdminAuth(async ({ session }, request) => {
       }
 
       // Create new lock
-      console.log(`🔒 Creating lock for user ${userId} by ${session.user.email}`);
+      console.log(
+        `🔒 Creating lock for user ${userId} by ${session.user.email}`,
+      );
       const newLock = await db
         .insert(userLocks)
         .values({
@@ -153,11 +174,13 @@ export const POST = withAdminAuth(async ({ session }, request) => {
           lockType: "edit",
         })
         .returning();
-      
+
       console.log(`✅ Lock created:`, newLock[0]);
 
       // Broadcast lock event directly to connected clients
-      console.log(`📡 Broadcasting lock event to ${connectedClients.size} connected clients`);
+      console.log(
+        `📡 Broadcasting lock event to ${connectedClients.size} connected clients`,
+      );
       const lockEvent = JSON.stringify({
         type: "user-edit-lock",
         data: {
@@ -165,13 +188,15 @@ export const POST = withAdminAuth(async ({ session }, request) => {
           lockingAdmin: session.user.email,
           lockId: newLock[0].id,
         },
-        triggeredBy: session.user.email
+        triggeredBy: session.user.email,
       });
-      
+
       for (const [clientId, client] of connectedClients) {
-        if (client.userRole === 'admin') {
+        if (client.userRole === "admin") {
           try {
-            client.controller.enqueue(new TextEncoder().encode(`data: ${lockEvent}\n\n`));
+            client.controller.enqueue(
+              new TextEncoder().encode(`data: ${lockEvent}\n\n`),
+            );
             console.log(`📤 Sent lock event to ${client.userEmail}`);
           } catch (error) {
             console.log(`❌ Failed to send to ${clientId}:`, error);
@@ -191,27 +216,31 @@ export const POST = withAdminAuth(async ({ session }, request) => {
         .where(
           and(
             eq(userLocks.lockedUserId, userId),
-            eq(userLocks.lockedByAdminId, session.user.id)
-          )
+            eq(userLocks.lockedByAdminId, session.user.id),
+          ),
         )
         .returning();
 
       if (deleted.length > 0) {
         // Broadcast unlock event directly to connected clients
-        console.log(`📡 Broadcasting unlock event to ${connectedClients.size} connected clients`);
+        console.log(
+          `📡 Broadcasting unlock event to ${connectedClients.size} connected clients`,
+        );
         const unlockEvent = JSON.stringify({
           type: "user-edit-unlock",
           data: {
             userId,
             unlockingAdmin: session.user.email,
           },
-          triggeredBy: session.user.email
+          triggeredBy: session.user.email,
         });
-        
+
         for (const [clientId, client] of connectedClients) {
-          if (client.userRole === 'admin') {
+          if (client.userRole === "admin") {
             try {
-              client.controller.enqueue(new TextEncoder().encode(`data: ${unlockEvent}\n\n`));
+              client.controller.enqueue(
+                new TextEncoder().encode(`data: ${unlockEvent}\n\n`),
+              );
               console.log(`📤 Sent unlock event to ${client.userEmail}`);
             } catch (error) {
               console.log(`❌ Failed to send to ${clientId}:`, error);
@@ -233,8 +262,8 @@ export const POST = withAdminAuth(async ({ session }, request) => {
         .where(
           and(
             eq(userLocks.lockedUserId, userId),
-            gte(userLocks.expiresAt, new Date())
-          )
+            gte(userLocks.expiresAt, new Date()),
+          ),
         )
         .limit(1);
 
@@ -245,16 +274,10 @@ export const POST = withAdminAuth(async ({ session }, request) => {
       });
     }
 
-    return Response.json(
-      { error: "Invalid action" },
-      { status: 400 }
-    );
+    return Response.json({ error: "Invalid action" }, { status: 400 });
   } catch (error) {
     console.error("Error managing lock:", error);
-    return Response.json(
-      { error: "Failed to manage lock" },
-      { status: 500 }
-    );
+    return Response.json({ error: "Failed to manage lock" }, { status: 500 });
   }
 });
 
@@ -272,9 +295,6 @@ export const DELETE = withAdminAuth(async () => {
     });
   } catch (error) {
     console.error("Error cleaning locks:", error);
-    return Response.json(
-      { error: "Failed to clean locks" },
-      { status: 500 }
-    );
+    return Response.json({ error: "Failed to clean locks" }, { status: 500 });
   }
 });

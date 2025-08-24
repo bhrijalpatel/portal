@@ -45,7 +45,7 @@ export async function getSessionWithRole(): Promise<{
   userRole: string;
 }> {
   const session = await requireSession();
-  
+
   // Use Better Auth user.role as single source of truth (no additional DB query needed)
   const userRole = session.user.role || "user";
   return { session, userRole };
@@ -61,7 +61,7 @@ export async function getSessionWithRoleOrNull(): Promise<{
 } | null> {
   const session = await getSessionOrNull();
   if (!session) return null;
-  
+
   // Use Better Auth user.role as single source of truth (no additional DB query needed)
   const userRole = session.user.role || "user";
   return { session, userRole };
@@ -74,10 +74,10 @@ export async function getSessionWithRoleOrNull(): Promise<{
 export async function requireRole(role: string | string[]) {
   const session = await requireSession();
   const roles = Array.isArray(role) ? role : [role];
-  
+
   // Use Better Auth user.role as single source of truth (no additional DB query needed)
   const userRole = session.user.role || "user";
-  
+
   if (!roles.includes(userRole)) redirect("/403");
   return { session, userRole };
 }

@@ -150,7 +150,7 @@ export function UserActionsDialog({
         role: data.role,
       });
 
-      toast.success("User created successfully", { id: 'create-user' });
+      toast.success("User created successfully", { id: "create-user" });
       createForm.reset();
       onSuccess();
       onClose();
@@ -195,7 +195,9 @@ export function UserActionsDialog({
         }
       }
 
-      toast.success("User updated successfully", { id: `update-user-${user.id}` });
+      toast.success("User updated successfully", {
+        id: `update-user-${user.id}`,
+      });
       onSuccess();
       onClose();
     } catch (error: unknown) {
@@ -216,14 +218,16 @@ export function UserActionsDialog({
         userId: user.id,
         newPassword: data.newPassword,
       });
-      toast.success("Password updated successfully", { id: `update-password-${user.id}` });
+      toast.success("Password updated successfully", {
+        id: `update-password-${user.id}`,
+      });
       passwordForm.reset();
       onSuccess();
       onClose();
     } catch (error: unknown) {
       toast.error(
         (error instanceof Error ? error.message : null) ||
-          "Failed to update password"
+          "Failed to update password",
       );
     } finally {
       setIsLoading(false);
@@ -248,7 +252,7 @@ export function UserActionsDialog({
       onClose();
     } catch (error: unknown) {
       toast.error(
-        (error instanceof Error ? error.message : null) || "Failed to ban user"
+        (error instanceof Error ? error.message : null) || "Failed to ban user",
       );
     } finally {
       setIsLoading(false);
@@ -263,13 +267,15 @@ export function UserActionsDialog({
       await authClient.admin.unbanUser({
         userId: user.id,
       });
-      toast.success("User unbanned successfully", { id: `unban-user-${user.id}` });
+      toast.success("User unbanned successfully", {
+        id: `unban-user-${user.id}`,
+      });
       onSuccess();
       onClose();
     } catch (error: unknown) {
       toast.error(
         (error instanceof Error ? error.message : null) ||
-          "Failed to unban user"
+          "Failed to unban user",
       );
     } finally {
       setIsLoading(false);
@@ -284,13 +290,15 @@ export function UserActionsDialog({
       await authClient.admin.removeUser({
         userId: user.id,
       });
-      toast.success("User deleted successfully", { id: `delete-user-${user.id}` });
+      toast.success("User deleted successfully", {
+        id: `delete-user-${user.id}`,
+      });
       onSuccess();
       onClose();
     } catch (error: unknown) {
       toast.error(
         (error instanceof Error ? error.message : null) ||
-          "Failed to delete user"
+          "Failed to delete user",
       );
     } finally {
       setIsLoading(false);
@@ -305,13 +313,15 @@ export function UserActionsDialog({
       await authClient.admin.impersonateUser({
         userId: user.id,
       });
-      toast.success(`Now impersonating ${user.name || user.email}`, { id: `impersonate-${user.id}` });
+      toast.success(`Now impersonating ${user.name || user.email}`, {
+        id: `impersonate-${user.id}`,
+      });
       // Redirect to dashboard as the impersonated user
       window.location.href = "/dashboard";
     } catch (error: unknown) {
       toast.error(
         (error instanceof Error ? error.message : null) ||
-          "Failed to impersonate user"
+          "Failed to impersonate user",
       );
       setIsLoading(false);
     }
@@ -673,12 +683,15 @@ export function UserActionsDialog({
   const dialogContent = getDialogContent();
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => {
-      // Only close if user explicitly closes the dialog, not on re-renders
-      if (!open) {
-        onClose();
-      }
-    }}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        // Only close if user explicitly closes the dialog, not on re-renders
+        if (!open) {
+          onClose();
+        }
+      }}
+    >
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>{dialogContent.title}</DialogTitle>

@@ -44,7 +44,7 @@ export default function ClaimAdmin() {
 
       // Success - show toast and sign out to refresh session
       toast.success(
-        "Admin role successfully claimed! Signing you out to refresh your session."
+        "Admin role successfully claimed! Signing you out to refresh your session.",
       );
 
       // Small delay for user to see the success message, then sign out

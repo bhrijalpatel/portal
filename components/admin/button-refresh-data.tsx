@@ -9,7 +9,10 @@ interface RefreshButtonProps {
   isLoading?: boolean;
 }
 
-export function RefreshButton({ onRefresh, isLoading = false }: RefreshButtonProps) {
+export function RefreshButton({
+  onRefresh,
+  isLoading = false,
+}: RefreshButtonProps) {
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const handleRefresh = async () => {
@@ -32,7 +35,11 @@ export function RefreshButton({ onRefresh, isLoading = false }: RefreshButtonPro
       disabled={refreshing}
       className="gap-2"
     >
-      {refreshing ? <Loader2 className="size-4 animate-spin" /> : <RefreshCw className="size-4" />}
+      {refreshing ? (
+        <Loader2 className="size-4 animate-spin" />
+      ) : (
+        <RefreshCw className="size-4" />
+      )}
       {refreshing ? "Refreshing..." : "Refresh Data"}
     </Button>
   );

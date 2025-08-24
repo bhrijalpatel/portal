@@ -25,16 +25,18 @@ export default function ResetPasswordPage() {
       </div>
 
       <div className="flex w-full max-w-sm flex-col gap-6">
-        <Suspense fallback={
-          <div className="w-full max-w-md p-8 rounded-2xl bg-gradient-to-br from-primary/5 via-blue-500/5 to-purple-500/5 border border-primary/10 backdrop-blur-sm shadow-lg">
-            <div className="animate-pulse space-y-4">
-              <div className="h-8 bg-muted rounded w-3/4 mx-auto"></div>
-              <div className="h-4 bg-muted rounded w-full"></div>
-              <div className="h-10 bg-muted rounded"></div>
-              <div className="h-10 bg-muted rounded"></div>
+        <Suspense
+          fallback={
+            <div className="w-full max-w-md p-8 rounded-2xl bg-gradient-to-br from-primary/5 via-blue-500/5 to-purple-500/5 border border-primary/10 backdrop-blur-sm shadow-lg">
+              <div className="animate-pulse space-y-4">
+                <div className="h-8 bg-muted rounded w-3/4 mx-auto"></div>
+                <div className="h-4 bg-muted rounded w-full"></div>
+                <div className="h-10 bg-muted rounded"></div>
+                <div className="h-10 bg-muted rounded"></div>
+              </div>
             </div>
-          </div>
-        }>
+          }
+        >
           <ResetPasswordForm />
         </Suspense>
       </div>

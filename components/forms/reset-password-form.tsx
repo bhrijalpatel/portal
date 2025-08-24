@@ -27,25 +27,30 @@ import { useState, useEffect } from "react";
 import { Loader2, KeyRound, CheckCircle, XCircle } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 
-const resetPasswordSchema = z.object({
-  newPassword: z.string()
-    .min(12, "Password must be at least 12 characters")
-    .max(128, "Password must be less than 128 characters")
-    .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
-    .regex(/[a-z]/, "Password must contain at least one lowercase letter")
-    .regex(/[0-9]/, "Password must contain at least one number"),
-  confirmPassword: z.string(),
-}).refine((data) => data.newPassword === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
-});
+const resetPasswordSchema = z
+  .object({
+    newPassword: z
+      .string()
+      .min(12, "Password must be at least 12 characters")
+      .max(128, "Password must be less than 128 characters")
+      .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+      .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+      .regex(/[0-9]/, "Password must contain at least one number"),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
 
 export function ResetPasswordForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
   const [isLoading, setIsLoading] = useState(false);
-  const [tokenStatus, setTokenStatus] = useState<'checking' | 'valid' | 'invalid'>('checking');
+  const [tokenStatus, setTokenStatus] = useState<
+    "checking" | "valid" | "invalid"
+  >("checking");
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
@@ -62,12 +67,12 @@ export function ResetPasswordForm({
   useEffect(() => {
     // Check for error in URL (invalid or expired token)
     if (error === "INVALID_TOKEN") {
-      setTokenStatus('invalid');
+      setTokenStatus("invalid");
       toast.error("Invalid or expired reset link. Please request a new one.");
     } else if (token) {
-      setTokenStatus('valid');
+      setTokenStatus("valid");
     } else {
-      setTokenStatus('invalid');
+      setTokenStatus("invalid");
     }
   }, [token, error]);
 
@@ -92,7 +97,7 @@ export function ResetPasswordForm({
       }
 
       toast.success("Password reset successfully! Redirecting to sign in...");
-      
+
       // Redirect to sign in after a short delay
       setTimeout(() => {
         router.push("/sign-in");
@@ -104,12 +109,15 @@ export function ResetPasswordForm({
     }
   }
 
-  if (tokenStatus === 'checking') {
+  if (tokenStatus === "checking") {
     return (
-      <div className={cn(
-        "flex flex-col gap-6 w-full max-w-md p-8 rounded-2xl bg-gradient-to-br from-primary/5 via-blue-500/5 to-purple-500/5 border border-primary/10 backdrop-blur-sm shadow-lg",
-        className
-      )} {...props}>
+      <div
+        className={cn(
+          "flex flex-col gap-6 w-full max-w-md p-8 rounded-2xl bg-gradient-to-br from-primary/5 via-blue-500/5 to-purple-500/5 border border-primary/10 backdrop-blur-sm shadow-lg",
+          className,
+        )}
+        {...props}
+      >
         <div className="flex items-center justify-center">
           <Loader2 className="size-8 animate-spin" />
         </div>
@@ -117,12 +125,15 @@ export function ResetPasswordForm({
     );
   }
 
-  if (tokenStatus === 'invalid') {
+  if (tokenStatus === "invalid") {
     return (
-      <div className={cn(
-        "flex flex-col gap-6 w-full max-w-md p-8 rounded-2xl bg-gradient-to-br from-rose-500/5 via-orange-500/5 to-amber-500/5 border border-rose-500/10 backdrop-blur-sm shadow-lg",
-        className
-      )} {...props}>
+      <div
+        className={cn(
+          "flex flex-col gap-6 w-full max-w-md p-8 rounded-2xl bg-gradient-to-br from-rose-500/5 via-orange-500/5 to-amber-500/5 border border-rose-500/10 backdrop-blur-sm shadow-lg",
+          className,
+        )}
+        {...props}
+      >
         <Card className="border-0 bg-transparent shadow-none">
           <CardHeader className="text-center">
             <div className="flex justify-center mb-4">
@@ -137,8 +148,8 @@ export function ResetPasswordForm({
             <p className="text-sm text-muted-foreground text-center">
               Password reset links expire after 1 hour for security reasons.
             </p>
-            <Button 
-              className="w-full" 
+            <Button
+              className="w-full"
               onClick={() => router.push("/forgot-password")}
             >
               Request New Reset Link
@@ -153,7 +164,7 @@ export function ResetPasswordForm({
     <div
       className={cn(
         "flex flex-col gap-6 w-full max-w-md p-8 rounded-2xl bg-gradient-to-br from-primary/5 via-blue-500/5 to-purple-500/5 border border-primary/10 backdrop-blur-sm shadow-lg",
-        className
+        className,
       )}
       {...props}
     >
@@ -163,9 +174,7 @@ export function ResetPasswordForm({
             <KeyRound className="size-12 text-primary" />
           </div>
           <CardTitle className="text-xl">Reset Your Password</CardTitle>
-          <CardDescription>
-            Enter your new password below
-          </CardDescription>
+          <CardDescription>Enter your new password below</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -178,18 +187,18 @@ export function ResetPasswordForm({
                     <FormItem>
                       <FormLabel>New Password</FormLabel>
                       <FormControl>
-                        <Input 
-                          type="password" 
+                        <Input
+                          type="password"
                           placeholder="Enter new password"
                           disabled={isLoading}
-                          {...field} 
+                          {...field}
                         />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="confirmPassword"
@@ -197,11 +206,11 @@ export function ResetPasswordForm({
                     <FormItem>
                       <FormLabel>Confirm Password</FormLabel>
                       <FormControl>
-                        <Input 
-                          type="password" 
+                        <Input
+                          type="password"
                           placeholder="Confirm new password"
                           disabled={isLoading}
-                          {...field} 
+                          {...field}
                         />
                       </FormControl>
                       <FormMessage />
