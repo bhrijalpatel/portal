@@ -54,7 +54,7 @@ export function SSEStatusIndicator() {
             </span>
 
             {userRole && (
-              <span className="text-xs text-muted-foreground">
+              <span className="text-muted-foreground text-xs">
                 {userRole.charAt(0).toUpperCase() + userRole.slice(1)}
               </span>
             )}
@@ -62,12 +62,12 @@ export function SSEStatusIndicator() {
         </TooltipTrigger>
         <TooltipContent>
           {isConnected ? (
-            <div className="flex flex-row gap-1 items-center justify-center">
+            <div className="flex flex-row items-center justify-center gap-1">
               <span>Real-time updates connected</span>
               <Check className="size-4" />
             </div>
           ) : (
-            <div className="flex flex-row gap-1 items-center justify-center">
+            <div className="flex flex-row items-center justify-center gap-1">
               <span>Real-time updates reconnecting</span>
               <Loader2 className="size-4 animate-spin" />
             </div>

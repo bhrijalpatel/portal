@@ -127,7 +127,7 @@ export function NavUserClient({ session }: { session: SessionShape | null }) {
                     <span className="truncate font-medium">{user.name}</span>
                   )}
                   {user.email && (
-                    <span className="truncate text-xs text-muted-foreground">
+                    <span className="text-muted-foreground truncate text-xs">
                       {user.email}
                     </span>
                   )}

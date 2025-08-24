@@ -347,7 +347,7 @@ function ActionsCell({
           <Button
             variant="outline"
             size="icon"
-            className="text-rose-500 hover:text-rose-700 border-rose-500 hover:border-rose-700"
+            className="border-rose-500 text-rose-500 hover:border-rose-700 hover:text-rose-700"
             onClick={handleEndEdit}
           >
             <span className="sr-only">Close edit mode</span>
@@ -553,7 +553,7 @@ export function createColumns(onUserUpdate: () => void): ColumnDef<User>[] {
         const date = new Date(dateValue as string | Date);
         return (
           <div className="flex justify-center">
-            <div className="text-sm text-muted-foreground">
+            <div className="text-muted-foreground text-sm">
               {date.toLocaleDateString("en-US", {
                 year: "numeric",
                 month: "short",
@@ -574,7 +574,7 @@ export function createColumns(onUserUpdate: () => void): ColumnDef<User>[] {
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <button className="font-mono text-sm text-muted-foreground hover:text-foreground cursor-default transition-colors">
+                  <button className="text-muted-foreground hover:text-foreground cursor-default font-mono text-sm transition-colors">
                     {id.slice(0, 8)}...
                   </button>
                 </TooltipTrigger>

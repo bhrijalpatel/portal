@@ -8,10 +8,10 @@ export default async function NotFound() {
   const session = await getSessionOrNull();
 
   return (
-    <main className="min-h-screen flex items-center justify-center">
-      <div className="text-center space-y-6 p-6">
+    <main className="flex min-h-screen items-center justify-center">
+      <div className="space-y-6 p-6 text-center">
         <div className="space-y-2">
-          <h1 className="text-6xl font-bold text-muted-foreground">404</h1>
+          <h1 className="text-muted-foreground text-6xl font-bold">404</h1>
           <h2 className="text-2xl font-semibold">Not Found</h2>
           <p className="text-muted-foreground max-w-md">
             The requested resource could not be found.

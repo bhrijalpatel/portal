@@ -3,10 +3,10 @@ import { Button } from "@/components/ui/button";
 
 export default function ForbiddenPage() {
   return (
-    <main className="min-h-screen flex items-center justify-center">
-      <div className="text-center space-y-6 p-6">
+    <main className="flex min-h-screen items-center justify-center">
+      <div className="space-y-6 p-6 text-center">
         <div className="space-y-2">
-          <h1 className="text-6xl font-bold text-muted-foreground">403</h1>
+          <h1 className="text-muted-foreground text-6xl font-bold">403</h1>
           <h2 className="text-2xl font-semibold">Access Forbidden</h2>
           <p className="text-muted-foreground max-w-md">
             You do not have permission to access this resource. Please contact
@@ -14,7 +14,7 @@ export default function ForbiddenPage() {
           </p>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <div className="flex flex-col justify-center gap-4 sm:flex-row">
           <Button asChild>
             <Link href="/dashboard">Go to Dashboard</Link>
           </Button>

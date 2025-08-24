@@ -25,7 +25,7 @@ export default async function AdminSetupPage() {
   // If bootstrap is not allowed, show error
   if (!accessCheck.allowed) {
     return (
-      <main className="flex flex-col items-center justify-center max-w-md mx-auto gap-3 h-screen">
+      <main className="mx-auto flex h-screen max-w-md flex-col items-center justify-center gap-3">
         <Card className="border-rose-500/20 bg-rose-50/10 dark:bg-rose-950/10">
           <CardHeader>
             <div className="flex items-center gap-2">
@@ -37,10 +37,10 @@ export default async function AdminSetupPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               To enable admin setup:
             </p>
-            <ol className="list-decimal list-inside text-sm space-y-1 text-muted-foreground">
+            <ol className="text-muted-foreground list-inside list-decimal space-y-1 text-sm">
               <li>
                 Set{" "}
                 <code className="bg-muted px-1">ADMIN_SETUP_ENABLED=true</code>{" "}
@@ -62,7 +62,7 @@ export default async function AdminSetupPage() {
   // Check if admin already exists
   if (await adminExists()) {
     return (
-      <main className="flex flex-col items-center justify-center mx-auto gap-3 h-screen">
+      <main className="mx-auto flex h-screen flex-col items-center justify-center gap-3">
         <Card>
           <CardContent>
             <CardHeader>
@@ -82,7 +82,7 @@ export default async function AdminSetupPage() {
   const { user } = await requireSession();
 
   return (
-    <main className="flex flex-col items-center justify-center max-w-lg mx-auto gap-4 h-screen p-4">
+    <main className="mx-auto flex h-screen max-w-lg flex-col items-center justify-center gap-4 p-4">
       <Card className="w-full">
         <CardHeader>
           <CardTitle>🔐 Secure Admin Setup</CardTitle>
@@ -91,21 +91,21 @@ export default async function AdminSetupPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="bg-muted p-3 rounded-lg space-y-2">
+          <div className="bg-muted space-y-2 rounded-lg p-3">
             <p className="text-sm">
               Signed in as: <b>{user.email}</b>
             </p>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               IP Address:{" "}
-              <code className="bg-background px-1 rounded">{ipAddress}</code>
+              <code className="bg-background rounded px-1">{ipAddress}</code>
             </p>
           </div>
 
-          <div className="border-l-4 border-amber-500 bg-amber-50/10 p-3 space-y-1">
+          <div className="space-y-1 border-l-4 border-amber-500 bg-amber-50/10 p-3">
             <p className="text-sm font-medium text-amber-600 dark:text-amber-400">
               ⚠️ Security Notice
             </p>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-muted-foreground text-xs">
               You will need the admin setup secret from your environment
               configuration to proceed. This is a one-time operation that cannot
               be reversed.

@@ -72,14 +72,14 @@ export function ForgotPasswordForm({
     return (
       <div
         className={cn(
-          "flex flex-col gap-6 w-full max-w-md p-8 rounded-2xl bg-gradient-to-br from-emerald-500/5 via-emerald-500/5 to-teal-500/5 border border-emerald-500/10 backdrop-blur-sm shadow-lg",
+          "flex w-full max-w-md flex-col gap-6 rounded-2xl border border-emerald-500/10 bg-gradient-to-br from-emerald-500/5 via-emerald-500/5 to-teal-500/5 p-8 shadow-lg backdrop-blur-sm",
           className,
         )}
         {...props}
       >
         <Card className="border-0 bg-transparent shadow-none">
           <CardHeader className="text-center">
-            <div className="flex justify-center mb-4">
+            <div className="mb-4 flex justify-center">
               <CheckCircle className="size-12 text-emerald-500 dark:text-emerald-400" />
             </div>
             <CardTitle className="text-xl">Check Your Email</CardTitle>
@@ -88,19 +88,19 @@ export function ForgotPasswordForm({
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="bg-muted/50 p-4 rounded-lg space-y-2">
-              <p className="text-sm text-muted-foreground">
+            <div className="bg-muted/50 space-y-2 rounded-lg p-4">
+              <p className="text-muted-foreground text-sm">
                 If an account exists for{" "}
                 <strong>{form.getValues("email")}</strong>, you will receive an
                 email with instructions to reset your password.
               </p>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-muted-foreground text-xs">
                 The link will expire in 1 hour for security reasons.
               </p>
             </div>
 
             <div className="space-y-2">
-              <p className="text-xs text-muted-foreground text-center">
+              <p className="text-muted-foreground text-center text-xs">
                 Didn&apos;t receive the email? Check your spam folder or
               </p>
               <Button
@@ -118,7 +118,7 @@ export function ForgotPasswordForm({
             <div className="text-center">
               <Link
                 href="/sign-in"
-                className="text-sm text-primary hover:underline"
+                className="text-primary text-sm hover:underline"
               >
                 Back to Sign In
               </Link>
@@ -132,15 +132,15 @@ export function ForgotPasswordForm({
   return (
     <div
       className={cn(
-        "flex flex-col gap-6 w-full max-w-md p-8 rounded-2xl bg-gradient-to-br from-primary/5 via-blue-500/5 to-purple-500/5 border border-primary/10 backdrop-blur-sm shadow-lg",
+        "from-primary/5 border-primary/10 flex w-full max-w-md flex-col gap-6 rounded-2xl border bg-gradient-to-br via-blue-500/5 to-purple-500/5 p-8 shadow-lg backdrop-blur-sm",
         className,
       )}
       {...props}
     >
       <Card className="border-0 bg-transparent shadow-none">
         <CardHeader className="text-center">
-          <div className="flex justify-center mb-4">
-            <Mail className="size-12 text-primary" />
+          <div className="mb-4 flex justify-center">
+            <Mail className="text-primary size-12" />
           </div>
           <CardTitle className="text-xl">Forgot Password?</CardTitle>
           <CardDescription>
@@ -183,13 +183,13 @@ export function ForgotPasswordForm({
                 )}
               </Button>
 
-              <div className="text-center space-y-2">
-                <p className="text-sm text-muted-foreground">
+              <div className="space-y-2 text-center">
+                <p className="text-muted-foreground text-sm">
                   Remember your password?
                 </p>
                 <Link
                   href="/sign-in"
-                  className="text-sm text-primary hover:underline font-medium"
+                  className="text-primary text-sm font-medium hover:underline"
                 >
                   Back to Sign In
                 </Link>

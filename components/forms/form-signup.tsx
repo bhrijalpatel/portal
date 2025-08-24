@@ -70,7 +70,7 @@ export function SignUpForm() {
   }
 
   return (
-    <Card className="bg-gradient-to-br from-primary/5 via-blue-500/5 to-purple-500/5">
+    <Card className="from-primary/5 bg-gradient-to-br via-blue-500/5 to-purple-500/5">
       <CardHeader className="text-center">
         <CardTitle className="text-xl">Sign Up</CardTitle>
         <CardDescription>Create an account to get started</CardDescription>
@@ -130,13 +130,13 @@ export function SignUpForm() {
 
                 <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading ? (
-                    <Loader2 className="animate-spin size-4" />
+                    <Loader2 className="size-4 animate-spin" />
                   ) : (
                     "Sign Up"
                   )}
                 </Button>
               </div>
-              <div className="text-center text-xs text-muted-foreground">
+              <div className="text-muted-foreground text-center text-xs">
                 In case you do not have an account, or you want to create a new
                 one contact the admin.
               </div>

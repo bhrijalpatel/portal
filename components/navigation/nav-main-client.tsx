@@ -46,7 +46,7 @@ export function NavMainClient({ items }: NavMainClientProps) {
                 disabled={item.disabled}
                 isActive={isActive}
                 className={
-                  item.disabled ? "opacity-60 pointer-events-none" : ""
+                  item.disabled ? "pointer-events-none opacity-60" : ""
                 }
               >
                 <Link href={item.url}>

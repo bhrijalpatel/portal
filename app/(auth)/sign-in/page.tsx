@@ -4,13 +4,13 @@ import { ArrowLeft, Sparkles } from "lucide-react";
 
 export default function SignInPage() {
   return (
-    <div className="relative min-h-svh flex flex-col items-center justify-center gap-6 p-6 md:p-10">
+    <div className="relative flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
       {/* Back to Home Link */}
       <Link
         href="/"
-        className="absolute top-6 left-6 flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors group"
+        className="text-muted-foreground hover:text-foreground group absolute top-6 left-6 flex items-center gap-2 text-sm transition-colors"
       >
-        <ArrowLeft className="size-4 group-hover:-translate-x-1 transition-transform" />
+        <ArrowLeft className="size-4 transition-transform group-hover:-translate-x-1" />
         <div className="flex items-center gap-1">
           <Sparkles className="size-4" />
           <span className="font-semibold">Portal</span>

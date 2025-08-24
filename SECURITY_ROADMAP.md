@@ -37,6 +37,7 @@ Based on comprehensive admin flow analysis, the following critical issues requir
   - [ ] Log all bootstrap attempts with IP, timestamp, user details
 
 - [ ] **Admin Bootstrap API Hardening**
+
   ```typescript
   // Target implementation:
   export const POST = withAuth(async ({ session, request }) => {

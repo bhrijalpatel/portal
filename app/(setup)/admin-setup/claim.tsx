@@ -102,7 +102,7 @@ export default function ClaimAdmin() {
           }}
         />
         {err && (
-          <p className="text-sm text-rose-600 dark:text-rose-400 flex items-start gap-1">
+          <p className="flex items-start gap-1 text-sm text-rose-600 dark:text-rose-400">
             <span className="text-xs">⚠️</span>
             <span>{err}</span>
           </p>
@@ -127,7 +127,7 @@ export default function ClaimAdmin() {
         )}
       </Button>
 
-      <div className="text-xs text-muted-foreground space-y-1">
+      <div className="text-muted-foreground space-y-1 text-xs">
         <p>• This action will be logged with your IP address</p>
         <p>• You will become the system administrator</p>
         <p>• You will be signed out to refresh your session with admin role</p>

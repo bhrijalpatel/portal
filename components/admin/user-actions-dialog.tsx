@@ -599,7 +599,7 @@ export function UserActionsDialog({
           description: `Remove ban from ${user?.name}.`,
           content: (
             <div className="space-y-4">
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 This will remove the ban and allow the user to sign in again.
               </p>
               <DialogFooter>
@@ -623,7 +623,7 @@ export function UserActionsDialog({
           description: `Permanently delete ${user?.name} from the system.`,
           content: (
             <div className="space-y-4">
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 This action cannot be undone. This will permanently delete the
                 user account and all associated data.
               </p>
@@ -652,7 +652,7 @@ export function UserActionsDialog({
           description: `Sign in as ${user?.name}.`,
           content: (
             <div className="space-y-4">
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 This will create a session as the selected user. The session
                 will remain active for 1 hour or until you stop impersonating.
               </p>

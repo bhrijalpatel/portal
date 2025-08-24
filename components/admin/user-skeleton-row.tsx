@@ -10,7 +10,7 @@ interface UserSkeletonRowProps {
 
 export function UserSkeletonRow({ creatingAdmin }: UserSkeletonRowProps) {
   return (
-    <TableRow className="animate-pulse bg-sky-50/50 dark:bg-sky-950/20 border-sky-200 dark:border-sky-800">
+    <TableRow className="animate-pulse border-sky-200 bg-sky-50/50 dark:border-sky-800 dark:bg-sky-950/20">
       {/* Select checkbox */}
       <TableCell>
         <Skeleton className="h-4 w-4 rounded-sm" />
@@ -54,8 +54,8 @@ export function UserSkeletonRow({ creatingAdmin }: UserSkeletonRowProps) {
       {/* Actions */}
       <TableCell>
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <span className="inline-block w-2 h-2 bg-sky-500 rounded-full animate-pulse"></span>
+          <div className="text-muted-foreground flex items-center gap-2 text-xs">
+            <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-sky-500"></span>
             {creatingAdmin} is creating...
           </div>
           <Skeleton className="h-8 w-8 rounded-md" />

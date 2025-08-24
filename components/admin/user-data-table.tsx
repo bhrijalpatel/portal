@@ -113,7 +113,7 @@ export function DataTable<TData, TValue>({
     <div className="w-full">
       {/* Impersonation banner */}
       {isImpersonating && (
-        <div className="mb-4 p-3 bg-orange-100 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg">
+        <div className="mb-4 rounded-lg border border-orange-200 bg-orange-100 p-3 dark:border-orange-800 dark:bg-orange-900/20">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <Shield className="size-4 text-orange-600" />
@@ -136,7 +136,7 @@ export function DataTable<TData, TValue>({
       <div className="flex items-center justify-between py-4">
         <div className="flex items-center space-x-4">
           <div className="relative max-w-sm">
-            <Search className="absolute left-2 top-2.5 size-4 text-muted-foreground" />
+            <Search className="text-muted-foreground absolute top-2.5 left-2 size-4" />
             <Input
               placeholder="Search all columns..."
               value={globalFilter ?? ""}
@@ -146,7 +146,7 @@ export function DataTable<TData, TValue>({
             />
           </div>
           {title && (
-            <p className="text-sm font-medium text-muted-foreground">{title}</p>
+            <p className="text-muted-foreground text-sm font-medium">{title}</p>
           )}
         </div>
         <div className="flex items-center gap-3">

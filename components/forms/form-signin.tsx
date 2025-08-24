@@ -74,7 +74,7 @@ export function SignInForm() {
   }
 
   return (
-    <Card className="bg-gradient-to-br from-primary/5 via-blue-500/5 to-purple-500/5">
+    <Card className="from-primary/5 bg-gradient-to-br via-blue-500/5 to-purple-500/5">
       <CardHeader className="text-center">
         <CardTitle className="text-lg md:text-xl">Sign In</CardTitle>
         <CardDescription className="text-xs md:text-sm">
@@ -139,7 +139,7 @@ export function SignInForm() {
                     control={form.control}
                     name="rememberMe"
                     render={({ field }) => (
-                      <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                      <FormItem className="flex flex-row items-start space-y-0 space-x-3">
                         <FormControl>
                           <Checkbox
                             checked={field.value}
@@ -156,7 +156,7 @@ export function SignInForm() {
 
                 <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading ? (
-                    <Loader2 className="animate-spin size-4" />
+                    <Loader2 className="size-4 animate-spin" />
                   ) : (
                     "Sign In"
                   )}

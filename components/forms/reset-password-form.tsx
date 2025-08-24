@@ -113,7 +113,7 @@ export function ResetPasswordForm({
     return (
       <div
         className={cn(
-          "flex flex-col gap-6 w-full max-w-md p-8 rounded-2xl bg-gradient-to-br from-primary/5 via-blue-500/5 to-purple-500/5 border border-primary/10 backdrop-blur-sm shadow-lg",
+          "from-primary/5 border-primary/10 flex w-full max-w-md flex-col gap-6 rounded-2xl border bg-gradient-to-br via-blue-500/5 to-purple-500/5 p-8 shadow-lg backdrop-blur-sm",
           className,
         )}
         {...props}
@@ -129,14 +129,14 @@ export function ResetPasswordForm({
     return (
       <div
         className={cn(
-          "flex flex-col gap-6 w-full max-w-md p-8 rounded-2xl bg-gradient-to-br from-rose-500/5 via-orange-500/5 to-amber-500/5 border border-rose-500/10 backdrop-blur-sm shadow-lg",
+          "flex w-full max-w-md flex-col gap-6 rounded-2xl border border-rose-500/10 bg-gradient-to-br from-rose-500/5 via-orange-500/5 to-amber-500/5 p-8 shadow-lg backdrop-blur-sm",
           className,
         )}
         {...props}
       >
         <Card className="border-0 bg-transparent shadow-none">
           <CardHeader className="text-center">
-            <div className="flex justify-center mb-4">
+            <div className="mb-4 flex justify-center">
               <XCircle className="size-12 text-rose-500 dark:text-rose-400" />
             </div>
             <CardTitle className="text-xl">Invalid Reset Link</CardTitle>
@@ -145,7 +145,7 @@ export function ResetPasswordForm({
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <p className="text-sm text-muted-foreground text-center">
+            <p className="text-muted-foreground text-center text-sm">
               Password reset links expire after 1 hour for security reasons.
             </p>
             <Button
@@ -163,15 +163,15 @@ export function ResetPasswordForm({
   return (
     <div
       className={cn(
-        "flex flex-col gap-6 w-full max-w-md p-8 rounded-2xl bg-gradient-to-br from-primary/5 via-blue-500/5 to-purple-500/5 border border-primary/10 backdrop-blur-sm shadow-lg",
+        "from-primary/5 border-primary/10 flex w-full max-w-md flex-col gap-6 rounded-2xl border bg-gradient-to-br via-blue-500/5 to-purple-500/5 p-8 shadow-lg backdrop-blur-sm",
         className,
       )}
       {...props}
     >
       <Card className="border-0 bg-transparent shadow-none">
         <CardHeader className="text-center">
-          <div className="flex justify-center mb-4">
-            <KeyRound className="size-12 text-primary" />
+          <div className="mb-4 flex justify-center">
+            <KeyRound className="text-primary size-12" />
           </div>
           <CardTitle className="text-xl">Reset Your Password</CardTitle>
           <CardDescription>Enter your new password below</CardDescription>
@@ -220,7 +220,7 @@ export function ResetPasswordForm({
               </div>
 
               <div className="space-y-2">
-                <ul className="text-xs text-muted-foreground space-y-1">
+                <ul className="text-muted-foreground space-y-1 text-xs">
                   <li>• At least 12 characters long</li>
                   <li>• Contains uppercase and lowercase letters</li>
                   <li>• Contains at least one number</li>
