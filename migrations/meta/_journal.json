@@ -29,6 +29,13 @@
       "when": 1755806990627,
       "tag": "0003_omniscient_kate_bishop",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1756037055242,
+      "tag": "0004_icy_rictor",
+      "breakpoints": true
     }
   ]
 }

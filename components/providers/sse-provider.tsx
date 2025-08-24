@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState, useRef } from "react";
+import React, { createContext, useContext, useEffect, useState, useRef, useCallback } from "react";
 import { toast } from "sonner";
 import { useSession } from "@/lib/auth-client";
 import { usePathname } from "next/navigation";
@@ -10,6 +10,16 @@ interface SSEContextType {
   connect: () => void;
   disconnect: () => void;
   userRole: string | null;
+  lockedRows: Set<string>;
+  creationSessions: Set<string>;
+  lockRow: (userId: string, lockingAdmin: string) => void;
+  unlockRow: (userId: string) => void;
+  startCreation: (sessionId: string, creatingAdmin: string) => void;
+  completeCreation: (sessionId: string) => void;
+  getRowLockInfo: (userId: string) => { isLocked: boolean; lockedBy?: string };
+  startEditingSession: (userId: string, adminEmail: string) => void;
+  endEditingSession: (userId: string) => void;
+  isUserBeingEditedByMe: (userId: string, myEmail: string) => boolean;
 }
 
 const SSEContext = createContext<SSEContextType | undefined>(undefined);
@@ -29,6 +39,10 @@ interface SSEProviderProps {
 export function SSEProvider({ children }: SSEProviderProps) {
   const [isConnected, setIsConnected] = useState(false);
   const [userRole, setUserRole] = useState<string | null>(null);
+  const [lockedRows, setLockedRows] = useState<Set<string>>(new Set());
+  const [lockOwnership, setLockOwnership] = useState<Map<string, string>>(new Map()); // userId -> lockingAdmin
+  const [editingSessions, setEditingSessions] = useState<Map<string, string>>(new Map()); // userId -> adminEmail (who's editing)
+  const [creationSessions, setCreationSessions] = useState<Set<string>>(new Set());
   const eventSourceRef = useRef<EventSource | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lastToastRef = useRef<{ message: string; timestamp: number } | null>(null);
@@ -67,7 +81,107 @@ export function SSEProvider({ children }: SSEProviderProps) {
     }
   };
 
-  const connect = () => {
+  // Collaborative editing functions with database persistence
+  const lockRow = async (userId: string) => {
+    try {
+      const response = await fetch('/api/admin/locks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId,
+          action: 'lock'
+        })
+      });
+      
+      const result = await response.json();
+      console.log(`🔍 Lock API response:`, response.status, result);
+      if (!response.ok) {
+        console.error('Failed to lock row:', result.error);
+        if (result.lockedBy) {
+          toast.warning(`User is being edited by ${result.lockedBy}`);
+        }
+        return false;
+      }
+      
+      console.log(`✅ Lock successful, returning true`);
+      return true;
+    } catch (error) {
+      console.error('Failed to lock row:', error);
+      return false;
+    }
+  };
+
+  const unlockRow = async (userId: string) => {
+    try {
+      await fetch('/api/admin/locks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId,
+          action: 'unlock'
+        })
+      });
+    } catch (error) {
+      console.error('Failed to unlock row:', error);
+    }
+  };
+
+  const startCreation = async (sessionId: string, creatingAdmin: string) => {
+    try {
+      await fetch('/api/realtime/broadcast', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          eventType: 'user-creation-started',
+          data: { sessionId, creatingAdmin }
+        })
+      });
+    } catch (error) {
+      console.error('Failed to broadcast creation start:', error);
+    }
+  };
+
+  const completeCreation = async (sessionId: string) => {
+    try {
+      await fetch('/api/realtime/broadcast', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          eventType: 'user-creation-completed',
+          data: { sessionId }
+        })
+      });
+    } catch (error) {
+      console.error('Failed to broadcast creation completion:', error);
+    }
+  };
+
+  const getRowLockInfo = (userId: string) => {
+    const isLocked = lockedRows.has(userId);
+    const lockedBy = lockOwnership.get(userId);
+    return { isLocked, lockedBy };
+  };
+
+  // Edit session management
+  const startEditingSession = (userId: string, adminEmail: string) => {
+    console.log(`🎯 Starting edit session for user ${userId} by ${adminEmail}`);
+    setEditingSessions(prev => new Map([...prev, [userId, adminEmail]]));
+  };
+
+  const endEditingSession = (userId: string) => {
+    console.log(`🎯 Ending edit session for user ${userId}`);
+    setEditingSessions(prev => {
+      const newMap = new Map(prev);
+      newMap.delete(userId);
+      return newMap;
+    });
+  };
+
+  const isUserBeingEditedByMe = (userId: string, myEmail: string) => {
+    return editingSessions.get(userId) === myEmail;
+  };
+
+  const connect = useCallback(() => {
     if (eventSourceRef.current?.readyState === EventSource.OPEN) {
       console.log("🔄 Real-time connection already active");
       return;
@@ -236,6 +350,71 @@ export function SSEProvider({ children }: SSEProviderProps) {
             }));
             break;
             
+          // Collaborative Editing Events
+          case 'user-edit-lock':
+            console.log(`🔒 User row locked: ${message.data.userId} by ${message.data.lockingAdmin}`);
+            setLockedRows(prev => new Set([...prev, message.data.userId]));
+            setLockOwnership(prev => new Map([...prev, [message.data.userId, message.data.lockingAdmin]]));
+            
+            window.dispatchEvent(new CustomEvent('realtime-user-lock', {
+              detail: { 
+                type: message.type, 
+                data: message.data,
+                triggeredBy: message.data.lockingAdmin
+              }
+            }));
+            break;
+            
+          case 'user-edit-unlock':
+            console.log(`🔓 User row unlocked: ${message.data.userId}`);
+            setLockedRows(prev => {
+              const newSet = new Set(prev);
+              newSet.delete(message.data.userId);
+              return newSet;
+            });
+            setLockOwnership(prev => {
+              const newMap = new Map(prev);
+              newMap.delete(message.data.userId);
+              return newMap;
+            });
+            
+            window.dispatchEvent(new CustomEvent('realtime-user-unlock', {
+              detail: { 
+                type: message.type, 
+                data: message.data
+              }
+            }));
+            break;
+            
+          case 'user-creation-started':
+            console.log(`👤➕ User creation started by ${message.data.creatingAdmin}, session: ${message.data.sessionId}`);
+            setCreationSessions(prev => new Set([...prev, message.data.sessionId]));
+            
+            window.dispatchEvent(new CustomEvent('realtime-user-creation', {
+              detail: { 
+                type: message.type, 
+                data: message.data,
+                triggeredBy: message.data.creatingAdmin
+              }
+            }));
+            break;
+            
+          case 'user-creation-completed':
+            console.log(`👤✅ User creation completed, session: ${message.data.sessionId}`);
+            setCreationSessions(prev => {
+              const newSet = new Set(prev);
+              newSet.delete(message.data.sessionId);
+              return newSet;
+            });
+            
+            window.dispatchEvent(new CustomEvent('realtime-user-creation', {
+              detail: { 
+                type: message.type, 
+                data: message.data
+              }
+            }));
+            break;
+            
           default:
             console.log("📡 Unknown real-time message type:", message.type);
         }
@@ -258,9 +437,9 @@ export function SSEProvider({ children }: SSEProviderProps) {
         }, 5000);
       }
     };
-  };
+  }, [shouldConnect]);
 
-  const disconnect = () => {
+  const disconnect = useCallback(() => {
     console.log("🛑 Disconnecting real-time connection");
     setShouldConnect(false);
     
@@ -276,6 +455,27 @@ export function SSEProvider({ children }: SSEProviderProps) {
     
     setIsConnected(false);
     setUserRole(null);
+  }, []);
+
+  // Fetch active locks from database
+  const fetchActiveLocks = async () => {
+    try {
+      const response = await fetch('/api/admin/locks');
+      if (response.ok) {
+        const data = await response.json();
+        const lockSet = new Set<string>();
+        const ownershipMap = new Map<string, string>();
+        data.locks.forEach((lock: { lockedUserId: string; lockedByAdminEmail: string }) => {
+          lockSet.add(lock.lockedUserId);
+          ownershipMap.set(lock.lockedUserId, lock.lockedByAdminEmail);
+        });
+        setLockedRows(lockSet);
+        setLockOwnership(ownershipMap);
+        console.log(`🔒 Loaded ${lockSet.size} active locks from database`);
+      }
+    } catch (error) {
+      console.error('Failed to fetch active locks:', error);
+    }
   };
 
   // Auto-connect when authenticated and on protected pages
@@ -308,18 +508,26 @@ export function SSEProvider({ children }: SSEProviderProps) {
         console.log("🔑 User authenticated on protected page, establishing SSE connection...");
         setTimeout(() => {
           connect();
+          // Fetch existing locks when connecting to admin page
+          if (pathname?.startsWith("/admin")) {
+            fetchActiveLocks();
+          }
         }, 500); // Small delay to ensure auth cookies are set
       }
     } else if (currentSessionId && isProtectedPage && !isConnected && !eventSourceRef.current) {
       // If already authenticated but not connected (e.g., navigating to protected page)
       console.log("📍 Navigated to protected page, establishing SSE connection...");
       connect();
+      // Fetch existing locks when connecting to admin page
+      if (pathname?.startsWith("/admin")) {
+        fetchActiveLocks();
+      }
     } else if (!currentSessionId && eventSourceRef.current) {
       // If logged out but still have connection, disconnect
       console.log("🚪 User logged out, closing SSE connection...");
       disconnect();
     }
-  }, [session, isPending, pathname, isConnected]);
+  }, [session, isPending, pathname, isConnected, connect, disconnect]);
 
   // Cleanup on unmount and handle page navigation
   useEffect(() => {
@@ -336,13 +544,23 @@ export function SSEProvider({ children }: SSEProviderProps) {
       window.removeEventListener("beforeunload", handleBeforeUnload);
       disconnect();
     };
-  }, []);
+  }, [disconnect]);
 
   const value: SSEContextType = {
     isConnected,
     connect,
     disconnect,
     userRole,
+    lockedRows,
+    creationSessions,
+    lockRow,
+    unlockRow,
+    startCreation,
+    completeCreation,
+    getRowLockInfo,
+    startEditingSession,
+    endEditingSession,
+    isUserBeingEditedByMe,
   };
 
   return (

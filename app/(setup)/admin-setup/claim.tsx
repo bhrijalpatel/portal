@@ -81,7 +81,7 @@ export default function ClaimAdmin() {
     <div className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="setup-secret" className="flex items-center gap-2">
-          <KeyRound className="h-4 w-4" />
+          <KeyRound className="size-4" />
           Admin Setup Secret
         </Label>
         <Input

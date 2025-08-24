@@ -75,7 +75,7 @@ export function ForgotPasswordForm({
         <Card className="border-0 bg-transparent shadow-none">
           <CardHeader className="text-center">
             <div className="flex justify-center mb-4">
-              <CheckCircle className="h-12 w-12 text-emerald-500 dark:text-emerald-400" />
+              <CheckCircle className="size-12 text-emerald-500 dark:text-emerald-400" />
             </div>
             <CardTitle className="text-xl">Check Your Email</CardTitle>
             <CardDescription>
@@ -133,7 +133,7 @@ export function ForgotPasswordForm({
       <Card className="border-0 bg-transparent shadow-none">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
-            <Mail className="h-12 w-12 text-primary" />
+            <Mail className="size-12 text-primary" />
           </div>
           <CardTitle className="text-xl">Forgot Password?</CardTitle>
           <CardDescription>

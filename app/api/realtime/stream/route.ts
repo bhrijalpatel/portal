@@ -22,6 +22,7 @@ export const GET = withAuth(async ({ session }) => {
       });
       
       console.log(`✅ Real-time client connected: ${currentClientId} (${userRole}) - Total: ${connectedClients.size}`);
+      console.log(`🔍 Debug: connectedClients instance in stream:`, connectedClients.constructor.name, connectedClients);
       
       // Send initial connection confirmation
       const initialMessage = {
@@ -45,7 +46,7 @@ export const GET = withAuth(async ({ session }) => {
         try {
           // Send a comment line as heartbeat (SSE comment format)
           controller.enqueue(new TextEncoder().encode(`:heartbeat ${new Date().toISOString()}\n\n`));
-        } catch (error) {
+        } catch {
           // Connection closed, clean up
           clearInterval(heartbeatInterval);
           if (currentClientId) {
@@ -55,13 +56,14 @@ export const GET = withAuth(async ({ session }) => {
       }, 30000);
       
       // Store interval for cleanup
-      (controller as any).heartbeatInterval = heartbeatInterval;
+      (controller as unknown as { heartbeatInterval: NodeJS.Timeout }).heartbeatInterval = heartbeatInterval;
     },
     
     cancel() {
       // Clean up heartbeat interval
-      if ((this as any).heartbeatInterval) {
-        clearInterval((this as any).heartbeatInterval);
+      const controllerWithInterval = this as unknown as { heartbeatInterval?: NodeJS.Timeout };
+      if (controllerWithInterval.heartbeatInterval) {
+        clearInterval(controllerWithInterval.heartbeatInterval);
       }
       
       // Remove this specific client

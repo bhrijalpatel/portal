@@ -1,14 +1,23 @@
-// Keep track of all connected users (not just admins)
-const connectedClients = new Map<string, {
-  controller: ReadableStreamDefaultController<Uint8Array>;
-  userId: string;
-  userRole: string;
-  userEmail: string;
-}>();
+// Global shared Map across all API routes and processes
+declare global {
+  var __GLOBAL_SSE_CLIENTS__: Map<string, {
+    controller: ReadableStreamDefaultController<Uint8Array>;
+    userId: string;
+    userRole: string;
+    userEmail: string;
+  }> | undefined;
+}
+
+// Initialize if doesn't exist
+globalThis.__GLOBAL_SSE_CLIENTS__ = globalThis.__GLOBAL_SSE_CLIENTS__ || new Map();
+
+// Export the global Map
+export const connectedClients = globalThis.__GLOBAL_SSE_CLIENTS__;
 
 // Universal event types for all business operations
 export type RealtimeEventType = 
   | 'user-created' | 'user-updated' | 'user-deleted'
+  | 'user-edit-lock' | 'user-edit-unlock' | 'user-creation-started' | 'user-creation-completed'
   | 'job-card-created' | 'job-card-updated' | 'job-card-completed'
   | 'inventory-updated' | 'stock-low' | 'stock-out'
   | 'salary-updated' | 'payment-processed' | 'invoice-generated'
@@ -22,6 +31,12 @@ const EVENT_PERMISSIONS: Record<RealtimeEventType, string[]> = {
   'user-created': ['admin'],
   'user-updated': ['admin'], 
   'user-deleted': ['admin'],
+  
+  // Collaborative editing - admin only
+  'user-edit-lock': ['admin'],
+  'user-edit-unlock': ['admin'],
+  'user-creation-started': ['admin'],
+  'user-creation-completed': ['admin'],
   
   // Job cards - all users
   'job-card-created': ['admin', 'user', 'manager', 'technician'],
@@ -61,6 +76,7 @@ export async function broadcastRealtimeUpdate(
 ) {
   console.log(`📡 Broadcasting ${eventType} to eligible clients (triggered by ${triggeredBy || 'system'})`);
   console.log(`📊 Current connected clients: ${connectedClients.size}`);
+  console.log(`🔍 Debug: connectedClients instance:`, connectedClients.constructor.name, connectedClients);
   
   // Debug: show all connected clients
   for (const [clientId, client] of connectedClients.entries()) {
@@ -109,5 +125,4 @@ export async function broadcastRealtimeUpdate(
   console.log(`📡 Broadcast complete. ${eligibleClients.length - disconnectedClients.length} clients notified`);
 }
 
-// Export for external use
-export { connectedClients };
+// Note: connectedClients is now exported as a singleton at the top of the file

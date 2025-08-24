@@ -78,6 +78,12 @@ function checkBroadcastPermission(eventType: RealtimeEventType, userRole: string
     'user-updated': ['admin'],
     'user-deleted': ['admin'],
     
+    // Collaborative editing - admin only can trigger
+    'user-edit-lock': ['admin'],
+    'user-edit-unlock': ['admin'],
+    'user-creation-started': ['admin'],
+    'user-creation-completed': ['admin'],
+    
     // Job cards - users, technicians, managers can trigger
     'job-card-created': ['admin', 'user', 'manager', 'technician'],
     'job-card-updated': ['admin', 'user', 'manager', 'technician'],
@@ -118,6 +124,10 @@ function getBroadcastRequiredRoles(eventType: RealtimeEventType): string[] {
     'user-created': ['admin'],
     'user-updated': ['admin'],
     'user-deleted': ['admin'],
+    'user-edit-lock': ['admin'],
+    'user-edit-unlock': ['admin'],
+    'user-creation-started': ['admin'],
+    'user-creation-completed': ['admin'],
     'job-card-created': ['admin', 'user', 'manager', 'technician'],
     'job-card-updated': ['admin', 'user', 'manager', 'technician'],
     'job-card-completed': ['admin', 'user', 'manager', 'technician'],

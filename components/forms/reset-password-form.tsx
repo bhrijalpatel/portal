@@ -111,7 +111,7 @@ export function ResetPasswordForm({
         className
       )} {...props}>
         <div className="flex items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <Loader2 className="size-8 animate-spin" />
         </div>
       </div>
     );
@@ -126,7 +126,7 @@ export function ResetPasswordForm({
         <Card className="border-0 bg-transparent shadow-none">
           <CardHeader className="text-center">
             <div className="flex justify-center mb-4">
-              <XCircle className="h-12 w-12 text-rose-500 dark:text-rose-400" />
+              <XCircle className="size-12 text-rose-500 dark:text-rose-400" />
             </div>
             <CardTitle className="text-xl">Invalid Reset Link</CardTitle>
             <CardDescription>
@@ -160,7 +160,7 @@ export function ResetPasswordForm({
       <Card className="border-0 bg-transparent shadow-none">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
-            <KeyRound className="h-12 w-12 text-primary" />
+            <KeyRound className="size-12 text-primary" />
           </div>
           <CardTitle className="text-xl">Reset Your Password</CardTitle>
           <CardDescription>

@@ -83,7 +83,7 @@ export const auth = betterAuth({
   },
   rateLimit: { enabled: true },
   advanced: {
-    useSecureCookies: true,
+    useSecureCookies: process.env.NODE_ENV === 'production',
     cookiePrefix: "Portal",
   },
   database: drizzleAdapter(db, { provider: "pg", schema }),

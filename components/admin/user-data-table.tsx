@@ -16,6 +16,7 @@ import {
 import { ChevronDown, Search, Plus, Shield } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+// import { DialogStateProvider } from "./dialog-state-provider";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -115,7 +116,7 @@ export function DataTable<TData, TValue>({
         <div className="mb-4 p-3 bg-orange-100 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <Shield className="h-4 w-4 text-orange-600" />
+              <Shield className="size-4 text-orange-600" />
               <span className="text-sm font-medium text-orange-800 dark:text-orange-200">
                 You are currently impersonating a user
               </span>
@@ -135,7 +136,7 @@ export function DataTable<TData, TValue>({
       <div className="flex items-center justify-between py-4">
         <div className="flex items-center space-x-4">
           <div className="relative max-w-sm">
-            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-2 top-2.5 size-4 text-muted-foreground" />
             <Input
               placeholder="Search all columns..."
               value={globalFilter ?? ""}

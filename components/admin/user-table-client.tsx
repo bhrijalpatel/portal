@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect } from "react";
 import { createColumns, User } from "@/components/admin/user-columns";
 import { DataTable } from "@/components/admin/user-data-table";
 import { toast } from "sonner";
+import { useSSE } from "@/components/providers/sse-provider";
 
 interface ClientUserTableProps {
   initialUsers: User[];
@@ -12,6 +13,7 @@ interface ClientUserTableProps {
 export function UserTableClient({ initialUsers }: ClientUserTableProps) {
   const [users, setUsers] = useState<User[]>(initialUsers);
   const [isLoading, setIsLoading] = useState(false);
+  useSSE();
 
   // Function to fetch fresh data from API
   const refreshUsers = useCallback(async (showToast: boolean = false) => {
@@ -127,7 +129,7 @@ export function UserTableClient({ initialUsers }: ClientUserTableProps) {
     await refreshUsers(true); // Show toast for manual refresh
   }, [refreshUsers]);
 
-  // Create columns with data change handler
+  // Create columns with data change handler (lock info now comes from SSE provider)
   const columnsWithUpdate = createColumns(handleDataChange);
 
   return (

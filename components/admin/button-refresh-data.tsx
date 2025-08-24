@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { RefreshCw } from "lucide-react";
+import { RefreshCw, Loader2 } from "lucide-react";
 import { useState } from "react";
 
 interface RefreshButtonProps {
@@ -32,7 +32,7 @@ export function RefreshButton({ onRefresh, isLoading = false }: RefreshButtonPro
       disabled={refreshing}
       className="gap-2"
     >
-      <RefreshCw className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
+      {refreshing ? <Loader2 className="size-4 animate-spin" /> : <RefreshCw className="size-4" />}
       {refreshing ? "Refreshing..." : "Refresh Data"}
     </Button>
   );

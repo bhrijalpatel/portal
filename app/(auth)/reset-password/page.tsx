@@ -11,9 +11,9 @@ export default function ResetPasswordPage() {
         href="/sign-in"
         className="absolute top-6 left-6 flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors group"
       >
-        <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
+        <ArrowLeft className="size-4 group-hover:-translate-x-1 transition-transform" />
         <div className="flex items-center gap-1">
-          <Sparkles className="h-4 w-4" />
+          <Sparkles className="size-4" />
           <span className="font-semibold">Back to Sign In</span>
         </div>
       </Link>

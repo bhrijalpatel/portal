@@ -467,7 +467,7 @@ export function UserActionsDialog({
                   </Button>
                   <Button type="submit" disabled={isLoading}>
                     {isLoading && (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      <Loader2 className="mr-2 size-4 animate-spin" />
                     )}
                     Update User
                   </Button>
@@ -510,7 +510,7 @@ export function UserActionsDialog({
                   </Button>
                   <Button type="submit" disabled={isLoading}>
                     {isLoading && (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      <Loader2 className="mr-2 size-4 animate-spin" />
                     )}
                     Set Password
                   </Button>
@@ -573,7 +573,7 @@ export function UserActionsDialog({
                     disabled={isLoading}
                   >
                     {isLoading && (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      <Loader2 className="mr-2 size-4 animate-spin" />
                     )}
                     Ban User
                   </Button>
@@ -598,7 +598,7 @@ export function UserActionsDialog({
                 </Button>
                 <Button onClick={handleUnbanUser} disabled={isLoading}>
                   {isLoading && (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <Loader2 className="mr-2 size-4 animate-spin" />
                   )}
                   Unban User
                 </Button>
@@ -627,7 +627,7 @@ export function UserActionsDialog({
                   disabled={isLoading}
                 >
                   {isLoading && (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <Loader2 className="mr-2 size-4 animate-spin" />
                   )}
                   Delete User
                 </Button>
@@ -652,7 +652,7 @@ export function UserActionsDialog({
                 </Button>
                 <Button onClick={handleImpersonateUser} disabled={isLoading}>
                   {isLoading && (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <Loader2 className="mr-2 size-4 animate-spin" />
                   )}
                   Start Impersonation
                 </Button>
@@ -673,7 +673,12 @@ export function UserActionsDialog({
   const dialogContent = getDialogContent();
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={(open) => {
+      // Only close if user explicitly closes the dialog, not on re-renders
+      if (!open) {
+        onClose();
+      }
+    }}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>{dialogContent.title}</DialogTitle>

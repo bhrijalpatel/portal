@@ -107,5 +107,20 @@ export const adminAuditLogs = pgTable("admin_audit_logs", {
     .notNull(),
 });
 
+/** Real-time Collaborative Editing Locks */
+export const userLocks = pgTable("user_locks", {
+  id: text("id").primaryKey().$defaultFn(() => `lock_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`),
+  lockedUserId: text("locked_user_id").notNull(), // The user being edited
+  lockedByAdminId: text("locked_by_admin_id").notNull(), // Admin who is editing
+  lockedByAdminEmail: text("locked_by_admin_email").notNull(), // For display purposes
+  lockType: text("lock_type").notNull().default("edit"), // 'edit', 'create', etc.
+  sessionId: text("session_id"), // Track which session created the lock
+  expiresAt: timestamp("expires_at").notNull() // Auto-expire stale locks (e.g., 15 minutes)
+    .$defaultFn(() => new Date(Date.now() + 15 * 60 * 1000)), // 15 minutes default
+  createdAt: timestamp("created_at")
+    .$defaultFn(() => new Date())
+    .notNull(),
+});
+
 /** Optional: central export for tooling */
-export const schema = { user, session, account, verification, profiles, adminAuditLogs };
+export const schema = { user, session, account, verification, profiles, adminAuditLogs, userLocks };

@@ -55,11 +55,11 @@ export default function HomePage() {
           <Button asChild size="lg" variant="outline">
             <Link href="/sign-in" className="flex items-center gap-2">
               Access Dashboard
-              <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="size-5 group-hover:translate-x-1 transition-transform" />
             </Link>
           </Button>
           <div className="flex items-center gap-2 text-sm text-muted-foreground group-hover:text-emerald-600 transition-all duration-300">
-            <Shield className="h-4 w-4" />
+            <Shield className="size-4" />
             <span>Secure team access</span>
           </div>
         </div>
@@ -140,7 +140,7 @@ function StatCard({
 }) {
   return (
     <div className="text-center p-6 rounded-xl bg-card/50 backdrop-blur-sm border border-border/50 hover:border-primary/20 transition-colors">
-      <Icon className="h-8 w-8 text-primary mx-auto mb-3" />
+      <Icon className="size-8 text-primary mx-auto mb-3" />
       <div className="text-2xl font-bold text-foreground">{value}</div>
       <div className="text-sm text-muted-foreground">{label}</div>
     </div>
@@ -164,7 +164,7 @@ function FeatureCard({
       <div className="relative">
         <div className="mb-4 flex items-center gap-3">
           <div className="p-3 rounded-xl bg-primary/10 group-hover:bg-primary/15 transition-colors">
-            <Icon className="h-6 w-6 text-primary" />
+            <Icon className="size-6 text-primary" />
           </div>
           <span className="text-xs font-semibold uppercase tracking-wider text-primary">
             {highlight}
