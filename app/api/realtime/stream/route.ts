@@ -39,9 +39,31 @@ export const GET = withAuth(async ({ session }) => {
       } catch (error) {
         console.error('Error sending initial message:', error);
       }
+      
+      // Send heartbeat every 30 seconds to keep connection alive
+      const heartbeatInterval = setInterval(() => {
+        try {
+          // Send a comment line as heartbeat (SSE comment format)
+          controller.enqueue(new TextEncoder().encode(`:heartbeat ${new Date().toISOString()}\n\n`));
+        } catch (error) {
+          // Connection closed, clean up
+          clearInterval(heartbeatInterval);
+          if (currentClientId) {
+            connectedClients.delete(currentClientId);
+          }
+        }
+      }, 30000);
+      
+      // Store interval for cleanup
+      (controller as any).heartbeatInterval = heartbeatInterval;
     },
     
     cancel() {
+      // Clean up heartbeat interval
+      if ((this as any).heartbeatInterval) {
+        clearInterval((this as any).heartbeatInterval);
+      }
+      
       // Remove this specific client
       if (currentClientId) {
         connectedClients.delete(currentClientId);

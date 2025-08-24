@@ -2,6 +2,8 @@
 
 import React, { createContext, useContext, useEffect, useState, useRef } from "react";
 import { toast } from "sonner";
+import { useSession } from "@/lib/auth-client";
+import { usePathname } from "next/navigation";
 
 interface SSEContextType {
   isConnected: boolean;
@@ -31,6 +33,9 @@ export function SSEProvider({ children }: SSEProviderProps) {
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lastToastRef = useRef<{ message: string; timestamp: number } | null>(null);
   const [shouldConnect, setShouldConnect] = useState(false);
+  const { data: session, isPending } = useSession();
+  const pathname = usePathname();
+  const previousSessionRef = useRef<string | null>(null);
 
   // Helper function to prevent duplicate toasts
   const showToast = (message: string, type: 'success' | 'info' | 'warning' | 'error' = 'info') => {
@@ -273,9 +278,62 @@ export function SSEProvider({ children }: SSEProviderProps) {
     setUserRole(null);
   };
 
-  // Cleanup on unmount
+  // Auto-connect when authenticated and on protected pages
   useEffect(() => {
+    // Skip if session is still loading
+    if (isPending) return;
+
+    // Check if we're on a protected page
+    const isProtectedPage = 
+      pathname?.startsWith("/dashboard") ||
+      pathname?.startsWith("/admin") ||
+      pathname?.startsWith("/inventory") ||
+      pathname?.startsWith("/jobs") ||
+      pathname?.startsWith("/orders") ||
+      pathname?.startsWith("/tasks");
+
+    const currentSessionId = session?.user?.id || null;
+    const sessionChanged = previousSessionRef.current !== currentSessionId;
+
+    // If session changed (login/logout/user switch)
+    if (sessionChanged) {
+      console.log("🔄 Session changed:", previousSessionRef.current, "→", currentSessionId);
+      previousSessionRef.current = currentSessionId;
+
+      // Always disconnect first when session changes
+      disconnect();
+
+      // If authenticated and on protected page, connect after a short delay
+      if (currentSessionId && isProtectedPage) {
+        console.log("🔑 User authenticated on protected page, establishing SSE connection...");
+        setTimeout(() => {
+          connect();
+        }, 500); // Small delay to ensure auth cookies are set
+      }
+    } else if (currentSessionId && isProtectedPage && !isConnected && !eventSourceRef.current) {
+      // If already authenticated but not connected (e.g., navigating to protected page)
+      console.log("📍 Navigated to protected page, establishing SSE connection...");
+      connect();
+    } else if (!currentSessionId && eventSourceRef.current) {
+      // If logged out but still have connection, disconnect
+      console.log("🚪 User logged out, closing SSE connection...");
+      disconnect();
+    }
+  }, [session, isPending, pathname, isConnected]);
+
+  // Cleanup on unmount and handle page navigation
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (eventSourceRef.current) {
+        console.log("🔄 Page unloading, closing SSE connection...");
+        eventSourceRef.current.close();
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
     return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
       disconnect();
     };
   }, []);

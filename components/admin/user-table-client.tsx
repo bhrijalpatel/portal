@@ -4,7 +4,6 @@ import { useState, useCallback, useEffect } from "react";
 import { createColumns, User } from "@/components/admin/user-columns";
 import { DataTable } from "@/components/admin/user-data-table";
 import { toast } from "sonner";
-import { useSSE } from "@/components/providers/sse-provider";
 
 interface ClientUserTableProps {
   initialUsers: User[];
@@ -13,7 +12,6 @@ interface ClientUserTableProps {
 export function UserTableClient({ initialUsers }: ClientUserTableProps) {
   const [users, setUsers] = useState<User[]>(initialUsers);
   const [isLoading, setIsLoading] = useState(false);
-  const { connect } = useSSE();
 
   // Function to fetch fresh data from API
   const refreshUsers = useCallback(async (showToast: boolean = false) => {
@@ -87,10 +85,7 @@ export function UserTableClient({ initialUsers }: ClientUserTableProps) {
     };
   }, [refreshUsers]);
 
-  // Auto-connect to real-time updates when component mounts
-  useEffect(() => {
-    connect();
-  }, [connect]);
+  // SSE connection is now automatically managed by SSEProvider based on authentication state
 
   // Broadcast user operations to all eligible users
   const handleDataChange = useCallback(async () => {
