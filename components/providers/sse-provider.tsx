@@ -12,7 +12,7 @@ interface SSEContextType {
   userRole: string | null;
   lockedRows: Set<string>;
   creationSessions: Set<string>;
-  lockRow: (userId: string, lockingAdmin: string) => void;
+  lockRow: (userId: string) => Promise<boolean>;
   unlockRow: (userId: string) => void;
   startCreation: (sessionId: string, creatingAdmin: string) => void;
   completeCreation: (sessionId: string) => void;
@@ -81,8 +81,8 @@ export function SSEProvider({ children }: SSEProviderProps) {
     }
   };
 
-  // Collaborative editing functions with database persistence
-  const lockRow = async (userId: string) => {
+  // Collaborative editing functions with database persistence  
+  const lockRow = async (userId: string): Promise<boolean> => {
     try {
       const response = await fetch('/api/admin/locks', {
         method: 'POST',
@@ -181,6 +181,38 @@ export function SSEProvider({ children }: SSEProviderProps) {
     return editingSessions.get(userId) === myEmail;
   };
 
+  // Fetch active locks from database
+  const fetchActiveLocks = useCallback(async (currentSession?: typeof session) => {
+    try {
+      const response = await fetch('/api/admin/locks');
+      if (response.ok) {
+        const data = await response.json();
+        const lockSet = new Set<string>();
+        const ownershipMap = new Map<string, string>();
+        const editingMap = new Map<string, string>(); // Restore editing sessions
+        
+        data.locks.forEach((lock: { lockedUserId: string; lockedByAdminEmail: string }) => {
+          lockSet.add(lock.lockedUserId);
+          ownershipMap.set(lock.lockedUserId, lock.lockedByAdminEmail);
+          
+          // If current user owns this lock, restore editing session
+          if (lock.lockedByAdminEmail === (currentSession || session)?.user?.email) {
+            editingMap.set(lock.lockedUserId, lock.lockedByAdminEmail);
+            console.log(`🔄 Restoring editing session for user ${lock.lockedUserId}`);
+          }
+        });
+        
+        setLockedRows(lockSet);
+        setLockOwnership(ownershipMap);
+        setEditingSessions(editingMap); // RESTORE editing state from database
+        console.log(`🔒 Loaded ${lockSet.size} active locks from database`);
+        console.log(`📝 Restored ${editingMap.size} editing sessions for current user`);
+      }
+    } catch (error) {
+      console.error('Failed to fetch active locks:', error);
+    }
+  }, [session]);
+
   const connect = useCallback(() => {
     if (eventSourceRef.current?.readyState === EventSource.OPEN) {
       console.log("🔄 Real-time connection already active");
@@ -223,6 +255,13 @@ export function SSEProvider({ children }: SSEProviderProps) {
               message.data.userRole.charAt(0).toUpperCase() + message.data.userRole.slice(1) : 
               'User';
             showToast(`Real-time updates connected (${capitalizedRole})`, 'success');
+            
+            // Re-fetch locks after SSE connection established (for admin users)
+            if (message.data.userRole === 'admin') {
+              console.log("🔄 SSE connected, refreshing lock state for admin user");
+              // Small delay to ensure connection is fully established
+              setTimeout(() => fetchActiveLocks(), 1000);
+            }
             break;
             
           // User Management Events
@@ -437,7 +476,7 @@ export function SSEProvider({ children }: SSEProviderProps) {
         }, 5000);
       }
     };
-  }, [shouldConnect]);
+  }, [shouldConnect, fetchActiveLocks]);
 
   const disconnect = useCallback(() => {
     console.log("🛑 Disconnecting real-time connection");
@@ -456,27 +495,6 @@ export function SSEProvider({ children }: SSEProviderProps) {
     setIsConnected(false);
     setUserRole(null);
   }, []);
-
-  // Fetch active locks from database
-  const fetchActiveLocks = async () => {
-    try {
-      const response = await fetch('/api/admin/locks');
-      if (response.ok) {
-        const data = await response.json();
-        const lockSet = new Set<string>();
-        const ownershipMap = new Map<string, string>();
-        data.locks.forEach((lock: { lockedUserId: string; lockedByAdminEmail: string }) => {
-          lockSet.add(lock.lockedUserId);
-          ownershipMap.set(lock.lockedUserId, lock.lockedByAdminEmail);
-        });
-        setLockedRows(lockSet);
-        setLockOwnership(ownershipMap);
-        console.log(`🔒 Loaded ${lockSet.size} active locks from database`);
-      }
-    } catch (error) {
-      console.error('Failed to fetch active locks:', error);
-    }
-  };
 
   // Auto-connect when authenticated and on protected pages
   useEffect(() => {
@@ -510,7 +528,7 @@ export function SSEProvider({ children }: SSEProviderProps) {
           connect();
           // Fetch existing locks when connecting to admin page
           if (pathname?.startsWith("/admin")) {
-            fetchActiveLocks();
+            fetchActiveLocks(session);
           }
         }, 500); // Small delay to ensure auth cookies are set
       }
@@ -520,14 +538,40 @@ export function SSEProvider({ children }: SSEProviderProps) {
       connect();
       // Fetch existing locks when connecting to admin page
       if (pathname?.startsWith("/admin")) {
-        fetchActiveLocks();
+        fetchActiveLocks(session);
       }
     } else if (!currentSessionId && eventSourceRef.current) {
       // If logged out but still have connection, disconnect
       console.log("🚪 User logged out, closing SSE connection...");
       disconnect();
     }
-  }, [session, isPending, pathname, isConnected, connect, disconnect]);
+
+    // ALWAYS fetch locks when navigating to admin pages (Fix for browser restart visibility issue)
+    if (currentSessionId && pathname?.startsWith("/admin") && !sessionChanged) {
+      console.log("📍 Admin page navigation detected, fetching current lock state...");
+      fetchActiveLocks(session);
+    }
+  }, [session, isPending, pathname, isConnected, connect, disconnect, fetchActiveLocks]);
+
+  // Periodic lock refresh for admin users (every 30 seconds)
+  useEffect(() => {
+    let refreshInterval: NodeJS.Timeout;
+    
+    if (session?.user?.role === 'admin' && pathname?.startsWith('/admin') && isConnected) {
+      console.log("🔄 Setting up periodic lock refresh for admin user");
+      refreshInterval = setInterval(() => {
+        console.log("⏰ Periodic lock refresh triggered");
+        fetchActiveLocks(session);
+      }, 30000); // 30 seconds
+    }
+
+    return () => {
+      if (refreshInterval) {
+        clearInterval(refreshInterval);
+        console.log("🛑 Cleared periodic lock refresh");
+      }
+    };
+  }, [session?.user?.role, pathname, isConnected, fetchActiveLocks, session]);
 
   // Cleanup on unmount and handle page navigation
   useEffect(() => {

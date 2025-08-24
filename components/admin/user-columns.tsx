@@ -110,7 +110,7 @@ function ActionsCell({
     console.log(`🔄 Lock pending state set for user ${user.id}`);
 
     try {
-      const lockSuccess = await lockRow(user.id, currentUserEmail);
+      const lockSuccess = await lockRow(user.id);
       console.log(`🔐 Lock result for edit mode: ${lockSuccess}`);
 
       if (lockSuccess) {
@@ -257,7 +257,7 @@ function ActionsCell({
                   disabled
                 >
                   <span className="sr-only">User locked</span>
-                  <Edit className="size-4 text-amber-500/50" />
+                  <Edit className="size-4 text-amber-500/75" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
@@ -359,41 +359,37 @@ function ActionsCell({
       {/* Show lock indicator only when locked by another admin and we're not editing */}
       {isLockedByOtherAdmin && !isEditing && (
         <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="text-amber-500"
-                >
-                  <Dot className="size-10 animate-pulse" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>{lockInfo.lockedBy} is editing</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="outline" size="icon" className="text-amber-500">
+                <Dot className="size-16 animate-pulse" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{lockInfo.lockedBy} is editing</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       )}
 
       {/* Show edit mode indicator when we're editing */}
       {isEditing && (
         <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="text-emerald-500"
-                >
-                  <Dot className="size-10 animate-pulse" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>You are editing</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="outline"
+                size="icon"
+                className="text-emerald-500"
+              >
+                <Dot className="size-16 animate-pulse" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>You are editing</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       )}
 
       <DialogPortal>

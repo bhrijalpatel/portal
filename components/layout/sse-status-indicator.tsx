@@ -7,6 +7,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Button } from "../ui/button";
+import { Check, Loader2 } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useSession } from "@/lib/auth-client";
 
@@ -35,7 +37,7 @@ export function SSEStatusIndicator() {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <div className="flex items-center justify-center gap-3 px-3 py-1.5 rounded-lg cursor-default border">
+          <Button size="sm" variant="outline">
             {/* Animated pulsing status indicator */}
             <span className="relative flex size-3">
               {isConnected ? (
@@ -56,18 +58,20 @@ export function SSEStatusIndicator() {
                 {userRole.charAt(0).toUpperCase() + userRole.slice(1)}
               </span>
             )}
-          </div>
+          </Button>
         </TooltipTrigger>
         <TooltipContent>
-          <p>
-            {isConnected
-              ? `Real-time updates active (${
-                  userRole
-                    ? userRole.charAt(0).toUpperCase() + userRole.slice(1)
-                    : "User"
-                })`
-              : "Real-time updates reconnecting..."}
-          </p>
+          {isConnected ? (
+            <div className="flex flex-row gap-1 items-center justify-center">
+              <span>Real-time updates connected</span>
+              <Check className="size-4" />
+            </div>
+          ) : (
+            <div className="flex flex-row gap-1 items-center justify-center">
+              <span>Real-time updates reconnecting</span>
+              <Loader2 className="size-4 animate-spin" />
+            </div>
+          )}
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

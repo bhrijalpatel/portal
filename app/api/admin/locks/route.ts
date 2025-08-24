@@ -1,7 +1,7 @@
 import { withAdminAuth } from "@/helpers/api-helpers";
 import { db } from "@/db/drizzle";
 import { userLocks } from "@/db/schema";
-import { eq, and, gte } from "drizzle-orm";
+import { eq, and, gte, lte } from "drizzle-orm";
 import { z } from "zod";
 import { connectedClients } from "@/helpers/realtime-broadcast";
 
@@ -29,7 +29,7 @@ export const GET = withAdminAuth(async ({ session }) => {
     const expiredLocks = await db
       .select()
       .from(userLocks)
-      .where(gte(new Date(), userLocks.expiresAt));
+      .where(lte(userLocks.expiresAt, new Date()));
       
     const locksToDelete = expiredLocks.filter(lock => 
       !currentlyConnectedSessions.has(lock.lockedByAdminId)
@@ -149,7 +149,7 @@ export const POST = withAdminAuth(async ({ session }, request) => {
           lockedUserId: userId,
           lockedByAdminId: session.user.id,
           lockedByAdminEmail: session.user.email,
-          sessionId: session.id,
+          sessionId: session.session.id,
           lockType: "edit",
         })
         .returning();
@@ -263,7 +263,7 @@ export const DELETE = withAdminAuth(async () => {
   try {
     const deleted = await db
       .delete(userLocks)
-      .where(gte(new Date(), userLocks.expiresAt))
+      .where(lte(userLocks.expiresAt, new Date()))
       .returning();
 
     return Response.json({
