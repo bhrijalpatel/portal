@@ -5,6 +5,49 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2025/08/25] - Authentication & Sign Out Flow Improvements
+
+### 🔧 **AUTHENTICATION SYSTEM FIXES**
+
+- **Fixed Sign Out Implementation**: Corrected sign out flow to follow Better Auth documentation best practices
+  - `components/buttons/button-signout.tsx`: Simplified sign out logic, removed duplicate error handling
+  - `components/navigation/nav-user-client.tsx`: Fixed user navigation dropdown sign out functionality
+  - Improved loading state management - buttons stay in loading state until redirect completes
+  - Changed from `router.replace("/")` to `router.push("/")` for better compatibility
+  - Removed `onError` from fetchOptions, letting try/catch handle errors naturally
+
+### 🚀 **DEVELOPMENT EXPERIENCE IMPROVEMENTS**
+
+- **Environment Variable Understanding**: Clarified NODE_ENV behavior in Next.js development vs production
+  - `pnpm dev` automatically forces `NODE_ENV=development` regardless of .env file setting
+  - `pnpm build && pnpm start` properly uses `NODE_ENV=production` for testing production features
+  - Email verification requirement now properly controlled by environment setting
+
+- **Debug Tooling**: Added temporary debug endpoint for environment variable verification
+  - `/app/api/debug/env/route.ts`: Created endpoint to verify NODE_ENV and feature flags
+  - Helps troubleshoot environment-specific authentication behaviors
+
+### 📝 **AUTHENTICATION FLOW CLARIFICATION**
+
+- **Email Verification Logic**: Better Auth email verification requirements properly documented
+  - Development mode (`NODE_ENV=development`): Email verification disabled for easier testing
+  - Production mode (`NODE_ENV=production`): Email verification required for security
+  - Existing unverified users would be locked out when switching to production mode
+
+### 🔄 **SIGN IN FORM ENHANCEMENTS**
+
+- **Production Redirect Fix**: Improved sign-in redirect handling for production builds
+  - `components/forms/form-signin.tsx`: Enhanced redirect logic for better production compatibility
+  - Added `setTimeout()` with `window.location.href` for reliable production redirects
+  - Maintains compatibility with both development and production environments
+
+### 🏗️ **DEPLOYMENT COMPATIBILITY**
+
+- **Vercel Deployment Preparation**: 
+  - Verified redirect functionality works correctly on Vercel platform
+  - Local production build issues identified and documented
+  - Sign out flow optimized for cloud deployment environments
+
 ## [2025/08/24] - Real-Time Collaborative Lock System & SSE State Management Revolution
 
 ### 🔄 **SERVER-SENT EVENTS AS SOURCE OF TRUTH**
