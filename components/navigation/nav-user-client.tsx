@@ -62,7 +62,7 @@ export function NavUserClient({ session }: { session: SessionShape | null }) {
           },
         },
       });
-    } catch (error) {
+    } catch {
       toast.error("Sign out failed");
       setSigningOut(false);
     }

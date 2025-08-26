@@ -96,7 +96,7 @@ export function ResetPasswordForm({
         return;
       }
 
-      toast.success("Password reset successfully! Redirecting to sign in...");
+      toast.success("Password reset successfully! Redirecting to sign in");
 
       // Redirect to sign in after a short delay
       setTimeout(() => {
@@ -111,139 +111,106 @@ export function ResetPasswordForm({
 
   if (tokenStatus === "checking") {
     return (
-      <div
-        className={cn(
-          "from-primary/5 border-primary/10 flex w-full max-w-md flex-col gap-6 rounded-2xl border bg-gradient-to-br via-blue-500/5 to-purple-500/5 p-8 shadow-lg backdrop-blur-sm",
-          className,
-        )}
-        {...props}
-      >
-        <div className="flex items-center justify-center">
-          <Loader2 className="size-8 animate-spin" />
-        </div>
+      <div className="flex items-center justify-center">
+        <Loader2 className="size-8 animate-spin" />
       </div>
     );
   }
 
   if (tokenStatus === "invalid") {
     return (
-      <div
-        className={cn(
-          "flex w-full max-w-md flex-col gap-6 rounded-2xl border border-rose-500/10 bg-gradient-to-br from-rose-500/5 via-orange-500/5 to-amber-500/5 p-8 shadow-lg backdrop-blur-sm",
-          className,
-        )}
-        {...props}
-      >
-        <Card className="border-0 bg-transparent shadow-none">
-          <CardHeader className="text-center">
-            <div className="mb-4 flex justify-center">
-              <XCircle className="size-12 text-rose-500 dark:text-rose-400" />
-            </div>
-            <CardTitle className="text-xl">Invalid Reset Link</CardTitle>
-            <CardDescription>
-              This password reset link is invalid or has expired.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-muted-foreground text-center text-sm">
-              Password reset links expire after 1 hour for security reasons.
-            </p>
-            <Button
-              className="w-full"
-              onClick={() => router.push("/forgot-password")}
-            >
-              Request New Reset Link
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
+      <Card className="from-primary/5 bg-gradient-to-br via-blue-500/5 to-purple-500/5">
+        <CardHeader className="text-center">
+          <CardTitle className="text-xl">Invalid Reset Link</CardTitle>
+          <CardDescription>
+            This password reset link is invalid or has expired.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-muted-foreground text-center text-sm">
+            Password reset links expire after 1 hour for security reasons.
+          </p>
+          <Button
+            className="w-full"
+            onClick={() => router.push("/forgot-password")}
+          >
+            Request New Reset Link
+          </Button>
+        </CardContent>
+      </Card>
     );
   }
 
   return (
-    <div
-      className={cn(
-        "from-primary/5 border-primary/10 flex w-full max-w-md flex-col gap-6 rounded-2xl border bg-gradient-to-br via-blue-500/5 to-purple-500/5 p-8 shadow-lg backdrop-blur-sm",
-        className,
-      )}
-      {...props}
-    >
-      <Card className="border-0 bg-transparent shadow-none">
-        <CardHeader className="text-center">
-          <div className="mb-4 flex justify-center">
-            <KeyRound className="text-primary size-12" />
-          </div>
-          <CardTitle className="text-xl">Reset Your Password</CardTitle>
-          <CardDescription>Enter your new password below</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <div className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="newPassword"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>New Password</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="password"
-                          placeholder="Enter new password"
-                          disabled={isLoading}
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="confirmPassword"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Confirm Password</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="password"
-                          placeholder="Confirm new password"
-                          disabled={isLoading}
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <ul className="text-muted-foreground space-y-1 text-xs">
-                  <li>• At least 12 characters long</li>
-                  <li>• Contains uppercase and lowercase letters</li>
-                  <li>• Contains at least one number</li>
-                </ul>
-              </div>
-
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? (
-                  <>
-                    <Loader2 className="animate-spin" />
-                    Resetting Password...
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle />
-                    Reset Password
-                  </>
+    <Card className="from-primary/5 bg-gradient-to-br via-blue-500/5 to-purple-500/5">
+      <CardHeader className="text-center">
+        <CardTitle className="text-xl">Reset Your Password</CardTitle>
+        <CardDescription>Enter your new password below</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <div className="space-y-4">
+              <FormField
+                control={form.control}
+                name="newPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>New Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="password"
+                        placeholder="Enter new password"
+                        disabled={isLoading}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
                 )}
-              </Button>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
-    </div>
+              />
+
+              <FormField
+                control={form.control}
+                name="confirmPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Confirm Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="password"
+                        placeholder="Confirm new password"
+                        disabled={isLoading}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <ul className="text-muted-foreground space-y-1 text-xs">
+                <li>• At least 12 characters long</li>
+                <li>• Contains uppercase and lowercase letters</li>
+                <li>• Contains at least one number</li>
+              </ul>
+            </div>
+
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? (
+                <>
+                  <Loader2 className="animate-spin" />
+                  Resetting Password
+                </>
+              ) : (
+                <>Reset Password</>
+              )}
+            </Button>
+          </form>
+        </Form>
+      </CardContent>
+    </Card>
   );
 }

@@ -23,7 +23,7 @@ export function ButtonSignOut() {
           },
         },
       });
-    } catch (error) {
+    } catch {
       toast.error("Sign out failed");
       setLoading(false);
     }

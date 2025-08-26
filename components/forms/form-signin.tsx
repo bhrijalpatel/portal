@@ -15,6 +15,7 @@ import Link from "next/link";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -29,7 +30,8 @@ import { email, z } from "zod";
 import { toast } from "sonner";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
-import { Loader2 } from "lucide-react";
+import { Info, Loader2 } from "lucide-react";
+import { Tooltip, TooltipTrigger, TooltipContent } from "../ui/tooltip";
 
 const formSchema = z.object({
   email: email().min(1, "Email is required"),
@@ -54,23 +56,27 @@ export function SignInForm() {
 
   // Define a submit handler
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsLoading(true);
-
-    const { error } = await authClient.signIn.email({
-      email: values.email,
-      password: values.password,
-      rememberMe: values.rememberMe,
-    });
-
-    if (error) {
-      toast.error(error.message ?? "Sign in failed. Please try again.");
-      setIsLoading(false);
-      return;
-    }
-
-    // Success toast and redirect
-    toast.success("Sign in successful");
-    router.push(callbackURL);
+    await authClient.signIn.email(
+      {
+        email: values.email,
+        password: values.password,
+        rememberMe: values.rememberMe,
+        callbackURL: callbackURL, // Pass callback URL directly
+      },
+      {
+        onRequest: () => {
+          setIsLoading(true); // Show loading when request starts
+        },
+        onSuccess: () => {
+          toast.success("Sign in successful");
+          router.push(callbackURL);
+        },
+        onError: (ctx) => {
+          toast.error(ctx.error.message ?? "Sign in failed. Please try again.");
+          setIsLoading(false);
+        },
+      },
+    );
   }
 
   return (
@@ -112,7 +118,15 @@ export function SignInForm() {
                     name="password"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Password</FormLabel>
+                        <FormLabel>
+                          Password
+                          <Link
+                            href="/forgot-password"
+                            className="ml-auto text-xs hover:underline"
+                          >
+                            Forgot your password?
+                          </Link>
+                        </FormLabel>
                         <FormControl>
                           <Input
                             type="password"
@@ -124,31 +138,29 @@ export function SignInForm() {
                       </FormItem>
                     )}
                   />
-                  <div className="flex items-center">
-                    <Link
-                      href="/forgot-password"
-                      className="ml-auto text-sm underline-offset-4 hover:underline"
-                    >
-                      Forgot your password?
-                    </Link>
-                  </div>
                 </div>
 
-                <div className="grid gap-3">
+                <div className="flex w-full justify-between gap-3">
                   <FormField
                     control={form.control}
                     name="rememberMe"
                     render={({ field }) => (
-                      <FormItem className="flex flex-row items-start space-y-0 space-x-3">
+                      <FormItem className="flex flex-row items-center">
                         <FormControl>
                           <Checkbox
                             checked={field.value}
                             onCheckedChange={field.onChange}
                           />
                         </FormControl>
-                        <div className="space-y-1 leading-none">
-                          <FormLabel>Remember me</FormLabel>
-                        </div>
+                        <FormLabel>Remember me</FormLabel>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Info className="text-muted-foreground size-4" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            Stay signed in on this device
+                          </TooltipContent>
+                        </Tooltip>
                       </FormItem>
                     )}
                   />

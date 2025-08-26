@@ -49,24 +49,29 @@ export function SignUpForm() {
 
   // Define a submit handler
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsLoading(true);
-
-    const { error } = await authClient.signUp.email({
-      name: values.name,
-      email: values.email,
-      password: values.password,
-    });
-
-    if (error) {
-      toast.error(error.message ?? "Sign up failed. Please try again.");
-      setIsLoading(false);
-      return;
-    }
-
-    // Success toast and redirect to sign-in
-    toast.success("Account created successfully! Please sign in.");
-    router.push("/sign-in");
-    // Keep loading state active during redirect
+    await authClient.signUp.email(
+      {
+        name: values.name,
+        email: values.email,
+        password: values.password,
+        callbackURL: "/dashboard", // URL to redirect after email verification
+      },
+      {
+        onRequest: () => {
+          setIsLoading(true); // Show loading when request starts
+        },
+        onSuccess: () => {
+          // Since autoSignIn is false and email verification is required,
+          // user needs to verify email before signing in
+          toast.success("Account created! Please check your email to verify your account.");
+          router.push("/sign-in?message=verify-email");
+        },
+        onError: (ctx) => {
+          toast.error(ctx.error.message ?? "Sign up failed. Please try again.");
+          setIsLoading(false);
+        },
+      }
+    );
   }
 
   return (

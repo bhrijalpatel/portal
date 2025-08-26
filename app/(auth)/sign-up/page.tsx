@@ -4,8 +4,7 @@ import { ArrowLeft, Sparkles } from "lucide-react";
 
 export default function SignUpPage() {
   return (
-    <div className="relative flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-1">
-      {/* Back to Home Link */}
+    <div className="relative flex min-h-svh flex-col items-center justify-center">
       <Link
         href="/"
         className="text-muted-foreground hover:text-foreground group absolute top-6 left-6 flex items-center gap-2 text-sm transition-colors"
@@ -17,7 +16,7 @@ export default function SignUpPage() {
         </div>
       </Link>
 
-      <div className="flex w-full max-w-sm flex-col gap-6">
+      <div className="w-full max-w-xs">
         <SignUpForm />
       </div>
     </div>
