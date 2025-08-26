@@ -57,16 +57,12 @@ export function NavUserClient({ session }: { session: SessionShape | null }) {
         fetchOptions: {
           onSuccess: () => {
             toast.success("Signed out");
-            router.replace("/");
-            setSigningOut(false);
-          },
-          onError: () => {
-            toast.error("Sign out failed");
-            setSigningOut(false);
+            router.push("/");
+            // Keep loading state until redirect completes
           },
         },
       });
-    } catch {
+    } catch (error) {
       toast.error("Sign out failed");
       setSigningOut(false);
     }

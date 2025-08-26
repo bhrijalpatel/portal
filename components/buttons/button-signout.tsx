@@ -18,16 +18,12 @@ export function ButtonSignOut() {
         fetchOptions: {
           onSuccess: () => {
             toast.success("Signed out");
-            router.replace("/");
-            setLoading(false);
-          },
-          onError: () => {
-            toast.error("Sign out failed");
-            setLoading(false);
+            router.push("/");
+            // Keep loading state until redirect completes
           },
         },
       });
-    } catch {
+    } catch (error) {
       toast.error("Sign out failed");
       setLoading(false);
     }
