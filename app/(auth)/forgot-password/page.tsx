@@ -16,7 +16,7 @@ export default function ForgotPasswordPage() {
         </div>
       </Link>
 
-      <div className="w-full max-w-xs">
+      <div className="w-full max-w-sm">
         <ForgotPasswordForm />
       </div>
     </div>

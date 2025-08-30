@@ -16,7 +16,7 @@ export default function SignUpPage() {
         </div>
       </Link>
 
-      <div className="w-full max-w-xs">
+      <div className="w-full max-w-sm">
         <SignUpForm />
       </div>
     </div>

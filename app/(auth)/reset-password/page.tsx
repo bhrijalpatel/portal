@@ -17,7 +17,7 @@ export default function ResetPasswordPage() {
         </div>
       </Link>
 
-      <div className="w-full max-w-xs">
+      <div className="w-full max-w-sm">
         <Suspense
           fallback={
             <div className="from-primary/5 border-primary/10 w-full max-w-md rounded-2xl border bg-gradient-to-br via-blue-500/5 to-purple-500/5 p-8 shadow-lg backdrop-blur-sm">

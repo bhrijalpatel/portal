@@ -23,7 +23,7 @@ export default async function SignInPage({
         </div>
       </Link>
 
-      <div className="w-full max-w-xs">
+      <div className="w-full max-w-sm">
         {params.message === "verify-email" && (
           <Alert className="border-sky-200 bg-sky-50 dark:border-sky-900 dark:bg-sky-950/20">
             <Mail className="h-4 w-4 text-sky-600 dark:text-sky-400" />
