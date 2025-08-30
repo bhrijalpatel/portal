@@ -7,16 +7,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **Development Server:**
 
 ```bash
-npm run dev        # Start development server with Turbopack
 pnpm dev          # Alternative using pnpm (preferred based on pnpm-lock.yaml)
 ```
 
 **Build & Production:**
 
 ```bash
-npm run build     # Build for production
-npm run start     # Start production server
-npm run lint      # Run ESLint
+pnpm build     # Build for production
+pnpm start     # Start production server
+pnpm lint      # Run ESLint
 ```
 
 **Database Operations:**
