@@ -10,7 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { ShieldAlert, Lock } from "lucide-react";
+import { ShieldAlert, Lock, LockKeyhole, TriangleAlert } from "lucide-react";
 
 export default async function AdminSetupPage() {
   const headersList = await headers();
@@ -85,7 +85,10 @@ export default async function AdminSetupPage() {
     <main className="mx-auto flex h-screen max-w-lg flex-col items-center justify-center gap-4 p-4">
       <Card className="w-full">
         <CardHeader>
-          <CardTitle>🔐 Secure Admin Setup</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <LockKeyhole className="size-5" />
+            <span>Secure Admin Setup</span>
+          </CardTitle>
           <CardDescription>
             First-time admin role assignment with enhanced security
           </CardDescription>
@@ -101,16 +104,19 @@ export default async function AdminSetupPage() {
             </p>
           </div>
 
-          <div className="space-y-1 border-l-4 border-amber-500 bg-amber-50/10 p-3">
-            <p className="text-sm font-medium text-amber-600 dark:text-amber-400">
-              ⚠️ Security Notice
-            </p>
-            <p className="text-muted-foreground text-xs">
-              You will need the admin setup secret from your environment
-              configuration to proceed. This is a one-time operation that cannot
-              be reversed.
-            </p>
-          </div>
+          <Card className="border-amber-500/50 bg-amber-500/25">
+            <CardHeader className="flex items-center gap-2 text-sm font-medium text-amber-600 dark:text-amber-400">
+              <TriangleAlert className="size-5" />
+              <span>Security Notice</span>
+            </CardHeader>
+            <CardContent>
+              <p className="text-xs">
+                You will need the admin setup secret from your environment
+                configuration to proceed. This is a one-time operation that
+                cannot be reversed.
+              </p>
+            </CardContent>
+          </Card>
 
           <ClaimAdmin />
         </CardContent>

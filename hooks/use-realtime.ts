@@ -19,10 +19,6 @@ export function useRealtime(
 ) {
   const handleUpdate = useCallback(
     (event: CustomEvent) => {
-      console.log(
-        `📡 Received ${category} real-time update:`,
-        event.detail.type,
-      );
       onUpdate(event);
     },
     [category, onUpdate],
@@ -30,12 +26,10 @@ export function useRealtime(
 
   useEffect(() => {
     const eventName = `realtime-${category}-update`;
-    console.log(`👂 Listening for ${eventName} events`);
 
     window.addEventListener(eventName, handleUpdate as EventListener);
 
     return () => {
-      console.log(`🔇 Stopped listening for ${eventName} events`);
       window.removeEventListener(eventName, handleUpdate as EventListener);
     };
   }, [category, handleUpdate]);
@@ -54,7 +48,6 @@ export function useBroadcast() {
       },
     ) => {
       try {
-        console.log(`📢 Broadcasting ${eventType}:`, data);
 
         const response = await fetch("/api/realtime/broadcast", {
           method: "POST",
@@ -72,10 +65,8 @@ export function useBroadcast() {
         }
 
         const result = await response.json();
-        console.log(`✅ Successfully broadcasted ${eventType}`);
         return result;
       } catch (error) {
-        console.error(`❌ Failed to broadcast ${eventType}:`, error);
         throw error;
       }
     },

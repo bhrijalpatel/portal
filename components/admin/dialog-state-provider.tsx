@@ -32,7 +32,6 @@ export function DialogStateProvider({ children }: { children: ReactNode }) {
   });
 
   const openDialog = (userId: string, action: DialogAction) => {
-    console.log(`🎭 Opening dialog for user ${userId}, action: ${action}`);
     setDialogState({
       isOpen: true,
       action,
@@ -41,7 +40,6 @@ export function DialogStateProvider({ children }: { children: ReactNode }) {
   };
 
   const closeDialog = () => {
-    console.log(`🎭 Closing dialog for user ${dialogState.userId}`);
     setDialogState({
       isOpen: false,
       action: "update",

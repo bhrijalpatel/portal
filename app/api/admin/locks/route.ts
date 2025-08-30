@@ -14,7 +14,6 @@ const lockSchema = z.object({
 // GET: Check active locks
 export const GET = withAdminAuth(async ({ session }) => {
   try {
-    console.log(`👀 Fetching active locks for session: ${session.user.email}`);
 
     // ONLY clean up expired locks that belong to disconnected sessions
     // First, get list of currently connected client sessions from SSE
@@ -23,9 +22,6 @@ export const GET = withAdminAuth(async ({ session }) => {
       currentlyConnectedSessions.add(client.userId);
     }
 
-    console.log(
-      `🔗 Currently connected sessions: ${Array.from(currentlyConnectedSessions).join(", ")}`,
-    );
 
     // Clean up expired locks ONLY for sessions that are no longer connected
     const expiredLocks = await db
@@ -38,16 +34,10 @@ export const GET = withAdminAuth(async ({ session }) => {
     );
 
     if (locksToDelete.length > 0) {
-      console.log(
-        `🧹 Cleaning ${locksToDelete.length} expired locks from disconnected sessions`,
-      );
       for (const lock of locksToDelete) {
         await db.delete(userLocks).where(eq(userLocks.id, lock.id));
 
         // Broadcast unlock event for each cleaned lock
-        console.log(
-          `📡 Broadcasting cleanup unlock for user ${lock.lockedUserId}`,
-        );
         const unlockEvent = JSON.stringify({
           type: "user-edit-unlock",
           data: {
@@ -64,14 +54,7 @@ export const GET = withAdminAuth(async ({ session }) => {
               client.controller.enqueue(
                 new TextEncoder().encode(`data: ${unlockEvent}\n\n`),
               );
-              console.log(
-                `📤 Sent cleanup unlock event to ${client.userEmail}`,
-              );
             } catch (error) {
-              console.log(
-                `❌ Failed to send cleanup unlock to ${clientId}:`,
-                error,
-              );
               connectedClients.delete(clientId);
             }
           }
@@ -85,7 +68,6 @@ export const GET = withAdminAuth(async ({ session }) => {
       .from(userLocks)
       .where(gte(userLocks.expiresAt, new Date()));
 
-    console.log(`📋 Returning ${activeLocks.length} active locks`);
     return Response.json({
       success: true,
       locks: activeLocks,
@@ -110,21 +92,14 @@ export const POST = withAdminAuth(async ({ session }, request) => {
         .where(eq(userLocks.lockedUserId, userId))
         .limit(1);
 
-      console.log(
-        `🔍 Found ${existingLock.length} existing locks for user ${userId}`,
-      );
 
       if (existingLock.length > 0) {
         const lockExpired = new Date(existingLock[0].expiresAt) < new Date();
-        console.log(`🕐 Lock expired: ${lockExpired}`);
 
         if (!lockExpired) {
           // Active lock exists
           if (existingLock[0].lockedByAdminId === session.user.id) {
             // Same admin - extend the lock expiry to 15 minutes
-            console.log(
-              `🔄 Extending lock for same admin: ${session.user.email}`,
-            );
             await db
               .update(userLocks)
               .set({
@@ -140,9 +115,6 @@ export const POST = withAdminAuth(async ({ session }, request) => {
           }
 
           // Someone else has the lock - REJECT
-          console.log(
-            `❌ User locked by another admin: ${existingLock[0].lockedByAdminEmail}`,
-          );
           return Response.json(
             {
               success: false,
@@ -153,7 +125,6 @@ export const POST = withAdminAuth(async ({ session }, request) => {
           );
         } else {
           // Expired lock - clean it up
-          console.log(`🧹 Cleaning up expired lock: ${existingLock[0].id}`);
           await db
             .delete(userLocks)
             .where(eq(userLocks.id, existingLock[0].id));
@@ -161,9 +132,6 @@ export const POST = withAdminAuth(async ({ session }, request) => {
       }
 
       // Create new lock
-      console.log(
-        `🔒 Creating lock for user ${userId} by ${session.user.email}`,
-      );
       const newLock = await db
         .insert(userLocks)
         .values({
@@ -175,12 +143,8 @@ export const POST = withAdminAuth(async ({ session }, request) => {
         })
         .returning();
 
-      console.log(`✅ Lock created:`, newLock[0]);
 
       // Broadcast lock event directly to connected clients
-      console.log(
-        `📡 Broadcasting lock event to ${connectedClients.size} connected clients`,
-      );
       const lockEvent = JSON.stringify({
         type: "user-edit-lock",
         data: {
@@ -197,9 +161,7 @@ export const POST = withAdminAuth(async ({ session }, request) => {
             client.controller.enqueue(
               new TextEncoder().encode(`data: ${lockEvent}\n\n`),
             );
-            console.log(`📤 Sent lock event to ${client.userEmail}`);
           } catch (error) {
-            console.log(`❌ Failed to send to ${clientId}:`, error);
             connectedClients.delete(clientId);
           }
         }
@@ -223,9 +185,6 @@ export const POST = withAdminAuth(async ({ session }, request) => {
 
       if (deleted.length > 0) {
         // Broadcast unlock event directly to connected clients
-        console.log(
-          `📡 Broadcasting unlock event to ${connectedClients.size} connected clients`,
-        );
         const unlockEvent = JSON.stringify({
           type: "user-edit-unlock",
           data: {
@@ -241,9 +200,7 @@ export const POST = withAdminAuth(async ({ session }, request) => {
               client.controller.enqueue(
                 new TextEncoder().encode(`data: ${unlockEvent}\n\n`),
               );
-              console.log(`📤 Sent unlock event to ${client.userEmail}`);
             } catch (error) {
-              console.log(`❌ Failed to send to ${clientId}:`, error);
               connectedClients.delete(clientId);
             }
           }

@@ -67,7 +67,7 @@ export const PATCH = withAdminAuth(async ({ session }, request) => {
       updatedBy: session.user.email,
     });
   } catch (error: unknown) {
-    console.error("❌ Update user error:", error);
+    console.error("Update user error:", error);
 
     if (error instanceof z.ZodError) {
       return Response.json(

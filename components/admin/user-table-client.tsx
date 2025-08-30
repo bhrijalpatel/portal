@@ -19,7 +19,6 @@ export function UserTableClient({ initialUsers }: ClientUserTableProps) {
   const refreshUsers = useCallback(async (showToast: boolean = false) => {
     setIsLoading(true);
     try {
-      console.log("🔄 Fetching fresh data from API...");
       const response = await fetch("/api/admin/users/list");
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
@@ -34,16 +33,12 @@ export function UserTableClient({ initialUsers }: ClientUserTableProps) {
         const dataChanged =
           JSON.stringify(prevUsers) !== JSON.stringify(newUsers);
 
-        console.log(
-          `📊 Data comparison: ${prevUsers.length} → ${newUsers.length} users`,
-        );
 
         if (showToast) {
           toast.success("User data refreshed successfully", {
             id: "manual-refresh",
           });
         } else if (dataChanged) {
-          console.log("🔄 Data changed, showing update notification");
           // Use a unique ID to prevent multiple identical table update toasts
           const toastId = "user-data-updated";
           toast.info(`User data updated (${newUsers.length} users)`, {
@@ -55,7 +50,6 @@ export function UserTableClient({ initialUsers }: ClientUserTableProps) {
         return newUsers;
       });
     } catch (error) {
-      console.error("Error refreshing users:", error);
 
       // Show more helpful error messages
       if (
@@ -81,7 +75,6 @@ export function UserTableClient({ initialUsers }: ClientUserTableProps) {
   // Listen for universal real-time user updates
   useEffect(() => {
     const handleRealtimeUserUpdate = () => {
-      console.log("📡 Received real-time user update, refreshing data");
       // Refresh user data when any user management event occurs
       refreshUsers(false);
     };
@@ -104,9 +97,6 @@ export function UserTableClient({ initialUsers }: ClientUserTableProps) {
 
   // Broadcast user operations to all eligible users
   const handleDataChange = useCallback(async () => {
-    console.log(
-      "👤 User operation detected, broadcasting to all eligible users...",
-    );
 
     try {
       // Use the new universal broadcast endpoint
@@ -130,9 +120,7 @@ export function UserTableClient({ initialUsers }: ClientUserTableProps) {
         throw new Error(errorData.error || "Failed to broadcast update");
       }
 
-      console.log("📡 Update broadcasted successfully to all eligible users");
     } catch (error) {
-      console.error("Failed to broadcast update:", error);
       // Fallback to local refresh if broadcast fails
       refreshUsers(false);
     }
@@ -140,7 +128,6 @@ export function UserTableClient({ initialUsers }: ClientUserTableProps) {
 
   // Manual refresh button
   const handleForceRefresh = useCallback(async () => {
-    console.log("🔄 Manual refresh requested...");
     await refreshUsers(true); // Show toast for manual refresh
   }, [refreshUsers]);
 

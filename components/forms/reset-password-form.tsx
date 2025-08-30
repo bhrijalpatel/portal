@@ -103,7 +103,6 @@ export function ResetPasswordForm({
         router.push("/sign-in");
       }, 2000);
     } catch (error) {
-      console.error("Reset password error:", error);
       toast.error("An unexpected error occurred");
       setIsLoading(false);
     }

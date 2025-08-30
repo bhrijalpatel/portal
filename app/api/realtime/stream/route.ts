@@ -3,7 +3,6 @@ import { connectedClients } from "@/helpers/realtime-broadcast";
 
 export const GET = withAuth(async ({ session }) => {
   const userRole = session.user.role || "user";
-  console.log(`🔄 Real-time connection: ${session.user.email} (${userRole})`);
 
   // Create a readable stream for Server-Sent Events
   // Variables to track controller and client ID
@@ -21,14 +20,6 @@ export const GET = withAuth(async ({ session }) => {
         userEmail: session.user.email,
       });
 
-      console.log(
-        `✅ Real-time client connected: ${currentClientId} (${userRole}) - Total: ${connectedClients.size}`,
-      );
-      console.log(
-        `🔍 Debug: connectedClients instance in stream:`,
-        connectedClients.constructor.name,
-        connectedClients,
-      );
 
       // Send initial connection confirmation
       const initialMessage = {
@@ -87,9 +78,6 @@ export const GET = withAuth(async ({ session }) => {
       // Remove this specific client
       if (currentClientId) {
         connectedClients.delete(currentClientId);
-        console.log(
-          `❌ Real-time client disconnected: ${currentClientId} (${connectedClients.size} remaining)`,
-        );
       }
     },
   });

@@ -2,7 +2,6 @@ import { withAdminAuth } from "@/helpers/api-helpers";
 import { connectedClients } from "@/helpers/realtime-broadcast";
 
 export const GET = withAdminAuth(async ({ session }) => {
-  console.log(`🔄 Admin SSE connection: ${session.user.email}`);
 
   // Create a readable stream for Server-Sent Events
   // Variables to track controller and client ID
@@ -18,9 +17,6 @@ export const GET = withAdminAuth(async ({ session }) => {
         userEmail: session.user.email,
       });
 
-      console.log(
-        `✅ SSE client connected: ${currentClientId} (${connectedClients.size} total)`,
-      );
 
       // Send initial connection confirmation
       const initialMessage = {
@@ -47,9 +43,6 @@ export const GET = withAdminAuth(async ({ session }) => {
       // Remove this specific client
       if (currentClientId) {
         connectedClients.delete(currentClientId);
-        console.log(
-          `❌ SSE client disconnected: ${currentClientId} (${connectedClients.size} remaining)`,
-        );
       }
     },
   });

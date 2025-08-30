@@ -7,7 +7,6 @@ export async function fetchUsersWithRetry(maxRetries = 3) {
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      console.log(`🔍 Fetching users (attempt ${attempt}/${maxRetries})...`);
 
       const users = await db
         .select({
@@ -24,12 +23,11 @@ export async function fetchUsersWithRetry(maxRetries = 3) {
         })
         .from(authUsers);
 
-      console.log(`✅ Successfully fetched ${users.length} users`);
       return users;
     } catch (error) {
       lastError = error;
       console.error(
-        `❌ Attempt ${attempt} failed:`,
+        `Database attempt ${attempt} failed:`,
         error instanceof Error ? error.message : "Unknown error",
       );
 
@@ -42,9 +40,6 @@ export async function fetchUsersWithRetry(maxRetries = 3) {
           error.message?.includes("ECONNRESET"))
       ) {
         const waitTime = attempt * 2000; // Progressive delay: 2s, 4s, 6s
-        console.log(
-          `⏳ Waiting ${waitTime / 1000} seconds before retry (Neon wake-up)...`,
-        );
         await new Promise((resolve) => setTimeout(resolve, waitTime));
         continue;
       }

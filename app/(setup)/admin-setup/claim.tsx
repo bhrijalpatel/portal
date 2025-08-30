@@ -31,6 +31,14 @@ export default function ClaimAdmin() {
         body: JSON.stringify({ setupSecret }),
       });
 
+      // Check if response is JSON before parsing
+      const contentType = res.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        setErr(`Server error: ${res.status} ${res.statusText}`);
+        setLoading(false);
+        return;
+      }
+
       const data = await res.json();
 
       if (!res.ok) {
@@ -70,7 +78,6 @@ export default function ClaimAdmin() {
         }
       }, 1500);
     } catch (error) {
-      console.error("Bootstrap error:", error);
       setErr("Failed to claim admin role. Please try again.");
       toast.error("An unexpected error occurred");
       setLoading(false);

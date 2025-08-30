@@ -80,7 +80,6 @@ export function SSEProvider({ children }: SSEProviderProps) {
       lastToast.message === message &&
       now - lastToast.timestamp < 3000
     ) {
-      console.log(`🚫 Duplicate toast prevented: ${message}`);
       return;
     }
 
@@ -116,19 +115,15 @@ export function SSEProvider({ children }: SSEProviderProps) {
       });
 
       const result = await response.json();
-      console.log(`🔍 Lock API response:`, response.status, result);
       if (!response.ok) {
-        console.error("Failed to lock row:", result.error);
         if (result.lockedBy) {
           toast.warning(`User is being edited by ${result.lockedBy}`);
         }
         return false;
       }
 
-      console.log(`✅ Lock successful, returning true`);
       return true;
     } catch (error) {
-      console.error("Failed to lock row:", error);
       return false;
     }
   };
@@ -144,7 +139,6 @@ export function SSEProvider({ children }: SSEProviderProps) {
         }),
       });
     } catch (error) {
-      console.error("Failed to unlock row:", error);
     }
   };
 
@@ -159,7 +153,6 @@ export function SSEProvider({ children }: SSEProviderProps) {
         }),
       });
     } catch (error) {
-      console.error("Failed to broadcast creation start:", error);
     }
   };
 
@@ -174,7 +167,6 @@ export function SSEProvider({ children }: SSEProviderProps) {
         }),
       });
     } catch (error) {
-      console.error("Failed to broadcast creation completion:", error);
     }
   };
 
@@ -186,12 +178,10 @@ export function SSEProvider({ children }: SSEProviderProps) {
 
   // Edit session management
   const startEditingSession = (userId: string, adminEmail: string) => {
-    console.log(`🎯 Starting edit session for user ${userId} by ${adminEmail}`);
     setEditingSessions((prev) => new Map([...prev, [userId, adminEmail]]));
   };
 
   const endEditingSession = (userId: string) => {
-    console.log(`🎯 Ending edit session for user ${userId}`);
     setEditingSessions((prev) => {
       const newMap = new Map(prev);
       newMap.delete(userId);
@@ -225,9 +215,6 @@ export function SSEProvider({ children }: SSEProviderProps) {
                 (currentSession || session)?.user?.email
               ) {
                 editingMap.set(lock.lockedUserId, lock.lockedByAdminEmail);
-                console.log(
-                  `🔄 Restoring editing session for user ${lock.lockedUserId}`,
-                );
               }
             },
           );
@@ -235,13 +222,8 @@ export function SSEProvider({ children }: SSEProviderProps) {
           setLockedRows(lockSet);
           setLockOwnership(ownershipMap);
           setEditingSessions(editingMap); // RESTORE editing state from database
-          console.log(`🔒 Loaded ${lockSet.size} active locks from database`);
-          console.log(
-            `📝 Restored ${editingMap.size} editing sessions for current user`,
-          );
         }
       } catch (error) {
-        console.error("Failed to fetch active locks:", error);
       }
     },
     [session],
@@ -249,17 +231,14 @@ export function SSEProvider({ children }: SSEProviderProps) {
 
   const connect = useCallback(() => {
     if (eventSourceRef.current?.readyState === EventSource.OPEN) {
-      console.log("🔄 Real-time connection already active");
       return;
     }
 
     // Prevent multiple simultaneous connection attempts
     if (eventSourceRef.current?.readyState === EventSource.CONNECTING) {
-      console.log("🔄 Real-time connection already in progress");
       return;
     }
 
-    console.log("🔄 Setting up universal real-time connection...");
     setShouldConnect(true);
 
     // Use the universal realtime endpoint instead of admin-specific
@@ -267,7 +246,6 @@ export function SSEProvider({ children }: SSEProviderProps) {
     eventSourceRef.current = eventSource;
 
     eventSource.onopen = () => {
-      console.log("✅ Universal real-time connection established");
       setIsConnected(true);
 
       // Clear any reconnection attempts
@@ -280,7 +258,6 @@ export function SSEProvider({ children }: SSEProviderProps) {
     eventSource.onmessage = (event) => {
       try {
         const message = JSON.parse(event.data);
-        console.log("📡 Real-time message received:", message.type);
 
         switch (message.type) {
           case "connected":
@@ -296,9 +273,6 @@ export function SSEProvider({ children }: SSEProviderProps) {
 
             // Re-fetch locks after SSE connection established (for admin users)
             if (message.data.userRole === "admin") {
-              console.log(
-                "🔄 SSE connected, refreshing lock state for admin user",
-              );
               // Small delay to ensure connection is fully established
               setTimeout(() => fetchActiveLocks(), 1000);
             }
@@ -308,7 +282,6 @@ export function SSEProvider({ children }: SSEProviderProps) {
           case "user-updated":
           case "user-created":
           case "user-deleted":
-            console.log(`👤 ${message.type} by ${message.data.triggeredBy}`);
             // Don't show toast here - let individual components handle their own notifications
 
             window.dispatchEvent(
@@ -326,7 +299,6 @@ export function SSEProvider({ children }: SSEProviderProps) {
           case "job-card-created":
           case "job-card-updated":
           case "job-card-completed":
-            console.log(`💼 ${message.type} by ${message.data.triggeredBy}`);
             toast.info(`Job card ${message.type.split("-")[2]}`);
 
             window.dispatchEvent(
@@ -344,7 +316,6 @@ export function SSEProvider({ children }: SSEProviderProps) {
           case "inventory-updated":
           case "stock-low":
           case "stock-out":
-            console.log(`📦 ${message.type} by ${message.data.triggeredBy}`);
 
             if (message.type === "stock-out") {
               showToast(
@@ -375,7 +346,6 @@ export function SSEProvider({ children }: SSEProviderProps) {
           case "salary-updated":
           case "payment-processed":
           case "invoice-generated":
-            console.log(`💰 ${message.type} by ${message.data.triggeredBy}`);
             toast.info(`Finance: ${message.type.replace("-", " ")}`);
 
             window.dispatchEvent(
@@ -393,7 +363,6 @@ export function SSEProvider({ children }: SSEProviderProps) {
           case "task-assigned":
           case "task-completed":
           case "task-overdue":
-            console.log(`📋 ${message.type} by ${message.data.triggeredBy}`);
 
             if (message.type === "task-assigned") {
               toast.info("New task assigned");
@@ -417,7 +386,6 @@ export function SSEProvider({ children }: SSEProviderProps) {
           // Notification Events
           case "notification-sent":
           case "system-announcement":
-            console.log(`🔔 ${message.type} by ${message.data.triggeredBy}`);
             toast.info(message.data.message || "New notification");
 
             window.dispatchEvent(
@@ -435,7 +403,6 @@ export function SSEProvider({ children }: SSEProviderProps) {
           case "order-created":
           case "order-updated":
           case "order-cancelled":
-            console.log(`🛒 ${message.type} by ${message.data.triggeredBy}`);
             toast.info(`Order ${message.type.split("-")[1]}`);
 
             window.dispatchEvent(
@@ -451,9 +418,6 @@ export function SSEProvider({ children }: SSEProviderProps) {
 
           // Collaborative Editing Events
           case "user-edit-lock":
-            console.log(
-              `🔒 User row locked: ${message.data.userId} by ${message.data.lockingAdmin}`,
-            );
             setLockedRows((prev) => new Set([...prev, message.data.userId]));
             setLockOwnership(
               (prev) =>
@@ -475,7 +439,6 @@ export function SSEProvider({ children }: SSEProviderProps) {
             break;
 
           case "user-edit-unlock":
-            console.log(`🔓 User row unlocked: ${message.data.userId}`);
             setLockedRows((prev) => {
               const newSet = new Set(prev);
               newSet.delete(message.data.userId);
@@ -498,9 +461,6 @@ export function SSEProvider({ children }: SSEProviderProps) {
             break;
 
           case "user-creation-started":
-            console.log(
-              `👤➕ User creation started by ${message.data.creatingAdmin}, session: ${message.data.sessionId}`,
-            );
             setCreationSessions(
               (prev) => new Set([...prev, message.data.sessionId]),
             );
@@ -517,9 +477,6 @@ export function SSEProvider({ children }: SSEProviderProps) {
             break;
 
           case "user-creation-completed":
-            console.log(
-              `👤✅ User creation completed, session: ${message.data.sessionId}`,
-            );
             setCreationSessions((prev) => {
               const newSet = new Set(prev);
               newSet.delete(message.data.sessionId);
@@ -537,7 +494,6 @@ export function SSEProvider({ children }: SSEProviderProps) {
             break;
 
           default:
-            console.log("📡 Unknown real-time message type:", message.type);
         }
       } catch (error) {
         console.error("Error parsing real-time message:", error);
@@ -545,14 +501,11 @@ export function SSEProvider({ children }: SSEProviderProps) {
     };
 
     eventSource.onerror = (error) => {
-      console.error("❌ Real-time connection error:", error);
+      console.error("Real-time connection error:", error);
       setIsConnected(false);
 
       // Only attempt reconnection if we should still be connected
       if (shouldConnect && eventSource.readyState === EventSource.CLOSED) {
-        console.log(
-          "🔄 Attempting to reconnect real-time updates in 5 seconds...",
-        );
         reconnectTimeoutRef.current = setTimeout(() => {
           if (shouldConnect) {
             connect();
@@ -563,7 +516,6 @@ export function SSEProvider({ children }: SSEProviderProps) {
   }, [shouldConnect, fetchActiveLocks]);
 
   const disconnect = useCallback(() => {
-    console.log("🛑 Disconnecting real-time connection");
     setShouldConnect(false);
 
     if (reconnectTimeoutRef.current) {
@@ -585,26 +537,21 @@ export function SSEProvider({ children }: SSEProviderProps) {
     // Skip if session is still loading
     if (isPending) return;
 
-    // Check if we're on a protected page
+    // Check if we're on a protected page (exclude setup pages to avoid auth conflicts)
     const isProtectedPage =
-      pathname?.startsWith("/dashboard") ||
-      pathname?.startsWith("/admin") ||
-      pathname?.startsWith("/inventory") ||
-      pathname?.startsWith("/jobs") ||
-      pathname?.startsWith("/orders") ||
-      pathname?.startsWith("/tasks");
+      (pathname?.startsWith("/dashboard") ||
+        pathname?.startsWith("/admin") ||
+        pathname?.startsWith("/inventory") ||
+        pathname?.startsWith("/jobs") ||
+        pathname?.startsWith("/orders") ||
+        pathname?.startsWith("/tasks")) &&
+      !pathname?.includes("/admin-setup");
 
     const currentSessionId = session?.user?.id || null;
     const sessionChanged = previousSessionRef.current !== currentSessionId;
 
     // If session changed (login/logout/user switch)
     if (sessionChanged) {
-      console.log(
-        "🔄 Session changed:",
-        previousSessionRef.current,
-        "→",
-        currentSessionId,
-      );
       previousSessionRef.current = currentSessionId;
 
       // Always disconnect first when session changes
@@ -612,9 +559,6 @@ export function SSEProvider({ children }: SSEProviderProps) {
 
       // If authenticated and on protected page, connect after a short delay
       if (currentSessionId && isProtectedPage) {
-        console.log(
-          "🔑 User authenticated on protected page, establishing SSE connection...",
-        );
         setTimeout(() => {
           connect();
           // Fetch existing locks when connecting to admin page
@@ -630,9 +574,6 @@ export function SSEProvider({ children }: SSEProviderProps) {
       !eventSourceRef.current
     ) {
       // If already authenticated but not connected (e.g., navigating to protected page)
-      console.log(
-        "📍 Navigated to protected page, establishing SSE connection...",
-      );
       connect();
       // Fetch existing locks when connecting to admin page
       if (pathname?.startsWith("/admin")) {
@@ -640,15 +581,11 @@ export function SSEProvider({ children }: SSEProviderProps) {
       }
     } else if (!currentSessionId && eventSourceRef.current) {
       // If logged out but still have connection, disconnect
-      console.log("🚪 User logged out, closing SSE connection...");
       disconnect();
     }
 
     // ALWAYS fetch locks when navigating to admin pages (Fix for browser restart visibility issue)
     if (currentSessionId && pathname?.startsWith("/admin") && !sessionChanged) {
-      console.log(
-        "📍 Admin page navigation detected, fetching current lock state...",
-      );
       fetchActiveLocks(session);
     }
   }, [
@@ -670,9 +607,7 @@ export function SSEProvider({ children }: SSEProviderProps) {
       pathname?.startsWith("/admin") &&
       isConnected
     ) {
-      console.log("🔄 Setting up periodic lock refresh for admin user");
       refreshInterval = setInterval(() => {
-        console.log("⏰ Periodic lock refresh triggered");
         fetchActiveLocks(session);
       }, 30000); // 30 seconds
     }
@@ -680,7 +615,6 @@ export function SSEProvider({ children }: SSEProviderProps) {
     return () => {
       if (refreshInterval) {
         clearInterval(refreshInterval);
-        console.log("🛑 Cleared periodic lock refresh");
       }
     };
   }, [session?.user?.role, pathname, isConnected, fetchActiveLocks, session]);
@@ -689,7 +623,6 @@ export function SSEProvider({ children }: SSEProviderProps) {
   useEffect(() => {
     const handleBeforeUnload = () => {
       if (eventSourceRef.current) {
-        console.log("🔄 Page unloading, closing SSE connection...");
         eventSourceRef.current.close();
       }
     };

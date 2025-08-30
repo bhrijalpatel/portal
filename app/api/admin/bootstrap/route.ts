@@ -100,9 +100,6 @@ export const POST = withAuth(async ({ session }, request) => {
       userAgent,
     );
 
-    console.log(
-      `🔒 SECURITY: Admin role successfully claimed by ${session.user.email} from IP ${ipAddress}`,
-    );
 
     return Response.json({
       ok: true,
