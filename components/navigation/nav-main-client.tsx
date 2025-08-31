@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/sidebar";
 import { NavItem } from "@/constants/nav-main";
 import { usePathname } from "next/navigation";
-import { ShieldUserIcon, GaugeIcon, Package, Gauge } from "lucide-react";
+import { ShieldUserIcon, GaugeIcon, Package } from "lucide-react";
 
 // Icon mapping for string identifiers
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
