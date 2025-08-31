@@ -4,7 +4,6 @@ import {
   text,
   timestamp,
   boolean,
-  integer,
 } from "drizzle-orm/pg-core";
 
 /** Better‑Auth tables (must match what’s already in your DB) */

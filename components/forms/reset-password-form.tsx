@@ -1,6 +1,5 @@
 "use client";
 
-import { cn } from "@/utils/cn";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -24,7 +23,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
-import { Loader2, KeyRound, CheckCircle, XCircle } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 
 const resetPasswordSchema = z
@@ -43,10 +42,7 @@ const resetPasswordSchema = z
     path: ["confirmPassword"],
   });
 
-export function ResetPasswordForm({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+export function ResetPasswordForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [tokenStatus, setTokenStatus] = useState<
     "checking" | "valid" | "invalid"
@@ -102,7 +98,7 @@ export function ResetPasswordForm({
       setTimeout(() => {
         router.push("/sign-in");
       }, 2000);
-    } catch (error) {
+    } catch {
       toast.error("An unexpected error occurred");
       setIsLoading(false);
     }

@@ -5,6 +5,104 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2025/08/31] - Code Quality Improvements & Auth UI Refactoring
+
+### 🧹 **LINTING & CODE QUALITY**
+
+#### **Complete ESLint Compliance**
+Achieved zero ESLint errors and warnings across the entire codebase by fixing 29 linting issues.
+
+#### **Fixed Issues by Category:**
+
+**1. Unused Variables & Parameters**
+- **Fixed unused error parameters** by replacing `catch (error)` with `catch {}` in:
+  - `app/(setup)/admin-setup/claim.tsx` (Line 80)
+  - `app/api/admin/locks/route.ts` (Lines 15, 57, 164, 203)
+  - `components/admin/user-columns.tsx` (Lines 115, 225)
+  - `components/admin/user-table-client.tsx` (Line 123)
+  - `components/forms/reset-password-form.tsx` (Line 105)
+  - `components/providers/sse-provider.tsx` (Lines 126, 141, 155, 169, 226)
+  - `helpers/realtime-broadcast.ts` (Line 132)
+
+**2. Unused Imports**
+- **Removed unused imports** from:
+  - `components/forms/forgot-password-form.tsx`: Removed unused `Mail`, `CheckCircle` imports
+  - `components/forms/form-signin.tsx`: Removed unused `FormDescription` import
+  - `components/forms/reset-password-form.tsx`: Removed unused `cn`, `KeyRound`, `CheckCircle`, `XCircle` imports
+  - `db/schema.ts`: Removed unused `integer` import
+
+**3. Unused Variables**
+- **Removed unused variable** `isLockedByCurrentUser` from `components/admin/user-columns.tsx` (Line 147)
+- **Fixed unused parameter** `e` in onClick handler (Line 225)
+- **Removed unused props** `className` and `props` from form components
+
+**4. React Hooks Dependencies**
+- **Fixed React Hook dependency** in `hooks/use-realtime.ts` (Line 24)
+  - Removed unnecessary `category` dependency from useCallback
+
+### 🎨 **UI/UX IMPROVEMENTS**
+
+#### **Authentication Pages Refactoring**
+Complete restructuring of authentication pages for improved maintainability and user experience.
+
+**1. Logo Simplification**
+- **Updated Logo Component** (`components/icon/Logo.tsx`):
+  - Simplified to display only the Lucide Sparkle icon
+  - Removed "Portal" text for cleaner visual design
+  - Increased icon size from `size-4` to `size-5` for better visibility
+
+**2. Auth Layout Centralization**
+- **Enhanced Auth Layout** (`app/(auth)/layout.tsx`):
+  - Added centralized "Back to Portal" button at top-left position
+  - Implemented consistent page centering with `flex min-h-svh` layout
+  - Wrapped children in `<div className="w-full max-w-sm">` for uniform width
+  - Moved all common UI elements from individual pages to layout
+
+**3. Page Simplification**
+All auth pages now follow a clean, minimal pattern:
+- **Sign-in Page** (`app/(auth)/sign-in/page.tsx`):
+  - Reduced to only importing and rendering `SignInForm`
+  - Email verification alert preserved with proper styling
+  
+- **Sign-up Page** (`app/(auth)/sign-up/page.tsx`):
+  - Simplified to single-line component return
+  
+- **Forgot Password Page** (`app/(auth)/forgot-password/page.tsx`):
+  - Streamlined to only import and render form
+  
+- **Reset Password Page** (`app/(auth)/reset-password/page.tsx`):
+  - Maintained Suspense wrapper for loading state
+  - Removed all redundant layout code
+
+**4. Component Organization**
+- **Removed duplicate layout code** from all auth pages
+- **Centralized navigation** with uniform "Back to Portal" button
+- **Consistent spacing and alignment** across all auth forms
+- **Improved maintainability** with single source of truth for layout
+
+### 📊 **IMPACT SUMMARY**
+
+- **Files Modified**: 15 files
+- **Linting Issues Fixed**: 29 (0 errors, 29 warnings)
+- **Lines of Code Removed**: ~100+ (duplicate layout code)
+- **Components Simplified**: 5 auth pages + 1 logo component
+- **Developer Experience**: Zero linting warnings for clean development
+
+### 🔧 **TECHNICAL IMPROVEMENTS**
+
+- **Better Error Handling**: Replaced error parameters with empty catch blocks where error wasn't used
+- **Cleaner Imports**: Removed all unused imports for smaller bundle size
+- **React Best Practices**: Fixed React Hook dependencies for proper re-rendering
+- **Component Props**: Cleaned up unused props from function signatures
+- **Code Maintainability**: Centralized auth layout reduces duplication and improves consistency
+
+### 📝 **DEVELOPMENT NOTES**
+
+- All changes maintain backward compatibility
+- No breaking changes to existing functionality
+- Auth flow remains unchanged from user perspective
+- Improved developer experience with clean linting status
+
 ## [2025/08/30] - Production Security Hardening & Console Log Cleanup
 
 ### 🔒 **SECURITY & PRIVACY IMPROVEMENTS**

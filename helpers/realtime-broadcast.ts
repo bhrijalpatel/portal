@@ -129,7 +129,7 @@ export async function broadcastRealtimeUpdate(
   for (const [clientId, client] of eligibleClients) {
     try {
       client.controller.enqueue(new TextEncoder().encode(messageStr));
-    } catch (error) {
+    } catch {
       disconnectedClients.push(clientId);
     }
   }

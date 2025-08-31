@@ -21,7 +21,7 @@ export function useRealtime(
     (event: CustomEvent) => {
       onUpdate(event);
     },
-    [category, onUpdate],
+    [onUpdate],
   );
 
   useEffect(() => {

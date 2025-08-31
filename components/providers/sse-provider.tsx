@@ -123,7 +123,7 @@ export function SSEProvider({ children }: SSEProviderProps) {
       }
 
       return true;
-    } catch (error) {
+    } catch {
       return false;
     }
   };
@@ -138,7 +138,7 @@ export function SSEProvider({ children }: SSEProviderProps) {
           action: "unlock",
         }),
       });
-    } catch (error) {
+    } catch {
     }
   };
 
@@ -152,7 +152,7 @@ export function SSEProvider({ children }: SSEProviderProps) {
           data: { sessionId, creatingAdmin },
         }),
       });
-    } catch (error) {
+    } catch {
     }
   };
 
@@ -166,7 +166,7 @@ export function SSEProvider({ children }: SSEProviderProps) {
           data: { sessionId },
         }),
       });
-    } catch (error) {
+    } catch {
     }
   };
 
@@ -223,7 +223,7 @@ export function SSEProvider({ children }: SSEProviderProps) {
           setLockOwnership(ownershipMap);
           setEditingSessions(editingMap); // RESTORE editing state from database
         }
-      } catch (error) {
+      } catch {
       }
     },
     [session],

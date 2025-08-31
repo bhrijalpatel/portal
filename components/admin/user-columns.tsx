@@ -112,7 +112,7 @@ function ActionsCell({
       } else {
         setIsLockPending(false); // Reset pending state on failure
       }
-    } catch (error) {
+    } catch {
       setIsLockPending(false); // Reset pending state on error
     }
   };
@@ -144,8 +144,6 @@ function ActionsCell({
   // Get actual lock info from SSE provider
   const lockInfo = getRowLockInfo(user.id);
   const currentUserEmail = session?.user?.email;
-  const isLockedByCurrentUser =
-    lockInfo.isLocked && lockInfo.lockedBy === currentUserEmail;
   const isLockedByOtherAdmin =
     lockInfo.isLocked && lockInfo.lockedBy !== currentUserEmail;
 
@@ -222,7 +220,7 @@ function ActionsCell({
             variant="outline"
             size="icon"
             disabled={isPending || !session?.user?.email || isLockPending}
-            onClick={(e) => {
+            onClick={() => {
               handleStartEdit();
             }}
           >

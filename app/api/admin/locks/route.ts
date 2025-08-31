@@ -12,16 +12,14 @@ const lockSchema = z.object({
 });
 
 // GET: Check active locks
-export const GET = withAdminAuth(async ({ session }) => {
+export const GET = withAdminAuth(async () => {
   try {
-
     // ONLY clean up expired locks that belong to disconnected sessions
     // First, get list of currently connected client sessions from SSE
     const currentlyConnectedSessions = new Set<string>();
     for (const [, client] of connectedClients.entries()) {
       currentlyConnectedSessions.add(client.userId);
     }
-
 
     // Clean up expired locks ONLY for sessions that are no longer connected
     const expiredLocks = await db
@@ -54,7 +52,7 @@ export const GET = withAdminAuth(async ({ session }) => {
               client.controller.enqueue(
                 new TextEncoder().encode(`data: ${unlockEvent}\n\n`),
               );
-            } catch (error) {
+            } catch {
               connectedClients.delete(clientId);
             }
           }
@@ -91,7 +89,6 @@ export const POST = withAdminAuth(async ({ session }, request) => {
         .from(userLocks)
         .where(eq(userLocks.lockedUserId, userId))
         .limit(1);
-
 
       if (existingLock.length > 0) {
         const lockExpired = new Date(existingLock[0].expiresAt) < new Date();
@@ -143,7 +140,6 @@ export const POST = withAdminAuth(async ({ session }, request) => {
         })
         .returning();
 
-
       // Broadcast lock event directly to connected clients
       const lockEvent = JSON.stringify({
         type: "user-edit-lock",
@@ -161,7 +157,7 @@ export const POST = withAdminAuth(async ({ session }, request) => {
             client.controller.enqueue(
               new TextEncoder().encode(`data: ${lockEvent}\n\n`),
             );
-          } catch (error) {
+          } catch {
             connectedClients.delete(clientId);
           }
         }
@@ -200,7 +196,7 @@ export const POST = withAdminAuth(async ({ session }, request) => {
               client.controller.enqueue(
                 new TextEncoder().encode(`data: ${unlockEvent}\n\n`),
               );
-            } catch (error) {
+            } catch {
               connectedClients.delete(clientId);
             }
           }

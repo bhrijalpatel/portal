@@ -120,7 +120,7 @@ export function UserTableClient({ initialUsers }: ClientUserTableProps) {
         throw new Error(errorData.error || "Failed to broadcast update");
       }
 
-    } catch (error) {
+    } catch {
       // Fallback to local refresh if broadcast fails
       refreshUsers(false);
     }

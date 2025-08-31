@@ -77,7 +77,7 @@ export default function ClaimAdmin() {
           window.location.href = "/sign-in";
         }
       }, 1500);
-    } catch (error) {
+    } catch {
       setErr("Failed to claim admin role. Please try again.");
       toast.error("An unexpected error occurred");
       setLoading(false);
