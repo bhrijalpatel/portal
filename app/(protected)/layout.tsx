@@ -1,30 +1,27 @@
 // app/(protected)/layout.tsx
-import { getSessionWithRoleOrNull } from "@/lib/auth-helpers";
+// Why: Add defense-in-depth with server-side validation as backup to middleware
+// Security: Provides Layer 2 protection against CVE-2025-29927 and other bypasses
+// Citation: https://nextjs.org/docs/app/building-your-application/routing/middleware#performance
+import { requireSession } from "@/lib/auth-helpers";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/navigation/app-sidebar";
 import { SiteHeader } from "@/components/layout/site-header";
 import { RoleProvider } from "@/providers/role-provider";
-import { redirect } from "next/navigation";
 
 export default async function ProtectedLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  // Check for session without causing redirect loop
-  const sessionData = await getSessionWithRoleOrNull();
+  // SECURITY: Layer 2 - Server-side session validation (defense-in-depth)
+  // This provides backup protection if middleware is bypassed (CVE-2025-29927)
+  const session = await requireSession();
 
-  // If no session, redirect to sign-in (this is the real protection)
-  if (!sessionData) {
-    redirect("/sign-in");
-  }
-
-  const { session, userRole } = sessionData;
-
+  // Session data is managed client-side by RoleProvider for UI purposes
   return (
-    <RoleProvider session={session} userRole={userRole}>
+    <RoleProvider>
       <SidebarProvider>
-        <AppSidebar session={session} userRole={userRole} />
+        <AppSidebar />
         <SidebarInset>
           <SiteHeader />
           <div className="flex flex-1 flex-col">

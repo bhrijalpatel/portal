@@ -1,5 +1,5 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { ButtonDashboard } from "@/components/buttons/button-dashboard";
+import { ButtonHome } from "@/components/buttons/button-home";
 
 export default function ForbiddenPage() {
   return (
@@ -15,12 +15,8 @@ export default function ForbiddenPage() {
         </div>
 
         <div className="flex flex-col justify-center gap-4 sm:flex-row">
-          <Button asChild>
-            <Link href="/dashboard">Go to Dashboard</Link>
-          </Button>
-          <Button variant="outline" asChild>
-            <Link href="/">Go Home</Link>
-          </Button>
+          <ButtonDashboard />
+          <ButtonHome />
         </div>
       </div>
     </main>

@@ -7,6 +7,7 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -53,8 +54,10 @@ export default async function AdminSetupPage() {
               <li>Restart the application</li>
             </ol>
           </CardContent>
+          <CardFooter>
+            <ButtonDashboard />
+          </CardFooter>
         </Card>
-        <ButtonDashboard />
       </main>
     );
   }
@@ -64,7 +67,7 @@ export default async function AdminSetupPage() {
     return (
       <main className="mx-auto flex h-screen flex-col items-center justify-center gap-3">
         <div className="w-full max-w-sm">
-          <Card className="from-primary/5 bg-gradient-to-br via-emerald-500/5 to-blue-500/5">
+          <Card className="from-primary/5 bg-gradient-to-br via-green-500/5 to-emerald-500/5">
             <CardHeader>
               <div className="flex items-center gap-2">
                 <Lock className="size-5 text-emerald-500 dark:text-emerald-400" />
@@ -74,8 +77,10 @@ export default async function AdminSetupPage() {
             <CardContent>
               An admin user already exists in the system.
             </CardContent>
+            <CardFooter>
+              <ButtonDashboard />
+            </CardFooter>
           </Card>
-          <ButtonDashboard />
         </div>
       </main>
     );
