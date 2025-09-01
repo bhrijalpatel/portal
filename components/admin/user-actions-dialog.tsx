@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -36,16 +37,23 @@ import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
 
 // Form schemas for different actions
-const createUserSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(12, "Password must be at least 12 characters"),
-  role: z.enum(["user", "admin"]).default("user"),
-});
+const createUserSchema = z
+  .object({
+    name: z.string().min(1, "Name is required"),
+    email: z.string().email("Invalid email address"),
+    password: z.string().min(12, "Password must be at least 12 characters"),
+    confirmPassword: z.string(),
+    role: z.enum(["user", "admin"]).default("user"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
 
 const updateUserSchema = z.object({
   name: z.string().min(1, "Name is required"),
   role: z.enum(["user", "admin"]),
+  emailVerified: z.boolean(),
 });
 
 const setPasswordSchema = z.object({
@@ -70,6 +78,7 @@ interface User {
   id: string;
   name: string | null;
   email: string;
+  emailVerified: boolean;
   role: string | null;
   banned: boolean | null;
   banReason: string | null;
@@ -100,6 +109,7 @@ export function UserActionsDialog({
       name: "",
       email: "",
       password: "",
+      confirmPassword: "",
       role: "user" as const,
     },
   });
@@ -110,6 +120,7 @@ export function UserActionsDialog({
     defaultValues: {
       name: user?.name || "",
       role: (user?.role as "user" | "admin") || "user",
+      emailVerified: user?.emailVerified || false,
     },
   });
 
@@ -136,6 +147,7 @@ export function UserActionsDialog({
       updateForm.reset({
         name: user.name || "",
         role: (user.role as "user" | "admin") || "user",
+        emailVerified: user.emailVerified,
       });
     }
   }, [user, action, updateForm]);
@@ -192,6 +204,27 @@ export function UserActionsDialog({
         if (!response.ok) {
           const errorData = await response.json();
           throw new Error(errorData.error || "Failed to update user name");
+        }
+      }
+
+      // Update emailVerified if it changed using our custom endpoint
+      if (data.emailVerified !== user.emailVerified) {
+        const response = await fetch("/api/admin/update-user", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: user.id,
+            emailVerified: data.emailVerified,
+          }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(
+            errorData.error || "Failed to update email verification status",
+          );
         }
       }
 
@@ -388,6 +421,23 @@ export function UserActionsDialog({
                 />
                 <FormField
                   control={createForm.control}
+                  name="confirmPassword"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Confirm Password</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="password"
+                          placeholder="Confirm user's password"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={createForm.control}
                   name="role"
                   render={({ field }) => (
                     <FormItem>
@@ -468,6 +518,23 @@ export function UserActionsDialog({
                         </SelectContent>
                       </Select>
                       <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={updateForm.control}
+                  name="emailVerified"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-center space-y-0 space-x-3">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel>Email Verified</FormLabel>
+                      </div>
                     </FormItem>
                   )}
                 />

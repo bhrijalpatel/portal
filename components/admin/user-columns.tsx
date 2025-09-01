@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Tooltip,
   TooltipContent,
@@ -93,7 +94,6 @@ function ActionsCell({
       ? isUserBeingEditedByMe(user.id, currentUserEmail)
       : false;
 
-
     // Don't proceed if session is still loading or already editing
     if (isPending || !currentUserEmail || isCurrentlyEditing) {
       return;
@@ -125,7 +125,6 @@ function ActionsCell({
   };
 
   const handleAction = async (action: typeof dialogAction) => {
-
     // Since we're in edit mode, user is already locked - directly open dialog
     setDialogAction(action);
     setDialogOpen(true);
@@ -356,6 +355,28 @@ function ActionsCell({
 
 export function createColumns(onUserUpdate: () => void): ColumnDef<User>[] {
   return [
+    {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
     {
       accessorKey: "name",
       header: ({ column }) => {

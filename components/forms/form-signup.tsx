@@ -29,11 +29,17 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 
-const formSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: email().min(1, "Email is required"),
-  password: z.string().min(12, "Password must be at least 12 characters"),
-});
+const formSchema = z
+  .object({
+    name: z.string().min(2, "Name must be at least 2 characters"),
+    email: email().min(1, "Email is required"),
+    password: z.string().min(12, "Password must be at least 12 characters"),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
 
 export function SignUpForm() {
   const [isLoading, setIsLoading] = useState(false);
@@ -44,6 +50,7 @@ export function SignUpForm() {
       name: "", // ensure controlled from first render
       email: "",
       password: "",
+      confirmPassword: "",
     },
   });
 
@@ -63,14 +70,16 @@ export function SignUpForm() {
         onSuccess: () => {
           // Since autoSignIn is false and email verification is required,
           // user needs to verify email before signing in
-          toast.success("Account created! Please check your email to verify your account.");
+          toast.success(
+            "Account created! Please check your email to verify your account.",
+          );
           router.push("/sign-in?message=verify-email");
         },
         onError: (ctx) => {
           toast.error(ctx.error.message ?? "Sign up failed. Please try again.");
           setIsLoading(false);
         },
-      }
+      },
     );
   }
 
@@ -124,6 +133,22 @@ export function SignUpForm() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Password</FormLabel>
+                        <FormControl>
+                          <Input type="password" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />{" "}
+                </div>
+
+                <div className="grid gap-3">
+                  <FormField
+                    control={form.control}
+                    name="confirmPassword"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Confirm Password</FormLabel>
                         <FormControl>
                           <Input type="password" {...field} />
                         </FormControl>

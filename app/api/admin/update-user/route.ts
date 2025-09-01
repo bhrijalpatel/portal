@@ -10,6 +10,7 @@ const updateUserSchema = z.object({
   userId: z.string().min(1, "User ID is required"),
   name: z.string().min(1, "Name is required").optional(),
   email: z.string().email("Invalid email").optional(),
+  emailVerified: z.boolean().optional(),
 });
 
 export const PATCH = withAdminAuth(async ({ session }, request) => {
@@ -40,6 +41,10 @@ export const PATCH = withAdminAuth(async ({ session }, request) => {
       updateData.email = validatedData.email;
     }
 
+    if (validatedData.emailVerified !== undefined) {
+      updateData.emailVerified = validatedData.emailVerified;
+    }
+
     // Update user in database
     const result = await db
       .update(authUsers)
@@ -49,6 +54,7 @@ export const PATCH = withAdminAuth(async ({ session }, request) => {
         id: authUsers.id,
         name: authUsers.name,
         email: authUsers.email,
+        emailVerified: authUsers.emailVerified,
         role: authUsers.role,
         updatedAt: authUsers.updatedAt,
       });
