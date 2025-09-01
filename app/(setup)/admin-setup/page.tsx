@@ -63,18 +63,20 @@ export default async function AdminSetupPage() {
   if (await adminExists()) {
     return (
       <main className="mx-auto flex h-screen flex-col items-center justify-center gap-3">
-        <Card>
-          <CardContent>
+        <div className="w-full max-w-sm">
+          <Card className="from-primary/5 bg-gradient-to-br via-emerald-500/5 to-blue-500/5">
             <CardHeader>
-              <Lock className="size-5 text-emerald-500 dark:text-emerald-400" />
-              <CardTitle>Setup Complete</CardTitle>
+              <div className="flex items-center gap-2">
+                <Lock className="size-5 text-emerald-500 dark:text-emerald-400" />
+                <CardTitle>Setup Complete</CardTitle>
+              </div>
             </CardHeader>
-            <CardDescription>
+            <CardContent>
               An admin user already exists in the system.
-            </CardDescription>
-          </CardContent>
-        </Card>
-        <ButtonDashboard />
+            </CardContent>
+          </Card>
+          <ButtonDashboard />
+        </div>
       </main>
     );
   }
@@ -82,45 +84,45 @@ export default async function AdminSetupPage() {
   const { user } = await requireSession();
 
   return (
-    <main className="mx-auto flex h-screen max-w-lg flex-col items-center justify-center gap-4 p-4">
-      <Card className="w-full">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <LockKeyhole className="size-5" />
-            <span>Secure Admin Setup</span>
-          </CardTitle>
-          <CardDescription>
-            First-time admin role assignment with enhanced security
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="bg-muted space-y-2 rounded-lg p-3">
-            <p className="text-sm">
-              Signed in as: <b>{user.email}</b>
-            </p>
-            <p className="text-muted-foreground text-sm">
-              IP Address:{" "}
-              <code className="bg-background rounded px-1">{ipAddress}</code>
-            </p>
-          </div>
-
-          <Card className="border-amber-500/50 bg-amber-500/25">
-            <CardHeader className="flex items-center gap-2 text-sm font-medium text-amber-600 dark:text-amber-400">
-              <TriangleAlert className="size-5" />
-              <span>Security Notice</span>
-            </CardHeader>
-            <CardContent>
-              <p className="text-xs">
-                You will need the admin setup secret from your environment
-                configuration to proceed. This is a one-time operation that
-                cannot be reversed.
+    <main className="mx-auto flex h-screen w-full flex-col items-center justify-center gap-4 p-4">
+      <div className="w-full max-w-sm">
+        <Card className="from-primary/5 bg-gradient-to-br via-blue-500/5 to-purple-500/5">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <LockKeyhole className="size-5" />
+              <span>Secure Admin Setup</span>
+            </CardTitle>
+            <CardDescription>
+              First-time admin role assignment with enhanced security
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="bg-muted space-y-2 rounded-lg p-3">
+              <p className="text-sm">
+                Signed in as: <b>{user.email}</b>
               </p>
-            </CardContent>
-          </Card>
-
-          <ClaimAdmin />
-        </CardContent>
-      </Card>
+              <p className="text-muted-foreground text-sm">
+                IP Address:{" "}
+                <code className="bg-background rounded px-1">{ipAddress}</code>
+              </p>
+            </div>
+            <Card className="border-amber-500/50 bg-amber-500/25">
+              <CardHeader className="flex items-center gap-2 text-sm font-medium text-amber-600 dark:text-amber-400">
+                <TriangleAlert className="size-5" />
+                <span>Security Notice</span>
+              </CardHeader>
+              <CardContent>
+                <p className="text-xs">
+                  You will need the admin setup secret from your environment
+                  configuration to proceed. This is a one-time operation that
+                  cannot be reversed.
+                </p>
+              </CardContent>
+            </Card>
+            <ClaimAdmin />
+          </CardContent>
+        </Card>
+      </div>
     </main>
   );
 }

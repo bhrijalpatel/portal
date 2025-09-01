@@ -7,7 +7,6 @@ export async function fetchUsersWithRetry(maxRetries = 3) {
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-
       const users = await db
         .select({
           id: authUsers.id,
