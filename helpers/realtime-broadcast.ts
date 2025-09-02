@@ -102,13 +102,11 @@ export async function broadcastRealtimeUpdate(
   data: unknown,
   triggeredBy?: string,
 ) {
-
   const allowedRoles = EVENT_PERMISSIONS[eventType] || [];
 
   const eligibleClients = Array.from(connectedClients.entries()).filter(
     ([, client]) => allowedRoles.includes(client.userRole),
   );
-
 
   const message = {
     type: eventType,
@@ -138,7 +136,6 @@ export async function broadcastRealtimeUpdate(
   disconnectedClients.forEach((clientId) => {
     connectedClients.delete(clientId);
   });
-
 }
 
 // Note: connectedClients is now exported as a singleton at the top of the file

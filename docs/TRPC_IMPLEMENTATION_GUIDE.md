@@ -72,9 +72,9 @@ const loggerMiddleware = t.middleware(async ({ path, type, next }) => {
   const start = Date.now();
   const result = await next();
   const durationMs = Date.now() - start;
-  
+
   console.log(`[tRPC] ${type} ${path} - ${durationMs}ms`);
-  
+
   return result;
 });
 
@@ -86,7 +86,7 @@ export const protectedProcedure = t.procedure
   .use(loggerMiddleware)
   .use(({ ctx, next }) => {
     if (!ctx.session || !ctx.user) {
-      throw new TRPCError({ 
+      throw new TRPCError({
         code: "UNAUTHORIZED",
         message: "You must be logged in to access this resource",
       });
@@ -103,7 +103,7 @@ export const protectedProcedure = t.procedure
 // Admin procedure - requires admin role
 export const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
   if (ctx.user.role !== "admin") {
-    throw new TRPCError({ 
+    throw new TRPCError({
       code: "FORBIDDEN",
       message: "You must be an admin to access this resource",
     });
@@ -118,7 +118,12 @@ Create `server/api/routers/user.ts`:
 
 ```typescript
 import { z } from "zod";
-import { router, publicProcedure, protectedProcedure, adminProcedure } from "../trpc";
+import {
+  router,
+  publicProcedure,
+  protectedProcedure,
+  adminProcedure,
+} from "../trpc";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { user } from "@/db/schema";
@@ -153,7 +158,7 @@ export const userRouter = router({
       z.object({
         name: z.string().min(1).optional(),
         image: z.string().url().optional(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const updated = await ctx.db
@@ -175,7 +180,7 @@ export const userRouter = router({
       z.object({
         limit: z.number().min(1).max(100).default(10),
         offset: z.number().min(0).default(0),
-      })
+      }),
     )
     .query(async ({ ctx, input }) => {
       const users = await ctx.db.query.user.findMany({
@@ -201,7 +206,7 @@ export const dashboardRouter = router({
   getStats: protectedProcedure.query(async ({ ctx }) => {
     // Example stats - replace with your actual queries
     const [userCount, recentOrders, pendingTasks] = await Promise.all([
-      ctx.db.query.user.findMany().then(users => users.length),
+      ctx.db.query.user.findMany().then((users) => users.length),
       // Add your actual queries here
       Promise.resolve(0),
       Promise.resolve(0),
@@ -220,7 +225,7 @@ export const dashboardRouter = router({
     .input(
       z.object({
         limit: z.number().min(1).max(50).default(20),
-      })
+      }),
     )
     .query(async ({ ctx, input }) => {
       // Replace with your actual activity query
@@ -269,7 +274,7 @@ const handler = (req: Request) =>
       process.env.NODE_ENV === "development"
         ? ({ path, error }) => {
             console.error(
-              `❌ tRPC failed on ${path ?? "<no-path>"}: ${error.message}`
+              `❌ tRPC failed on ${path ?? "<no-path>"}: ${error.message}`,
             );
           }
         : undefined,
@@ -382,7 +387,7 @@ import { trpc } from "@/lib/trpc/client";
 
 export function UserProfile() {
   const { data: user, isLoading, error } = trpc.user.me.useQuery();
-  
+
   const updateProfile = trpc.user.updateProfile.useMutation({
     onSuccess: () => {
       toast.success("Profile updated!");
@@ -475,7 +480,7 @@ export const inventoryRouter = router({
       z.object({
         itemId: z.string(),
         quantity: z.number(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       // Update database
@@ -502,7 +507,7 @@ import { TRPCError } from "@trpc/server";
 
 export function handleDatabaseError(error: unknown): never {
   console.error("Database error:", error);
-  
+
   if (error instanceof Error) {
     if (error.message.includes("UNIQUE constraint")) {
       throw new TRPCError({
@@ -511,7 +516,7 @@ export function handleDatabaseError(error: unknown): never {
       });
     }
   }
-  
+
   throw new TRPCError({
     code: "INTERNAL_SERVER_ERROR",
     message: "An unexpected error occurred",
@@ -520,7 +525,7 @@ export function handleDatabaseError(error: unknown): never {
 
 export function requirePermission(
   hasPermission: boolean,
-  message = "You don't have permission to perform this action"
+  message = "You don't have permission to perform this action",
 ): void {
   if (!hasPermission) {
     throw new TRPCError({
@@ -582,9 +587,9 @@ batchUpdate: adminProcedure
           data: z.object({
             // your update fields
           }),
-        })
+        }),
       ),
-    })
+    }),
   )
   .mutation(async ({ ctx, input }) => {
     const results = await ctx.db.transaction(async (tx) => {
@@ -594,8 +599,8 @@ batchUpdate: adminProcedure
             .update(table)
             .set(update.data)
             .where(eq(table.id, update.id))
-            .returning()
-        )
+            .returning(),
+        ),
       );
     });
 

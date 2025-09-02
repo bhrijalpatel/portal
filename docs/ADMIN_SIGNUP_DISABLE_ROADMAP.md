@@ -22,6 +22,7 @@ Implement secure admin-controlled sign-up disabling with the following security 
 ## 🚨 Security Considerations
 
 ### **Potential Vulnerabilities**
+
 1. **Bypass Attacks** - Direct API calls to sign-up endpoints
 2. **Race Conditions** - Multiple simultaneous sign-up attempts during toggle
 3. **Admin Privilege Escalation** - Non-admin users accessing control
@@ -29,6 +30,7 @@ Implement secure admin-controlled sign-up disabling with the following security 
 5. **Database Inconsistency** - Settings table corruption or missing entries
 
 ### **Security Requirements**
+
 - ✅ Admin role validation on all control endpoints
 - ✅ Atomic database operations for setting changes
 - ✅ Rate limiting on toggle operations (max 5 changes/minute)
@@ -46,6 +48,7 @@ Implement secure admin-controlled sign-up disabling with the following security 
 **Security Impact**: Foundation for all admin controls - must be bulletproof
 
 - [ ] **Database Migration: Application Settings**
+
   ```sql
   -- Target schema:
   CREATE TABLE IF NOT EXISTS application_settings (
@@ -59,7 +62,7 @@ Implement secure admin-controlled sign-up disabling with the following security 
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_by TEXT NOT NULL -- Admin user ID who made the change
   );
-  
+
   -- Security indexes
   CREATE INDEX idx_settings_key ON application_settings(setting_key);
   CREATE INDEX idx_settings_public ON application_settings(is_public);
@@ -89,24 +92,25 @@ Implement secure admin-controlled sign-up disabling with the following security 
 **Security Impact**: Core security functions - must validate all operations
 
 - [ ] **Settings Service Layer** (`lib/settings.ts`)
+
   ```typescript
   // Target implementation:
   export class SettingsManager {
     // Get setting with fallback to environment
-    static async getSetting(key: string): Promise<string | boolean | null>
-    
+    static async getSetting(key: string): Promise<string | boolean | null>;
+
     // Admin-only setting updates with audit logging
     static async updateSetting(
-      key: string, 
-      value: string | boolean, 
-      adminUserId: string
-    ): Promise<void>
-    
+      key: string,
+      value: string | boolean,
+      adminUserId: string,
+    ): Promise<void>;
+
     // Validate setting changes before applying
-    static validateSettingUpdate(key: string, value: any): boolean
-    
+    static validateSettingUpdate(key: string, value: any): boolean;
+
     // Get public settings (non-sensitive only)
-    static async getPublicSettings(): Promise<Record<string, any>>
+    static async getPublicSettings(): Promise<Record<string, any>>;
   }
   ```
 
@@ -126,6 +130,7 @@ Implement secure admin-controlled sign-up disabling with the following security 
 **Security Impact**: HIGH - Direct admin control interface
 
 - [ ] **Settings Management API** (`app/api/admin/settings/route.ts`)
+
   ```typescript
   // GET /api/admin/settings - List all settings (admin only)
   export const GET = withAdminAuth(async ({ adminSession }) => {
@@ -135,14 +140,16 @@ Implement secure admin-controlled sign-up disabling with the following security 
   });
 
   // PUT /api/admin/settings/[key] - Update specific setting
-  export const PUT = withAdminAuth(async ({ adminSession, params, request }) => {
-    // 1. Validate admin permissions
-    // 2. Extract and validate setting key/value
-    // 3. Apply rate limiting (max 5 changes/minute per admin)
-    // 4. Update setting with audit logging
-    // 5. Broadcast change to all admin sessions
-    // 6. Return success with new value
-  });
+  export const PUT = withAdminAuth(
+    async ({ adminSession, params, request }) => {
+      // 1. Validate admin permissions
+      // 2. Extract and validate setting key/value
+      // 3. Apply rate limiting (max 5 changes/minute per admin)
+      // 4. Update setting with audit logging
+      // 5. Broadcast change to all admin sessions
+      // 6. Return success with new value
+    },
+  );
   ```
 
 - [ ] **API Security Hardening**
@@ -157,7 +164,7 @@ Implement secure admin-controlled sign-up disabling with the following security 
   // POST /api/admin/settings/signup-control - Toggle sign-up enable/disable
   export const POST = withAdminAuth(async ({ adminSession, request }) => {
     const { enabled } = await request.json();
-    
+
     // 1. Validate boolean input
     // 2. Check rate limiting
     // 3. Update signup_enabled setting
@@ -171,21 +178,22 @@ Implement secure admin-controlled sign-up disabling with the following security 
 **Security Impact**: MEDIUM - Critical for compliance and security monitoring
 
 - [ ] **Settings Audit Trail**
+
   ```typescript
   // Add to existing audit log system:
   await createAuditLog({
     adminUserId: session.user.id,
     adminEmail: session.user.email,
-    action: 'SETTINGS_UPDATE',
+    action: "SETTINGS_UPDATE",
     details: {
-      settingKey: 'signup_enabled',
-      oldValue: 'true',
-      newValue: 'false',
+      settingKey: "signup_enabled",
+      oldValue: "true",
+      newValue: "false",
       timestamp: new Date().toISOString(),
-      ipAddress: request.headers.get('x-forwarded-for'),
-      userAgent: request.headers.get('user-agent')
+      ipAddress: request.headers.get("x-forwarded-for"),
+      userAgent: request.headers.get("user-agent"),
     },
-    success: true
+    success: true,
   });
   ```
 
@@ -204,6 +212,7 @@ Implement secure admin-controlled sign-up disabling with the following security 
 **Security Impact**: MEDIUM - User interface for critical system controls
 
 - [ ] **Admin Settings Panel Component** (`components/admin/settings-panel.tsx`)
+
   ```typescript
   // Target features:
   - Real-time settings display with current values
@@ -215,12 +224,13 @@ Implement secure admin-controlled sign-up disabling with the following security 
   ```
 
 - [ ] **Sign-Up Control Widget** (`components/admin/signup-control.tsx`)
+
   ```typescript
   // Secure implementation:
   export function SignUpControlWidget() {
     const [enabled, setEnabled] = useState<boolean>(true);
     const [loading, setLoading] = useState(false);
-    
+
     const handleToggle = async (newState: boolean) => {
       // 1. Show confirmation dialog
       // 2. Call API with loading state
@@ -228,7 +238,7 @@ Implement secure admin-controlled sign-up disabling with the following security 
       // 4. Update local state
       // 5. Show appropriate notifications
     };
-    
+
     return (
       <Card className="p-4">
         <div className="flex items-center justify-between">
@@ -236,8 +246,8 @@ Implement secure admin-controlled sign-up disabling with the following security 
             <h3>User Registration</h3>
             <p>Control whether new users can sign up</p>
           </div>
-          <Switch 
-            checked={enabled} 
+          <Switch
+            checked={enabled}
             onCheckedChange={handleToggle}
             disabled={loading}
           />
@@ -258,6 +268,7 @@ Implement secure admin-controlled sign-up disabling with the following security 
 **Security Impact**: LOW - Prevents accidental changes, improves admin UX
 
 - [ ] **Confirmation Dialogs**
+
   ```typescript
   // Critical action confirmation:
   <AlertDialog>
@@ -265,7 +276,7 @@ Implement secure admin-controlled sign-up disabling with the following security 
       <AlertDialogHeader>
         <AlertDialogTitle>Disable User Registration?</AlertDialogTitle>
         <AlertDialogDescription>
-          This will prevent new users from signing up. 
+          This will prevent new users from signing up.
           Existing users will not be affected.
         </AlertDialogDescription>
       </AlertDialogHeader>
@@ -294,11 +305,12 @@ Implement secure admin-controlled sign-up disabling with the following security 
 **Security Impact**: HIGH - Primary enforcement point
 
 - [ ] **Sign-Up Page Protection** (`app/(auth)/sign-up/page.tsx`)
+
   ```typescript
   // Server-side check before rendering:
   export default async function SignUpPage() {
     const isSignUpEnabled = await SettingsManager.getSetting('signup_enabled');
-    
+
     if (!isSignUpEnabled) {
       return (
         <div className="text-center">
@@ -308,7 +320,7 @@ Implement secure admin-controlled sign-up disabling with the following security 
         </div>
       );
     }
-    
+
     return <SignUpForm />;
   }
   ```
@@ -318,14 +330,14 @@ Implement secure admin-controlled sign-up disabling with the following security 
   // Add to sign-up form submit:
   async function onSubmit(values: SignUpFormValues) {
     // 1. Check if sign-up is enabled before API call
-    const response = await fetch('/api/signup-status');
+    const response = await fetch("/api/signup-status");
     const { enabled } = await response.json();
-    
+
     if (!enabled) {
-      toast.error('Registration is currently disabled');
+      toast.error("Registration is currently disabled");
       return;
     }
-    
+
     // 2. Proceed with normal sign-up flow
     await authClient.signUp.email(values, callbacks);
   }
@@ -336,12 +348,13 @@ Implement secure admin-controlled sign-up disabling with the following security 
 **Security Impact**: MEDIUM - Ensure consistent behavior across auth system
 
 - [ ] **Sign-Up Status API** (`app/api/signup-status/route.ts`)
+
   ```typescript
   // Public endpoint for checking sign-up availability:
   export async function GET() {
-    const enabled = await SettingsManager.getSetting('signup_enabled');
-    return NextResponse.json({ 
-      enabled: enabled ?? process.env.SIGNUP_ENABLED !== 'false' 
+    const enabled = await SettingsManager.getSetting("signup_enabled");
+    return NextResponse.json({
+      enabled: enabled ?? process.env.SIGNUP_ENABLED !== "false",
     });
   }
   ```
@@ -361,6 +374,7 @@ Implement secure admin-controlled sign-up disabling with the following security 
 **Security Impact**: CRITICAL - Validate all security assumptions
 
 - [ ] **Attack Simulation Tests**
+
   ```typescript
   // Test scenarios:
   1. Non-admin user trying to access /api/admin/settings
@@ -399,13 +413,13 @@ Implement secure admin-controlled sign-up disabling with the following security 
 
 ## 📊 Implementation Timeline
 
-| Phase | Priority | Tasks | Duration | Security Impact |
-|-------|----------|-------|----------|----------------|
-| **Phase 1** | 🔴 CRITICAL | Database schema, settings library | Day 1 (6 hours) | Foundation Security |
-| **Phase 2** | 🔴 HIGH | Admin API endpoints, audit logging | Day 1-2 (8 hours) | Access Control |
-| **Phase 3** | 🟡 MEDIUM | Frontend controls, admin UI | Day 2 (6 hours) | User Interface |
-| **Phase 4** | 🔴 HIGH | Sign-up flow protection | Day 2-3 (4 hours) | Primary Enforcement |
-| **Phase 5** | 🔴 CRITICAL | Security testing, validation | Day 3 (6 hours) | Security Validation |
+| Phase       | Priority    | Tasks                              | Duration          | Security Impact     |
+| ----------- | ----------- | ---------------------------------- | ----------------- | ------------------- |
+| **Phase 1** | 🔴 CRITICAL | Database schema, settings library  | Day 1 (6 hours)   | Foundation Security |
+| **Phase 2** | 🔴 HIGH     | Admin API endpoints, audit logging | Day 1-2 (8 hours) | Access Control      |
+| **Phase 3** | 🟡 MEDIUM   | Frontend controls, admin UI        | Day 2 (6 hours)   | User Interface      |
+| **Phase 4** | 🔴 HIGH     | Sign-up flow protection            | Day 2-3 (4 hours) | Primary Enforcement |
+| **Phase 5** | 🔴 CRITICAL | Security testing, validation       | Day 3 (6 hours)   | Security Validation |
 
 **Total Estimated Time**: 30 hours (3-4 development days)
 
@@ -414,24 +428,28 @@ Implement secure admin-controlled sign-up disabling with the following security 
 ## 🔧 Security Checklist
 
 ### Pre-Implementation
+
 - [ ] Review existing admin security patterns
 - [ ] Validate database schema design
 - [ ] Plan rollback strategy for failed deployments
 - [ ] Set up monitoring for new endpoints
 
-### During Implementation  
+### During Implementation
+
 - [ ] Test each component in isolation
 - [ ] Validate admin-only access controls
 - [ ] Check rate limiting effectiveness
 - [ ] Verify audit logging accuracy
 
 ### Post-Implementation
+
 - [ ] Conduct penetration testing
 - [ ] Monitor for unusual activity patterns
 - [ ] Verify settings persistence
 - [ ] Document admin procedures
 
 ### Production Deployment
+
 - [ ] Test environment variable fallbacks
 - [ ] Validate database migration success
 - [ ] Confirm admin access works correctly
@@ -442,6 +460,7 @@ Implement secure admin-controlled sign-up disabling with the following security 
 ## 🚨 Security Alerts & Monitoring
 
 ### Critical Events to Monitor
+
 1. **Multiple failed admin access attempts**
 2. **Rapid settings changes (>5/minute)**
 3. **Sign-up attempts when disabled**
@@ -449,8 +468,9 @@ Implement secure admin-controlled sign-up disabling with the following security 
 5. **API endpoint abuse or DoS attempts**
 
 ### Success Metrics
+
 - ✅ Zero unauthorized access to settings controls
-- ✅ 100% audit trail coverage for setting changes  
+- ✅ 100% audit trail coverage for setting changes
 - ✅ <100ms response time for settings API calls
 - ✅ Zero sign-up bypasses when disabled
 - ✅ Successful fallback to environment variables
@@ -460,6 +480,7 @@ Implement secure admin-controlled sign-up disabling with the following security 
 ## 🔒 Post-Implementation Security Notes
 
 ### Environment Configuration
+
 ```bash
 # Production settings:
 SIGNUP_ENABLED=false  # Default to disabled in production
@@ -468,11 +489,13 @@ ADMIN_SETTINGS_RATE_LIMIT=5  # Changes per minute
 ```
 
 ### Database Maintenance
+
 - Regular backup of application_settings table
 - Monitor for orphaned or corrupted setting entries
 - Periodic audit of setting change frequency
 
 ### Admin Training
+
 - Document proper setting change procedures
 - Explain security implications of each control
 - Establish approval process for critical changes

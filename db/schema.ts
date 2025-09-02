@@ -1,10 +1,5 @@
 // db/schema.ts
-import {
-  pgTable,
-  text,
-  timestamp,
-  boolean,
-} from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, boolean } from "drizzle-orm/pg-core";
 
 /** Better‑Auth tables (must match what’s already in your DB) */
 export const user = pgTable("user", {

@@ -7,7 +7,6 @@ export const POST = withAdminAuth(async ({ session }, request) => {
     const body = await request.json();
     const { eventType, userId, userData } = body;
 
-
     // Fetch latest user data to send to all clients
     const users = await fetchUsersWithRetry();
 

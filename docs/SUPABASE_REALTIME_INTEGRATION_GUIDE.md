@@ -72,7 +72,7 @@ export const supabaseAdmin = createClient<Database>(
     auth: {
       persistSession: false,
     },
-  }
+  },
 );
 ```
 
@@ -105,7 +105,7 @@ export function useSupabase() {
             Authorization: session?.token ? `Bearer ${session.token}` : "",
           },
         },
-      }
+      },
     );
   }, [session?.token]);
 
@@ -353,7 +353,7 @@ export function usePresence(channelName: string) {
         ...data,
       });
     },
-    [channel, session]
+    [channel, session],
   );
 
   const getAllUsers = useCallback(() => {
@@ -388,7 +388,7 @@ interface BroadcastMessage {
 
 export function useBroadcast(
   channelName: string,
-  onMessage?: (message: BroadcastMessage) => void
+  onMessage?: (message: BroadcastMessage) => void,
 ) {
   const supabase = useSupabase();
   const [channel, setChannel] = useState<RealtimeChannel | null>(null);
@@ -397,13 +397,9 @@ export function useBroadcast(
     const broadcastChannel = supabase.channel(channelName);
 
     if (onMessage) {
-      broadcastChannel.on(
-        "broadcast",
-        { event: "message" },
-        ({ payload }) => {
-          onMessage(payload as BroadcastMessage);
-        }
-      );
+      broadcastChannel.on("broadcast", { event: "message" }, ({ payload }) => {
+        onMessage(payload as BroadcastMessage);
+      });
     }
 
     broadcastChannel.subscribe();
@@ -424,7 +420,7 @@ export function useBroadcast(
         payload: message,
       });
     },
-    [channel]
+    [channel],
   );
 
   return { broadcast, channel };
@@ -484,7 +480,7 @@ export function useRealtimeTable({
               onDelete?.(payload);
               break;
           }
-        }
+        },
       )
       .subscribe();
 
@@ -612,7 +608,7 @@ export function CollaborativeDashboard() {
   const [widgets, setWidgets] = useState<Widget[]>([]);
   const [layouts, setLayouts] = useState<Record<string, Layout[]>>({});
   const { presenceState, getAllUsers } = usePresence("dashboard-collaborative");
-  
+
   const { data: userRole } = trpc.user.me.useQuery();
   const { data: dashboardWidgets, refetch } = trpc.dashboard.getWidgets.useQuery();
   const updateWidget = trpc.dashboard.updateWidgetPosition.useMutation();
@@ -646,7 +642,7 @@ export function CollaborativeDashboard() {
   useEffect(() => {
     if (dashboardWidgets) {
       setWidgets(dashboardWidgets);
-      
+
       const newLayouts = {
         lg: dashboardWidgets.map((w) => ({
           i: w.id,
@@ -996,7 +992,7 @@ export function HybridRealtimeProvider({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  
+
   // Determine which providers to activate based on the current page
   const isDashboard = pathname?.startsWith("/dashboard");
   const isCollaborative = pathname?.includes("/collaborative");
@@ -1040,7 +1036,7 @@ export const dashboardRouter = router({
     const widgets = await ctx.db.query.dashboardWidgets.findMany({
       where: eq(dashboardWidgets.userId, ctx.user.id),
     });
-    
+
     return widgets;
   }),
 
@@ -1049,7 +1045,7 @@ export const dashboardRouter = router({
       z.object({
         type: z.enum(["stats", "chart", "table", "calendar", "tasks"]),
         config: z.record(z.any()).optional(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const widget = await ctx.db
@@ -1070,7 +1066,7 @@ export const dashboardRouter = router({
       z.object({
         widgetId: z.string().uuid(),
         position: widgetPositionSchema,
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       // Verify the widget belongs to the user

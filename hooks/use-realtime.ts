@@ -48,7 +48,6 @@ export function useBroadcast() {
       },
     ) => {
       try {
-
         const response = await fetch("/api/realtime/broadcast", {
           method: "POST",
           headers: { "Content-Type": "application/json" },

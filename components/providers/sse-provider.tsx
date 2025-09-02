@@ -138,8 +138,7 @@ export function SSEProvider({ children }: SSEProviderProps) {
           action: "unlock",
         }),
       });
-    } catch {
-    }
+    } catch {}
   };
 
   const startCreation = async (sessionId: string, creatingAdmin: string) => {
@@ -152,8 +151,7 @@ export function SSEProvider({ children }: SSEProviderProps) {
           data: { sessionId, creatingAdmin },
         }),
       });
-    } catch {
-    }
+    } catch {}
   };
 
   const completeCreation = async (sessionId: string) => {
@@ -166,8 +164,7 @@ export function SSEProvider({ children }: SSEProviderProps) {
           data: { sessionId },
         }),
       });
-    } catch {
-    }
+    } catch {}
   };
 
   const getRowLockInfo = (userId: string) => {
@@ -223,8 +220,7 @@ export function SSEProvider({ children }: SSEProviderProps) {
           setLockOwnership(ownershipMap);
           setEditingSessions(editingMap); // RESTORE editing state from database
         }
-      } catch {
-      }
+      } catch {}
     },
     [session],
   );
@@ -316,7 +312,6 @@ export function SSEProvider({ children }: SSEProviderProps) {
           case "inventory-updated":
           case "stock-low":
           case "stock-out":
-
             if (message.type === "stock-out") {
               showToast(
                 `Stock out: ${message.data.itemName || "Item"}`,
@@ -363,7 +358,6 @@ export function SSEProvider({ children }: SSEProviderProps) {
           case "task-assigned":
           case "task-completed":
           case "task-overdue":
-
             if (message.type === "task-assigned") {
               toast.info("New task assigned");
             } else if (message.type === "task-overdue") {

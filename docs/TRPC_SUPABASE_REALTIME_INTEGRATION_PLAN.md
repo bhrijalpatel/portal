@@ -7,18 +7,21 @@ This document outlines a comprehensive plan to integrate tRPC for type-safe API 
 ## Current Architecture Analysis
 
 ### Existing Real-time Infrastructure
+
 - **SSE Provider**: Custom Server-Sent Events implementation for unidirectional real-time updates
 - **Collaborative Editing**: Database-persisted locks with automatic expiry and ownership tracking
 - **Event Broadcasting**: Role-based event filtering for various business entities
 - **Better Auth**: Session management with role-based access control
 
 ### Strengths of Current System
+
 1. Simple unidirectional updates via SSE
 2. Comprehensive lock management for collaborative editing
 3. Role-based event filtering
 4. Automatic reconnection and state restoration
 
 ### Areas for Enhancement
+
 1. Bidirectional real-time communication
 2. Type-safe API endpoints
 3. Presence awareness for collaborative features
@@ -30,12 +33,14 @@ This document outlines a comprehensive plan to integrate tRPC for type-safe API 
 ### Phase 1: tRPC Setup and Migration (Week 1-2)
 
 #### 1.1 Install Dependencies
+
 ```bash
 pnpm add @trpc/server @trpc/client @trpc/react-query @trpc/next @tanstack/react-query@^5 superjson
 pnpm add -D @types/superjson
 ```
 
 #### 1.2 Create tRPC Infrastructure
+
 ```
 /server/
   ├── api/
@@ -52,11 +57,12 @@ pnpm add -D @types/superjson
 ```
 
 #### 1.3 tRPC Context with Better Auth Integration
+
 ```typescript
 // server/context.ts
-import { auth } from '@/lib/auth';
-import { db } from '@/db';
-import type { FetchCreateContextFnOptions } from '@trpc/server/adapters/fetch';
+import { auth } from "@/lib/auth";
+import { db } from "@/db";
+import type { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
 
 export async function createContext(opts: FetchCreateContextFnOptions) {
   const session = await auth.api.getSession({
@@ -75,11 +81,12 @@ export type Context = Awaited<ReturnType<typeof createContext>>;
 ```
 
 #### 1.4 Protected Procedures
+
 ```typescript
 // server/api/trpc.ts
-import { initTRPC, TRPCError } from '@trpc/server';
-import superjson from 'superjson';
-import type { Context } from '../context';
+import { initTRPC, TRPCError } from "@trpc/server";
+import superjson from "superjson";
+import type { Context } from "../context";
 
 const t = initTRPC.context<Context>().create({
   transformer: superjson,
@@ -90,7 +97,7 @@ export const publicProcedure = t.procedure;
 
 export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
   if (!ctx.session || !ctx.user) {
-    throw new TRPCError({ code: 'UNAUTHORIZED' });
+    throw new TRPCError({ code: "UNAUTHORIZED" });
   }
   return next({
     ctx: {
@@ -102,8 +109,8 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
 });
 
 export const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
-  if (ctx.user.role !== 'admin') {
-    throw new TRPCError({ code: 'FORBIDDEN' });
+  if (ctx.user.role !== "admin") {
+    throw new TRPCError({ code: "FORBIDDEN" });
   }
   return next({ ctx });
 });
@@ -112,15 +119,17 @@ export const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
 ### Phase 2: Supabase Realtime Integration (Week 2-3)
 
 #### 2.1 Install Supabase Client
+
 ```bash
 pnpm add @supabase/supabase-js @supabase/realtime-js
 ```
 
 #### 2.2 Configure Supabase Client with Better Auth Sessions
+
 ```typescript
 // lib/supabase-client.ts
-import { createClient } from '@supabase/supabase-js';
-import { useSession } from '@/lib/auth-client';
+import { createClient } from "@supabase/supabase-js";
+import { useSession } from "@/lib/auth-client";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -139,17 +148,18 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 // Hook to get authenticated Supabase client
 export function useSupabaseClient() {
   const { data: session } = useSession();
-  
+
   // Set custom JWT for Supabase Realtime auth
   if (session?.user) {
     supabase.realtime.setAuth(session.token);
   }
-  
+
   return supabase;
 }
 ```
 
 #### 2.3 Database Schema for Realtime Features
+
 ```sql
 -- Enable Realtime for specific tables
 ALTER PUBLICATION supabase_realtime ADD TABLE dashboard_widgets;
@@ -216,10 +226,11 @@ CREATE POLICY "Users can update their own presence" ON user_presence
 ### Phase 3: Real-time Collaborative Dashboard Implementation (Week 3-4)
 
 #### 3.1 Dashboard Layout System with tRPC
+
 ```typescript
 // server/api/routers/dashboard.ts
-import { z } from 'zod';
-import { router, protectedProcedure } from '../trpc';
+import { z } from "zod";
+import { router, protectedProcedure } from "../trpc";
 
 const widgetPositionSchema = z.object({
   x: z.number(),
@@ -236,15 +247,17 @@ export const dashboardRouter = router({
   }),
 
   updateWidgetPosition: protectedProcedure
-    .input(z.object({
-      widgetId: z.string(),
-      position: widgetPositionSchema,
-    }))
+    .input(
+      z.object({
+        widgetId: z.string(),
+        position: widgetPositionSchema,
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
       // Update in database
       const updated = await ctx.db
         .update(dashboardWidgets)
-        .set({ 
+        .set({
           position: input.position,
           updatedAt: new Date(),
         })
@@ -252,7 +265,7 @@ export const dashboardRouter = router({
         .returning();
 
       // Broadcast via existing SSE system
-      await broadcastRealtimeEvent('dashboard-widget-updated', {
+      await broadcastRealtimeEvent("dashboard-widget-updated", {
         widgetId: input.widgetId,
         position: input.position,
         userId: ctx.user.id,
@@ -262,10 +275,12 @@ export const dashboardRouter = router({
     }),
 
   addWidget: protectedProcedure
-    .input(z.object({
-      type: z.enum(['stats', 'chart', 'table', 'calendar', 'tasks']),
-      config: z.record(z.any()).optional(),
-    }))
+    .input(
+      z.object({
+        type: z.enum(["stats", "chart", "table", "calendar", "tasks"]),
+        config: z.record(z.any()).optional(),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
       const widget = await ctx.db
         .insert(dashboardWidgets)
@@ -282,6 +297,7 @@ export const dashboardRouter = router({
 ```
 
 #### 3.2 Real-time Collaborative Features Component
+
 ```typescript
 // components/dashboard/collaborative-dashboard.tsx
 "use client";
@@ -297,7 +313,7 @@ export function CollaborativeDashboard() {
   const { data: widgets, refetch } = trpc.dashboard.getWidgets.useQuery();
   const updatePosition = trpc.dashboard.updateWidgetPosition.useMutation();
   const { userRole } = useSSE();
-  
+
   const [presence, setPresence] = useState<Map<string, any>>(new Map());
   const [layouts, setLayouts] = useState([]);
 
@@ -408,11 +424,12 @@ export function CollaborativeDashboard() {
 ```
 
 #### 3.3 Hybrid Real-time Architecture
+
 ```typescript
 // hooks/use-hybrid-realtime.ts
-import { useEffect } from 'react';
-import { useSSE } from '@/components/providers/sse-provider';
-import { useSupabaseClient } from '@/lib/supabase-client';
+import { useEffect } from "react";
+import { useSSE } from "@/components/providers/sse-provider";
+import { useSupabaseClient } from "@/lib/supabase-client";
 
 export function useHybridRealtime({
   sseEvents,
@@ -435,11 +452,11 @@ export function useHybridRealtime({
 
     // SSE subscriptions
     if (sseEvents && isConnected) {
-      sseEvents.forEach(eventName => {
+      sseEvents.forEach((eventName) => {
         const handler = (event: CustomEvent) => onUpdate(event.detail);
         window.addEventListener(eventName, handler as EventListener);
-        subscriptions.push(() => 
-          window.removeEventListener(eventName, handler as EventListener)
+        subscriptions.push(() =>
+          window.removeEventListener(eventName, handler as EventListener),
         );
       });
     }
@@ -449,15 +466,15 @@ export function useHybridRealtime({
       supabaseChannels.forEach(({ channel, event, filter }) => {
         const sub = supabase
           .channel(channel)
-          .on('postgres_changes', { event, ...filter }, onUpdate)
+          .on("postgres_changes", { event, ...filter }, onUpdate)
           .subscribe();
-        
+
         subscriptions.push(() => supabase.removeChannel(sub));
       });
     }
 
     return () => {
-      subscriptions.forEach(unsub => unsub());
+      subscriptions.forEach((unsub) => unsub());
     };
   }, [sseEvents, supabaseChannels, onUpdate, isConnected, supabase]);
 }
@@ -466,6 +483,7 @@ export function useHybridRealtime({
 ### Phase 4: Advanced Collaborative Features (Week 4-5)
 
 #### 4.1 Real-time Cursor Tracking
+
 ```typescript
 // components/collaborative/cursor-tracker.tsx
 export function CursorTracker({ documentId }: { documentId: string }) {
@@ -530,9 +548,10 @@ export function CursorTracker({ documentId }: { documentId: string }) {
 ```
 
 #### 4.2 Conflict Resolution for Collaborative Editing
+
 ```typescript
 // lib/conflict-resolution.ts
-import { diff_match_patch } from 'diff-match-patch';
+import { diff_match_patch } from "diff-match-patch";
 
 export class ConflictResolver {
   private dmp = new diff_match_patch();
@@ -540,7 +559,7 @@ export class ConflictResolver {
   resolveTextConflict(
     base: string,
     local: string,
-    remote: string
+    remote: string,
   ): { resolved: string; hasConflicts: boolean } {
     // If local and remote are the same, no conflict
     if (local === remote) {
@@ -571,10 +590,10 @@ export class ConflictResolver {
   resolveJsonConflict(
     base: any,
     local: any,
-    remote: any
+    remote: any,
   ): { resolved: any; conflicts: string[] } {
     const conflicts: string[] = [];
-    const resolved = this.deepMerge(base, local, remote, '', conflicts);
+    const resolved = this.deepMerge(base, local, remote, "", conflicts);
 
     return { resolved, conflicts };
   }
@@ -584,7 +603,7 @@ export class ConflictResolver {
     local: any,
     remote: any,
     path: string,
-    conflicts: string[]
+    conflicts: string[],
   ): any {
     // Implementation of three-way merge for JSON objects
     // ... (detailed implementation)
@@ -595,23 +614,25 @@ export class ConflictResolver {
 ### Phase 5: Performance Optimization & Migration (Week 5-6)
 
 #### 5.1 Gradual Migration Strategy
+
 1. **Parallel Running**: Keep SSE system running alongside new implementations
 2. **Feature Flags**: Use environment variables to toggle between systems
 3. **A/B Testing**: Roll out to subset of users first
 4. **Monitoring**: Track performance metrics and user feedback
 
 #### 5.2 Performance Optimizations
+
 ```typescript
 // lib/realtime-optimizations.ts
 
 // 1. Debounced updates for high-frequency changes
 export const useDebouncedRealtimeUpdate = (
   updateFn: (data: any) => void,
-  delay: number = 300
+  delay: number = 300,
 ) => {
   const debouncedUpdate = useMemo(
     () => debounce(updateFn, delay),
-    [updateFn, delay]
+    [updateFn, delay],
   );
 
   return debouncedUpdate;
@@ -625,7 +646,7 @@ export class UpdateBatcher {
   constructor(
     private batchSize: number = 10,
     private batchDelay: number = 100,
-    private onFlush: (updates: any[]) => void
+    private onFlush: (updates: any[]) => void,
   ) {}
 
   add(id: string, update: any) {
@@ -673,7 +694,7 @@ export class ChannelPool {
 
   releaseChannel(name: string, supabase: any) {
     const count = this.refCounts.get(name) || 0;
-    
+
     if (count <= 1) {
       const channel = this.channels.get(name);
       if (channel) {
@@ -691,30 +712,35 @@ export class ChannelPool {
 ## Implementation Timeline
 
 ### Week 1-2: Foundation
+
 - [ ] Set up tRPC with Better Auth integration
 - [ ] Create base routers for existing features
 - [ ] Migrate select API endpoints to tRPC
 - [ ] Set up development environment
 
 ### Week 2-3: Supabase Integration
+
 - [ ] Configure Supabase client with Better Auth
 - [ ] Create database tables for real-time features
 - [ ] Implement basic Supabase Realtime subscriptions
 - [ ] Test hybrid approach with SSE
 
 ### Week 3-4: Dashboard Implementation
+
 - [ ] Build collaborative dashboard with widgets
 - [ ] Implement drag-and-drop with real-time sync
 - [ ] Add presence awareness
 - [ ] Create widget library
 
 ### Week 4-5: Advanced Features
+
 - [ ] Implement cursor tracking
 - [ ] Add conflict resolution
 - [ ] Build collaborative document editor
 - [ ] Optimize performance
 
 ### Week 5-6: Testing & Migration
+
 - [ ] Comprehensive testing
 - [ ] Performance benchmarking
 - [ ] Gradual rollout

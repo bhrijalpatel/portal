@@ -20,7 +20,6 @@ export const GET = withAuth(async ({ session }) => {
         userEmail: session.user.email,
       });
 
-
       // Send initial connection confirmation
       const initialMessage = {
         type: "connected",

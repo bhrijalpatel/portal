@@ -100,7 +100,6 @@ export const POST = withAuth(async ({ session }, request) => {
       userAgent,
     );
 
-
     return Response.json({
       ok: true,
       message: "Admin role assigned successfully",

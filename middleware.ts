@@ -10,7 +10,7 @@ export async function middleware(req: NextRequest) {
   // SECURITY: CVE-2025-29927 Protection
   // Filter out x-middleware-subrequest header to prevent bypass attacks
   const headers = new Headers(req.headers);
-  headers.delete('x-middleware-subrequest');
+  headers.delete("x-middleware-subrequest");
 
   // Skip middleware for auth API routes (handled by Better Auth internally)
   if (pathname.startsWith("/api/auth")) {
@@ -27,10 +27,14 @@ export async function middleware(req: NextRequest) {
     "/sign-up",
     "/forgot-password",
     "/reset-password",
-    "/admin-setup" // Allow admin setup for initial configuration
+    "/admin-setup", // Allow admin setup for initial configuration
   ];
 
-  if (publicRoutes.some(route => pathname === route || pathname.startsWith(`${route}/`))) {
+  if (
+    publicRoutes.some(
+      (route) => pathname === route || pathname.startsWith(`${route}/`),
+    )
+  ) {
     // Redirect authenticated users away from auth pages
     if (session && (pathname === "/sign-in" || pathname === "/sign-up")) {
       return NextResponse.redirect(new URL("/dashboard", req.url));
@@ -45,11 +49,11 @@ export async function middleware(req: NextRequest) {
     "/admin",
     "/api/private",
     "/api/realtime",
-    "/api/admin"
+    "/api/admin",
   ];
 
-  const isProtectedRoute = protectedRoutes.some(route =>
-    pathname === route || pathname.startsWith(`${route}/`)
+  const isProtectedRoute = protectedRoutes.some(
+    (route) => pathname === route || pathname.startsWith(`${route}/`),
   );
 
   if (isProtectedRoute) {
@@ -61,8 +65,8 @@ export async function middleware(req: NextRequest) {
 
     // Admin-only routes - require admin role
     const adminRoutes = ["/admin", "/api/admin"];
-    const isAdminRoute = adminRoutes.some(route =>
-      pathname === route || pathname.startsWith(`${route}/`)
+    const isAdminRoute = adminRoutes.some(
+      (route) => pathname === route || pathname.startsWith(`${route}/`),
     );
 
     if (isAdminRoute) {

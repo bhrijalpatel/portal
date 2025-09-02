@@ -7,7 +7,9 @@ import { revalidateTag } from "next/cache";
 
 // Validation schema for bulk unban
 const bulkUnbanSchema = z.object({
-  userIds: z.array(z.string().min(1)).min(1, "At least one user ID is required"),
+  userIds: z
+    .array(z.string().min(1))
+    .min(1, "At least one user ID is required"),
 });
 
 export const POST = withAdminAuth(async ({ session }, request) => {

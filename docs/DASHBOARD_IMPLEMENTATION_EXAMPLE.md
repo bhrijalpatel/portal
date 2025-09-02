@@ -44,7 +44,7 @@ export function DashboardSkeleton() {
         <Skeleton className="h-9 w-24" />
         <Skeleton className="h-9 w-24" />
       </div>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {Array.from({ length: 6 }).map((_, i) => (
           <Skeleton key={i} className="h-64" />
@@ -76,7 +76,7 @@ interface StatsConfig {
 
 export function StatsWidget({ config }: { config: StatsConfig }) {
   const { data, isLoading } = trpc.dashboard.getStats.useQuery();
-  
+
   const renderMetric = () => {
     if (isLoading) {
       return (
@@ -96,9 +96,9 @@ export function StatsWidget({ config }: { config: StatsConfig }) {
     };
 
     const current = stats[metric];
-    const TrendIcon = 
-      current.change > 0 ? TrendingUp : 
-      current.change < 0 ? TrendingDown : 
+    const TrendIcon =
+      current.change > 0 ? TrendingUp :
+      current.change < 0 ? TrendingDown :
       Minus;
 
     return (
@@ -106,13 +106,13 @@ export function StatsWidget({ config }: { config: StatsConfig }) {
         <p className="text-2xl font-bold">{current.value}</p>
         <div className="flex items-center gap-2 text-xs">
           <TrendIcon className={`h-3 w-3 ${
-            current.change > 0 ? "text-emerald-500" : 
-            current.change < 0 ? "text-rose-500" : 
+            current.change > 0 ? "text-emerald-500" :
+            current.change < 0 ? "text-rose-500" :
             "text-gray-500"
           }`} />
           <span className={
-            current.change > 0 ? "text-emerald-500" : 
-            current.change < 0 ? "text-rose-500" : 
+            current.change > 0 ? "text-emerald-500" :
+            current.change < 0 ? "text-rose-500" :
             "text-gray-500"
           }>
             {Math.abs(current.change)}%
@@ -154,11 +154,11 @@ export function ChartWidget({ config }: { config: ChartConfig }) {
     // Simple placeholder chart
     const width = canvasRef.current.width;
     const height = canvasRef.current.height;
-    
+
     ctx.clearRect(0, 0, width, height);
     ctx.strokeStyle = "#e5e7eb";
     ctx.lineWidth = 2;
-    
+
     // Draw axes
     ctx.beginPath();
     ctx.moveTo(40, height - 40);
@@ -296,13 +296,13 @@ function formatTime(date: Date): string {
   const now = new Date();
   const diff = now.getTime() - date.getTime();
   const minutes = Math.floor(diff / 60000);
-  
+
   if (minutes < 1) return "Just now";
   if (minutes < 60) return `${minutes}m ago`;
-  
+
   const hours = Math.floor(minutes / 60);
   if (hours < 24) return `${hours}h ago`;
-  
+
   return date.toLocaleDateString();
 }
 ```
@@ -431,6 +431,7 @@ Add to `app/globals.css`:
 ## 7. Testing the Implementation
 
 1. **Start Development Server**:
+
    ```bash
    pnpm dev
    ```
@@ -454,6 +455,7 @@ Add to `app/globals.css`:
 ## 8. Deployment Considerations
 
 1. **Environment Variables**:
+
    ```bash
    # Production .env
    NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co

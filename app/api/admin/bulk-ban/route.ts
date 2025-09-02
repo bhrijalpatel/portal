@@ -7,7 +7,9 @@ import { revalidateTag } from "next/cache";
 
 // Validation schema for bulk ban
 const bulkBanSchema = z.object({
-  userIds: z.array(z.string().min(1)).min(1, "At least one user ID is required"),
+  userIds: z
+    .array(z.string().min(1))
+    .min(1, "At least one user ID is required"),
   banReason: z.string().min(1, "Ban reason is required").optional(),
 });
 

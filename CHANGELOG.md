@@ -5,14 +5,133 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2025/09/01] - CRITICAL SECURITY: Authentication Architecture Transformation & CVE-2025-29927 Mitigation
+## [Unreleased]
+
+_Changes that have been made but not yet released._
+
+### 📁 **DOCUMENTATION ORGANIZATION**
+
+#### **Roadmap Files Relocation**
+
+Moved roadmap and documentation files to dedicated `docs/` folder for better organization and maintainability.
+
+#### **Files Moved:**
+
+- **`ADMIN_SIGNUP_DISABLE_ROADMAP.md`**: Admin sign-up control implementation roadmap
+- **`SECURITY_ROADMAP.md`**: Security implementation and vulnerability mitigation roadmap
+- **`DASHBOARD_IMPLEMENTATION_EXAMPLE.md`**: Dashboard collaborative features implementation guide
+- **`SUPABASE_REALTIME_INTEGRATION_GUIDE.md`**: Supabase Realtime integration documentation
+- **`TRPC_IMPLEMENTATION_GUIDE.md`**: tRPC integration and implementation guide
+- **`TRPC_SUPABASE_REALTIME_INTEGRATION_PLAN.md`**: Combined tRPC + Supabase Realtime integration plan
+
+#### **Benefits:**
+
+- **Centralized Documentation**: All project documentation now in dedicated `docs/` folder
+- **Improved Discoverability**: Documentation files easier to find and navigate
+- **Better Organization**: Clear separation between code and documentation
+- **Maintenance**: Easier to maintain and update documentation files
+
+## [0.1.0] - 2025-09-02
+
+### 🔧 **SUPABASE LOCAL DEVELOPMENT FIX**
+
+#### **Windows Port Exclusion Resolution**
+
+Fixed critical Supabase local development startup failure caused by Windows port exclusion ranges that prevented Docker from binding to required ports.
+
+#### **Port Configuration Update**
+
+**Problem Identified:**
+
+- Windows maintains dynamic port exclusion ranges reserved for system services
+- Supabase default ports (54321-54329) fell within excluded range `54231-54330`
+- Docker containers failed to start with "bind: An attempt was made to access a socket in a way forbidden by its access permissions"
+
+**Solution Implemented:**
+
+- **API Port**: `54321` → `54340`
+- **Database Port**: `54322` → `54331`
+- **Studio Port**: `54323` → `54333`
+- **Inbucket Port**: `54324` → `54334`
+- **Pooler Port**: `54329` → `54332`
+- **Analytics Port**: `54327` → `54335`
+- **SMTP Port**: `54325` → `54336` (commented)
+- **POP3 Port**: `54326` → `54337` (commented)
+
+#### **Configuration Updates**
+
+- Updated `supabase/config.toml` with ports outside Windows exclusion ranges
+- Updated Studio API URL to reflect new API port: `http://127.0.0.1:54340`
+- Verified Supabase local development now starts successfully
+
+### 🎨 **CODE FORMATTING & QUALITY IMPROVEMENTS**
+
+#### **Prettier Code Formatting**
+
+Applied comprehensive code formatting across the entire codebase using Prettier configuration.
+
+#### **Formatting Changes Applied:**
+
+**1. Line Ending Standardization**
+
+- Converted all files from LF to CRLF line endings (Windows compatibility)
+- Consistent line ending format across all source files
+
+**2. Quote Style Consistency**
+
+- Standardized quote usage throughout codebase
+- Applied project's quote style preferences
+
+**3. Code Structure Formatting**
+
+- Consistent indentation and spacing
+- Improved code readability and maintainability
+- Proper line breaks and code organization
+
+**4. Import/Export Formatting**
+
+- Standardized import statement formatting
+- Consistent export syntax across modules
+
+#### **Files Affected by Formatting:**
+
+- **Core Application Files**: 25+ TypeScript/React files formatted
+- **API Routes**: All API endpoints formatted consistently
+- **Components**: UI components formatted with proper spacing
+- **Configuration Files**: JSON, YAML, and config files formatted
+- **Documentation**: Markdown files formatted for consistency
+
+### 📊 **IMPACT SUMMARY**
+
+- **Functional Changes**: Supabase local development now works on Windows
+- **Code Quality**: Improved consistency and readability across codebase
+- **Developer Experience**: Standardized formatting reduces merge conflicts
+- **Windows Compatibility**: Proper line endings for Windows development environment
+
+### 🔧 **TECHNICAL IMPROVEMENTS**
+
+- **Port Management**: Resolved Windows-specific port binding issues
+- **Code Standards**: Applied consistent formatting standards
+- **Cross-Platform**: Improved compatibility across different operating systems
+- **Development Workflow**: Cleaner code for better development experience
+
+### 📝 **DEVELOPMENT NOTES**
+
+- Supabase local development is now fully functional on Windows
+- Code formatting provides consistent development experience
+- All changes maintain backward compatibility
+- No breaking changes to existing functionality
+
+## [0.0.9] - 2025-09-01
 
 ### 🚨 **CRITICAL SECURITY VULNERABILITY MITIGATION**
 
 #### **CVE-2025-29927 Protection Implementation**
+
 Implemented comprehensive protection against CVE-2025-29927, a critical Next.js middleware authorization bypass vulnerability (CVSS Score: 9.1) that allows attackers to bypass authentication and authorization controls.
 
 #### **Vulnerability Details:**
+
 - **CVE ID**: CVE-2025-29927
 - **Severity**: Critical (CVSS 9.1)
 - **Attack Vector**: HTTP header manipulation (`x-middleware-subrequest`)
@@ -20,14 +139,17 @@ Implemented comprehensive protection against CVE-2025-29927, a critical Next.js 
 - **Affected Systems**: All Next.js applications using middleware for authentication
 
 #### **Technical Vulnerability Explanation:**
+
 CVE-2025-29927 exploits Next.js's internal `x-middleware-subrequest` header mechanism. When this header is present in a request with specific values (e.g., `middleware:middleware:middleware:middleware:middleware`), Next.js skips middleware execution entirely, allowing direct access to protected routes.
 
 **Attack Example:**
+
 ```http
 GET /admin/dashboard HTTP/1.1
 Host: example.com
 x-middleware-subrequest: middleware:middleware:middleware:middleware:middleware
 ```
+
 This request would bypass all middleware authentication checks and gain unauthorized access to admin areas.
 
 ### 🛡️ **COMPREHENSIVE SECURITY ARCHITECTURE OVERHAUL**
@@ -35,6 +157,7 @@ This request would bypass all middleware authentication checks and gain unauthor
 #### **BEFORE: Vulnerable Single-Layer Authentication**
 
 **Previous Architecture (VULNERABLE):**
+
 ```
 ┌─────────────────────────────────────────────────┐
 │ REQUEST → Middleware Only → Protected Routes    │ ❌ SINGLE POINT OF FAILURE
@@ -46,15 +169,16 @@ This request would bypass all middleware authentication checks and gain unauthor
 ```
 
 **Previous Middleware Implementation (VULNERABLE):**
+
 ```typescript
 // middleware.ts - BEFORE (VULNERABLE)
 export async function middleware(req: NextRequest) {
   // ❌ SECURITY FLAW: Used request headers directly
   const session = await auth.api.getSession({ headers: req.headers });
-  
+
   // ❌ VULNERABILITY: No header filtering
   // ❌ RISK: x-middleware-subrequest bypass possible
-  
+
   if (!session) {
     return NextResponse.redirect("/sign-in");
   }
@@ -63,13 +187,14 @@ export async function middleware(req: NextRequest) {
 ```
 
 **Previous Layout Implementation (VULNERABLE):**
+
 ```typescript
 // app/(protected)/layout.tsx - BEFORE (VULNERABLE)
 export default function ProtectedLayout({ children }) {
   // ❌ SECURITY FLAW: No server-side validation
   // ❌ RISK: Complete reliance on middleware
   // ❌ VULNERABILITY: No backup protection if middleware bypassed
-  
+
   return (
     <RoleProvider>
       {children}  {/* ❌ Renders without any auth validation */}
@@ -81,6 +206,7 @@ export default function ProtectedLayout({ children }) {
 #### **AFTER: Enterprise-Grade Multi-Layer Security**
 
 **New Architecture (SECURE):**
+
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │ Layer 1: MIDDLEWARE (CVE-2025-29927 Protected)                │ ✅ PROACTIVE DEFENSE
@@ -105,6 +231,7 @@ export default function ProtectedLayout({ children }) {
 #### **1. Middleware Transformation (CVE-2025-29927 Protection)**
 
 **NEW SECURE IMPLEMENTATION:**
+
 ```typescript
 // middleware.ts - AFTER (SECURE)
 export async function middleware(req: NextRequest) {
@@ -113,7 +240,7 @@ export async function middleware(req: NextRequest) {
   // 🛡️ SECURITY: CVE-2025-29927 Protection
   // Filter out x-middleware-subrequest header to prevent bypass attacks
   const headers = new Headers(req.headers);
-  headers.delete('x-middleware-subrequest');
+  headers.delete("x-middleware-subrequest");
 
   // Skip middleware for auth API routes (handled by Better Auth internally)
   if (pathname.startsWith("/api/auth")) {
@@ -125,13 +252,19 @@ export async function middleware(req: NextRequest) {
 
   // Enhanced route protection with comprehensive routing
   const publicRoutes = [
-    "/", "/sign-in", "/sign-up", "/forgot-password", 
-    "/reset-password", "/admin-setup"
+    "/",
+    "/sign-in",
+    "/sign-up",
+    "/forgot-password",
+    "/reset-password",
+    "/admin-setup",
   ];
 
-  if (publicRoutes.some(route => 
-    pathname === route || pathname.startsWith(`${route}/`)
-  )) {
+  if (
+    publicRoutes.some(
+      (route) => pathname === route || pathname.startsWith(`${route}/`),
+    )
+  ) {
     // Redirect authenticated users away from auth pages
     if (session && (pathname === "/sign-in" || pathname === "/sign-up")) {
       return NextResponse.redirect(new URL("/dashboard", req.url));
@@ -141,12 +274,16 @@ export async function middleware(req: NextRequest) {
 
   // Protected routes - require authentication
   const protectedRoutes = [
-    "/dashboard", "/inventory", "/admin", 
-    "/api/private", "/api/realtime", "/api/admin"
+    "/dashboard",
+    "/inventory",
+    "/admin",
+    "/api/private",
+    "/api/realtime",
+    "/api/admin",
   ];
 
-  const isProtectedRoute = protectedRoutes.some(route =>
-    pathname === route || pathname.startsWith(`${route}/`)
+  const isProtectedRoute = protectedRoutes.some(
+    (route) => pathname === route || pathname.startsWith(`${route}/`),
   );
 
   if (isProtectedRoute) {
@@ -158,8 +295,8 @@ export async function middleware(req: NextRequest) {
 
     // Admin-only routes - require admin role
     const adminRoutes = ["/admin", "/api/admin"];
-    const isAdminRoute = adminRoutes.some(route =>
-      pathname === route || pathname.startsWith(`${route}/`)
+    const isAdminRoute = adminRoutes.some(
+      (route) => pathname === route || pathname.startsWith(`${route}/`),
     );
 
     if (isAdminRoute) {
@@ -177,15 +314,14 @@ export async function middleware(req: NextRequest) {
 export const runtime = "nodejs";
 
 export const config = {
-  matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|api/auth).*)",
-  ],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|api/auth).*)"],
 };
 ```
 
 #### **2. Defense-in-Depth Layout Implementation**
 
 **NEW SECURE LAYOUT:**
+
 ```typescript
 // app/(protected)/layout.tsx - AFTER (SECURE)
 import { requireSession } from "@/lib/auth-helpers";
@@ -223,6 +359,7 @@ export default async function ProtectedLayout({
 #### **3. Enhanced Navigation Security**
 
 **CLIENT-SIDE SECURITY IMPROVEMENTS:**
+
 ```typescript
 // components/navigation/nav-user.tsx - Enhanced Security
 "use client";
@@ -290,18 +427,21 @@ export function AppSidebar() {
 ### 📊 **SECURITY TRANSFORMATION METRICS**
 
 #### **Vulnerability Mitigation:**
+
 - **CVE-2025-29927**: ✅ FULLY PROTECTED (Header filtering implemented)
 - **Single Point of Failure**: ✅ ELIMINATED (Multi-layer validation)
 - **Authentication Bypass**: ✅ IMPOSSIBLE (Defense-in-depth architecture)
 - **Session Hijacking**: ✅ MITIGATED (Server-side validation)
 
 #### **Architecture Improvements:**
+
 - **Security Layers**: 1 → 3 (200% increase in protection depth)
 - **Validation Points**: 1 → 6 (600% increase in security checkpoints)
 - **Bypass Resistance**: 0% → 99.9% (Near-impossible to bypass all layers)
 - **Performance Impact**: 0% (No performance degradation from security enhancements)
 
 #### **Compliance Achievement:**
+
 - **OWASP Standards**: ✅ EXCEEDS (Defense-in-depth, secure headers)
 - **Next.js Best Practices 2025**: ✅ PERFECT COMPLIANCE
 - **Better Auth Guidelines**: ✅ EXEMPLARY IMPLEMENTATION
@@ -310,6 +450,7 @@ export function AppSidebar() {
 ### 🔒 **ATTACK VECTOR ANALYSIS**
 
 #### **Previously Vulnerable Attack Vectors (BEFORE):**
+
 1. **CVE-2025-29927 Exploitation**: ❌ COMPLETELY VULNERABLE
    - Attacker adds `x-middleware-subrequest` header
    - Middleware execution skipped entirely
@@ -326,6 +467,7 @@ export function AppSidebar() {
    - Insufficient server-side verification
 
 #### **Now Protected Attack Vectors (AFTER):**
+
 1. **CVE-2025-29927 Exploitation**: ✅ FULLY PROTECTED
    - Malicious headers filtered at middleware level
    - Multiple validation layers prevent bypass
@@ -344,12 +486,14 @@ export function AppSidebar() {
 ### 🚀 **PERFORMANCE IMPACT ANALYSIS**
 
 #### **Security vs Performance Balance:**
+
 - **Middleware Performance**: ✅ OPTIMIZED (Header filtering adds <1ms)
 - **Layout Rendering**: ✅ EFFICIENT (Single `requireSession()` call)
 - **Client Components**: ✅ REACTIVE (Modern React hooks with optimal re-rendering)
 - **Memory Usage**: ✅ MINIMAL (Efficient session management)
 
 #### **User Experience Enhancements:**
+
 - **Loading States**: ✅ PROFESSIONAL (Skeleton placeholders + centered spinner with Loader2 icon)
 - **Error Handling**: ✅ GRACEFUL (Proper redirects and fallbacks)
 - **Session Management**: ✅ SEAMLESS (Reactive updates without page refreshes)
@@ -359,12 +503,14 @@ export function AppSidebar() {
 ### 📚 **IMPLEMENTATION REFERENCES**
 
 #### **Security Standards Compliance:**
+
 - **OWASP Authentication Guidelines**: ✅ Defense-in-depth implementation
 - **CVE-2025-29927 Mitigation**: ✅ Proactive header filtering
 - **Next.js Security Best Practices 2025**: ✅ Multi-layer protection
 - **Better Auth Enterprise Patterns**: ✅ Session management excellence
 
 #### **Technical Documentation:**
+
 - **Middleware Security**: Enhanced with comprehensive route protection
 - **Layout Authentication**: Server-side validation with performance optimization
 - **Client Component Security**: Modern React patterns with security-first approach
@@ -373,12 +519,14 @@ export function AppSidebar() {
 ### 🎯 **DEPLOYMENT IMPACT**
 
 #### **Zero Breaking Changes:**
+
 - ✅ **Backward Compatibility**: All existing functionality preserved
 - ✅ **User Experience**: No impact on user workflows
 - ✅ **API Compatibility**: All endpoints continue working normally
 - ✅ **Database Schema**: No migrations required
 
 #### **Immediate Security Benefits:**
+
 - ✅ **Critical Vulnerability Patched**: CVE-2025-29927 protection active
 - ✅ **Attack Surface Reduced**: Multiple attack vectors eliminated
 - ✅ **Security Posture Enhanced**: Enterprise-grade protection implemented
@@ -387,12 +535,14 @@ export function AppSidebar() {
 ### 📝 **TECHNICAL DEBT ELIMINATION**
 
 #### **Authentication Anti-Patterns Resolved:**
+
 - ❌ **Single Point of Failure**: Eliminated with multi-layer architecture
 - ❌ **Client-Side Security Assumptions**: Replaced with server-side validation
 - ❌ **Vulnerable Header Handling**: Secured with proactive filtering
 - ❌ **Insufficient Error Boundaries**: Enhanced with comprehensive error handling
 
 #### **Code Quality Improvements:**
+
 - ✅ **Comprehensive Documentation**: Security reasoning clearly explained
 - ✅ **Type Safety**: Full TypeScript compliance maintained
 - ✅ **Performance Optimization**: Modern React patterns implemented
@@ -401,12 +551,14 @@ export function AppSidebar() {
 ### 🔮 **FUTURE-PROOFING**
 
 #### **Scalability Enhancements:**
+
 - **Multi-Tenant Ready**: Architecture supports role-based multi-tenancy
 - **Microservice Compatible**: Security layers work with distributed architectures
 - **Cloud Native**: Optimized for serverless and containerized deployments
 - **Monitoring Ready**: Comprehensive logging for security event tracking
 
 #### **Security Evolution:**
+
 - **Vulnerability Resilient**: Multi-layer approach prevents single points of failure
 - **Standards Compliant**: Exceeds current and anticipated security requirements
 - **Audit Ready**: Comprehensive documentation for security reviews
@@ -424,22 +576,25 @@ This authentication transformation represents a **complete security revolution**
 
 **The authentication system has been transformed from a vulnerable implementation to an enterprise-grade, security-first architecture that exceeds 2025 industry standards and serves as a reference implementation for secure Next.js applications.**
 
-## [2025/09/01] - Admin Page Enhancement: Bulk Actions & Checkbox Selection
+## [0.0.8] - 2025-09-01
 
 ### 🎯 **ADMIN USER MANAGEMENT IMPROVEMENTS**
 
 #### **Re-implemented Checkbox Selection System**
+
 Complete restoration of row selection functionality for bulk operations in the admin user table.
 
 #### **Added Features:**
 
 **1. Row Selection Checkboxes**
+
 - **Header Checkbox**: Select/deselect all visible rows with single click
 - **Individual Row Selection**: Checkbox for each user row
 - **Visual Feedback**: Selected rows highlighted with proper state management
 - **Indeterminate State**: Header checkbox shows mixed selection state when some rows selected
 
 **2. Bulk Actions System**
+
 - **Bulk Actions Dropdown**: Appears when users are selected, showing count of selected items
 - **Bulk Email Verification**:
   - Verify multiple user emails simultaneously
@@ -452,6 +607,7 @@ Complete restoration of row selection functionality for bulk operations in the a
 - **Selection Reset**: Selections cleared after successful bulk action
 
 **3. API Endpoints for Bulk Operations**
+
 - **`/api/admin/bulk-update`**: Handles bulk email verification updates
   - PATCH endpoint for updating emailVerified status
   - Supports multiple user IDs in single request
@@ -468,6 +624,7 @@ Complete restoration of row selection functionality for bulk operations in the a
   - Complete ban record cleanup for fresh user status
 
 **4. UI/UX Enhancements**
+
 - **Selection Counter**: Shows "X selected" next to bulk actions button
 - **Icon Integration**: Appropriate icons for each bulk action (Check, X, Ban, Eye)
 - **Toast Notifications**: Success/error feedback for all bulk operations
@@ -477,6 +634,7 @@ Complete restoration of row selection functionality for bulk operations in the a
 #### **Code Quality Improvements:**
 
 **1. Console.log Cleanup**
+
 - **Removed 75+ console.log statements** from admin components
 - Eliminated debug logging from:
   - `components/admin/user-columns.tsx`: Removed all edit mode, lock state, and interaction logging
@@ -499,6 +657,7 @@ Complete restoration of row selection functionality for bulk operations in the a
   - `app/api/admin/update-user/route.ts`: Simplified error logging
 
 **2. Production Readiness**
+
 - All sensitive information removed from logs
 - Cleaner browser console in production environment
 - Retained only essential error logging for debugging
@@ -528,14 +687,16 @@ Complete restoration of row selection functionality for bulk operations in the a
 - Enhanced admin productivity with bulk user management
 - Cleaner codebase with production-ready logging
 
-## [2025/09/01] - Password Confirmation & Email Verification Management
+## [0.0.7] - 2025-09-01
 
 ### 🔒 **ENHANCED AUTHENTICATION SECURITY**
 
 #### **Password Confirmation Implementation**
+
 Added password confirmation fields to improve security and prevent password input errors across authentication flows.
 
 #### **Sign-Up Form Enhancements**
+
 - **Confirm Password Field**: Added password confirmation field to sign-up form
 - **Real-time Validation**: Zod schema validation ensures passwords match before form submission
 - **Improved Schema**: Enhanced form validation with `.refine()` method for password matching
@@ -543,12 +704,14 @@ Added password confirmation fields to improve security and prevent password inpu
 - **Form Structure**: Added `confirmPassword` field to form schema and default values
 
 #### **Admin Create User Dialog Improvements**
+
 - **Password Confirmation**: Added confirm password field to admin user creation form
 - **Validation**: Same password matching validation as sign-up form
 - **Security Enhancement**: Prevents admin password input errors when creating new users
 - **Consistent UX**: Maintains same validation patterns across all password creation flows
 
 #### **Admin User Management Features**
+
 - **Email Verification Control**: Added checkbox to toggle user email verification status
 - **API Enhancement**: Extended `/api/admin/update-user` endpoint to support email verification updates
 - **Real-time Updates**: Email verification changes reflected immediately in user table
@@ -557,6 +720,7 @@ Added password confirmation fields to improve security and prevent password inpu
 ### 🔧 **API IMPROVEMENTS**
 
 #### **Update User Endpoint Enhancement**
+
 - **New Field Support**: `/api/admin/update-user` now accepts `emailVerified` boolean parameter
 - **Validation**: Added Zod schema validation for email verification updates
 - **Database Updates**: Direct updates to Better Auth user table `emailVerified` field
@@ -583,34 +747,39 @@ Added password confirmation fields to improve security and prevent password inpu
 - Email verification management provides admin flexibility for user onboarding
 - Form validation prevents common password input errors
 
-## [2025/09/01] - Documentation & Development Resources
+## [0.0.6] - 2025-09-01
 
 ### 📚 **COMPREHENSIVE DOCUMENTATION ADDITIONS**
 
 #### **New Documentation Files Created**
+
 Added extensive technical documentation and implementation guides to support future development and integrations.
 
 #### **Documentation Files Added:**
 
 **1. tRPC Implementation Guide** (`docs/TRPC_IMPLEMENTATION_GUIDE.md`)
+
 - Complete step-by-step guide for integrating tRPC with the existing Portal architecture
 - Router setup, middleware configuration, and type-safe API patterns
 - Client-side integration patterns and error handling strategies
 - Authentication integration with Better Auth sessions
 
 **2. Supabase Realtime Integration Guide** (`docs/SUPABASE_REALTIME_INTEGRATION_GUIDE.md`)
+
 - Comprehensive guide for adding Supabase Realtime to the existing SSE system
 - Database setup, RLS policies, and real-time subscription patterns
 - Integration with existing collaborative editing features
 - Performance optimization and scaling considerations
 
 **3. tRPC + Supabase Integration Plan** (`docs/TRPC_SUPABASE_REALTIME_INTEGRATION_PLAN.md`)
+
 - Advanced integration plan combining tRPC with Supabase Realtime
 - Unified architecture for type-safe real-time collaborative features
 - Migration strategies from existing SSE system
 - Performance benchmarks and optimization techniques
 
 **4. Dashboard Implementation Example** (`docs/DASHBOARD_IMPLEMENTATION_EXAMPLE.md`)
+
 - Practical implementation example for collaborative dashboard features
 - React components with real-time collaboration capabilities
 - Widget system architecture with drag-and-drop functionality
@@ -638,16 +807,18 @@ Added extensive technical documentation and implementation guides to support fut
 - All examples maintain compatibility with Better Auth and current database schema
 - Documentation supports both incremental adoption and complete system overhauls
 
-## [2025/08/31] - Code Quality Improvements & Auth UI Refactoring
+## [0.0.5] - 2025-08-31
 
 ### 🧹 **LINTING & CODE QUALITY**
 
 #### **Complete ESLint Compliance**
+
 Achieved zero ESLint errors and warnings across the entire codebase by fixing 29 linting issues.
 
 #### **Fixed Issues by Category:**
 
 **1. Unused Variables & Parameters**
+
 - **Fixed unused error parameters** by replacing `catch (error)` with `catch {}` in:
   - `app/(setup)/admin-setup/claim.tsx` (Line 80)
   - `app/api/admin/locks/route.ts` (Lines 15, 57, 164, 203)
@@ -658,6 +829,7 @@ Achieved zero ESLint errors and warnings across the entire codebase by fixing 29
   - `helpers/realtime-broadcast.ts` (Line 132)
 
 **2. Unused Imports**
+
 - **Removed unused imports** from:
   - `components/forms/forgot-password-form.tsx`: Removed unused `Mail`, `CheckCircle` imports
   - `components/forms/form-signin.tsx`: Removed unused `FormDescription` import
@@ -665,26 +837,31 @@ Achieved zero ESLint errors and warnings across the entire codebase by fixing 29
   - `db/schema.ts`: Removed unused `integer` import
 
 **3. Unused Variables**
+
 - **Removed unused variable** `isLockedByCurrentUser` from `components/admin/user-columns.tsx` (Line 147)
 - **Fixed unused parameter** `e` in onClick handler (Line 225)
 - **Removed unused props** `className` and `props` from form components
 
 **4. React Hooks Dependencies**
+
 - **Fixed React Hook dependency** in `hooks/use-realtime.ts` (Line 24)
   - Removed unnecessary `category` dependency from useCallback
 
 ### 🎨 **UI/UX IMPROVEMENTS**
 
 #### **Authentication Pages Refactoring**
+
 Complete restructuring of authentication pages for improved maintainability and user experience.
 
 **1. Logo Simplification**
+
 - **Updated Logo Component** (`components/icon/Logo.tsx`):
   - Simplified to display only the Lucide Sparkle icon
   - Removed "Portal" text for cleaner visual design
   - Increased icon size from `size-4` to `size-5` for better visibility
 
 **2. Auth Layout Centralization**
+
 - **Enhanced Auth Layout** (`app/(auth)/layout.tsx`):
   - Added centralized "Back to Portal" button at top-left position
   - Implemented consistent page centering with `flex min-h-svh` layout
@@ -693,21 +870,20 @@ Complete restructuring of authentication pages for improved maintainability and 
 
 **3. Page Simplification**
 All auth pages now follow a clean, minimal pattern:
+
 - **Sign-in Page** (`app/(auth)/sign-in/page.tsx`):
   - Reduced to only importing and rendering `SignInForm`
   - Email verification alert preserved with proper styling
-  
 - **Sign-up Page** (`app/(auth)/sign-up/page.tsx`):
   - Simplified to single-line component return
-  
 - **Forgot Password Page** (`app/(auth)/forgot-password/page.tsx`):
   - Streamlined to only import and render form
-  
 - **Reset Password Page** (`app/(auth)/reset-password/page.tsx`):
   - Maintained Suspense wrapper for loading state
   - Removed all redundant layout code
 
 **4. Component Organization**
+
 - **Removed duplicate layout code** from all auth pages
 - **Centralized navigation** with uniform "Back to Portal" button
 - **Consistent spacing and alignment** across all auth forms
@@ -736,16 +912,18 @@ All auth pages now follow a clean, minimal pattern:
 - Auth flow remains unchanged from user perspective
 - Improved developer experience with clean linting status
 
-## [2025/08/30] - Production Security Hardening & Console Log Cleanup
+## [0.0.4] - 2025-08-30
 
 ### 🔒 **SECURITY & PRIVACY IMPROVEMENTS**
 
 #### **Comprehensive Console Log Removal**
+
 Performed extensive security audit and removed 200+ console.log statements that exposed sensitive information in production environments. This significant security improvement prevents data leakage through browser developer tools and server logs.
 
 #### **Removed Console Logs by Category:**
 
 **1. User Authentication & Session Data (HIGH SEVERITY)**
+
 - **`app/api/admin/users/stream/route.ts`**:
   - Line 5: Removed `console.log(\`🔄 Admin SSE connection: ${session.user.email}\`)`
   - Line 21-23: Removed SSE client connection logs exposing user counts
@@ -756,6 +934,7 @@ Performed extensive security audit and removed 200+ console.log statements that 
   - Line 10: Removed `console.log(\`📢 Broadcast request: ${eventType} by ${session.user.email}\`)`
 
 **2. Lock Management & Collaborative Editing (HIGH SEVERITY)**
+
 - **`app/api/admin/locks/route.ts`** (43 lines removed):
   - Line 17: Removed `console.log(\`👀 Fetching active locks for session: ${session.user.email}\`)`
   - Line 26-28: Removed connected sessions logging
@@ -773,6 +952,7 @@ Performed extensive security audit and removed 200+ console.log statements that 
   - Line 204-206: Removed unlock broadcast logging
 
 **3. Real-time Connection & SSE (MEDIUM SEVERITY)**
+
 - **`components/providers/sse-provider.tsx`** (85 lines removed):
   - Line 83: Removed duplicate toast prevention logging
   - Line 118-128: Removed lock API response and success logging
@@ -809,6 +989,7 @@ Performed extensive security audit and removed 200+ console.log statements that 
   - Line 151-153: Removed broadcast completion statistics
 
 **4. User Management & Data Operations (MEDIUM SEVERITY)**
+
 - **`components/admin/user-columns.tsx`** (53 lines removed):
   - Line 96-98: Removed edit mode start logging
   - Line 102-104: Removed edit mode prevention logging
@@ -838,6 +1019,7 @@ Performed extensive security audit and removed 200+ console.log statements that 
   - Line 143: Removed manual refresh logging
 
 **5. Database & Utility Operations (LOW-MEDIUM SEVERITY)**
+
 - **`utils/db-utils.tsx`**:
   - Line 10: Removed fetch attempt logging
   - Line 27: Removed successful fetch logging
@@ -852,6 +1034,7 @@ Performed extensive security audit and removed 200+ console.log statements that 
   - Line 71: Removed broadcast success logging
 
 **6. UI Components & Forms (LOW SEVERITY)**
+
 - **`components/admin/dialog-state-provider.tsx`**:
   - Line 35: Removed dialog open logging
   - Line 44: Removed dialog close logging
@@ -867,6 +1050,7 @@ Performed extensive security audit and removed 200+ console.log statements that 
   - Line 37-39: Removed broadcast request logging
 
 **7. Admin Operations (LOW SEVERITY)**
+
 - **`app/api/admin/update-user/route.ts`**:
   - Line 70: Modified from emoji to plain text error logging
 
@@ -878,7 +1062,8 @@ Performed extensive security audit and removed 200+ console.log statements that 
 ### 🎨 **UI/UX IMPROVEMENTS**
 
 #### **SSE Status Indicator Enhancement**
-- **`components/layout/sse-status-indicator.tsx`**: 
+
+- **`components/layout/sse-status-indicator.tsx`**:
   - Complete redesign of the real-time connection status indicator
   - Removed verbose connection state logging
   - Improved visual feedback with better color coding
@@ -887,6 +1072,7 @@ Performed extensive security audit and removed 200+ console.log statements that 
   - Simplified connection state management
 
 #### **Admin Setup Page Refinement**
+
 - **`app/(setup)/admin-setup/page.tsx`**:
   - Improved layout and spacing
   - Enhanced visual hierarchy
@@ -905,7 +1091,9 @@ Performed extensive security audit and removed 200+ console.log statements that 
 ### 🔧 **ERROR HANDLING IMPROVEMENTS**
 
 #### **Retained Essential Error Logging**
+
 Preserved critical error handlers for production debugging while removing sensitive details:
+
 - Email service failures (`lib/email.ts`)
 - Authentication errors (`lib/auth.ts`)
 - Database connection errors (`utils/db-utils.ts`)
@@ -913,7 +1101,9 @@ Preserved critical error handlers for production debugging while removing sensit
 - API route errors (various admin routes)
 
 #### **Removed Client-Side Logging**
+
 Eliminated all console statements from React components to prevent browser console exposure:
+
 - Form components
 - UI components
 - Client-side error handlers
@@ -921,6 +1111,7 @@ Eliminated all console statements from React components to prevent browser conso
 ### 🚀 **PRODUCTION READINESS**
 
 This update significantly improves production security by:
+
 1. **Preventing Data Leakage**: No user emails, IDs, or session data in logs
 2. **Reducing Attack Surface**: Removed operational details that could aid attackers
 3. **Professional Logging**: Removed emojis and informal messages
@@ -930,13 +1121,14 @@ This update significantly improves production security by:
 ### 📝 **RECOMMENDATIONS**
 
 For future production deployments:
+
 1. Implement centralized logging service (Sentry, LogRocket, DataDog)
 2. Use structured logging instead of console statements
 3. Add request IDs for distributed tracing
 4. Set up alerts for critical failures
 5. Consider log retention policies for compliance
 
-## [2025/08/26] - Better Auth Integration & UI Form Improvements
+## [0.0.3] - 2025-08-26
 
 ### 🔧 **BETTER AUTH IMPLEMENTATION UPDATES**
 
@@ -982,7 +1174,7 @@ For future production deployments:
   - Hybrid approach with environment variable fallback and database control
   - Complete security analysis and phase-based implementation plan
 
-## [2025/08/25] - Authentication & Sign Out Flow Improvements
+## [0.0.2] - 2025-08-25
 
 ### 🔧 **AUTHENTICATION SYSTEM FIXES**
 
@@ -1020,12 +1212,12 @@ For future production deployments:
 
 ### 🏗️ **DEPLOYMENT COMPATIBILITY**
 
-- **Vercel Deployment Preparation**: 
+- **Vercel Deployment Preparation**:
   - Verified redirect functionality works correctly on Vercel platform
   - Local production build issues identified and documented
   - Sign out flow optimized for cloud deployment environments
 
-## [2025/08/24] - Real-Time Collaborative Lock System & SSE State Management Revolution
+## [0.0.1] - 2025-08-24
 
 ### 🔄 **SERVER-SENT EVENTS AS SOURCE OF TRUTH**
 
@@ -1189,7 +1381,7 @@ For future production deployments:
 
 ---
 
-## [2025/08/23] - Directory Structure Reorganization & Architecture Standardization
+## [0.0.0] - 2025-08-23
 
 ### 🏗️ **COMPLETE FOLDER STRUCTURE REORGANIZATION**
 
@@ -1270,7 +1462,7 @@ For future production deployments:
 └── db/              # Database schema & migrations (unchanged)
 ```
 
-## [2025/08/23] - Advanced User Interface & Real-Time System Implementation
+## [0.0.0] - 2025-08-23
 
 ### 🎨 **UNIFORM DESIGN SYSTEM & UI POLISH**
 
@@ -1459,7 +1651,7 @@ Conducted comprehensive compliance audit against official Better Auth documentat
 
 ---
 
-## [2025/08/21] - Critical Security Implementation & Email System Integration
+## [0.0.0] - 2025-08-21
 
 ### 🚨 **CRITICAL SECURITY ROADMAP IMPLEMENTATION**
 
@@ -1640,7 +1832,7 @@ Conducted comprehensive compliance audit against official Better Auth documentat
 
 ---
 
-## [2025/08/21] - UI Polish & Dependency Updates
+## [0.0.0] - 2025-08-21
 
 ### 🎨 UI/UX Improvements
 
@@ -1684,7 +1876,7 @@ Conducted comprehensive compliance audit against official Better Auth documentat
   - @types/react: Updated to 19.1.10
   - Various build tool updates for improved development experience
 
-## [2025/08/16] - Critical Authentication Fixes & Role Management Migration
+## [0.0.0] - 2025-08-16
 
 ### 🚨 **CRITICAL FIX: Sign-In Redirect Loop Resolution**
 
@@ -1712,7 +1904,7 @@ Conducted comprehensive compliance audit against official Better Auth documentat
 - **Layout Guards**: ✅ Server-side session validation with graceful fallback
 - **Session Management**: ✅ Consistent session detection across all authentication layers
 
-## [2025/08/16] - Single Source of Truth Role Management Migration
+## [0.0.0] - 2025-08-16
 
 ### 🔒 **BREAKING CHANGE: Role Management Architecture Overhaul**
 
@@ -1791,7 +1983,7 @@ Conducted comprehensive compliance audit against official Better Auth documentat
 - **Admin Operations**: All existing admin features continue to work seamlessly
 - **API Compatibility**: External integrations unaffected by internal role migration
 
-## [2025/08/16] - The Admin Arrives
+## [0.0.0] - 2025-08-16
 
 ### 🛠️ Code Quality & Type Safety Improvements
 
@@ -2024,7 +2216,7 @@ Conducted comprehensive compliance audit against official Better Auth documentat
   - Improved component exports and imports for better maintainability
   - Cleaned up unused components and imports
 
-## [2025.08.14] - Performance & Architecture Revolution
+## [0.0.0] - 2025-08-14
 
 ### 🚀 Major Performance Optimizations
 

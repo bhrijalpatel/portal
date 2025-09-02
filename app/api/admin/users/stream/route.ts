@@ -2,7 +2,6 @@ import { withAdminAuth } from "@/helpers/api-helpers";
 import { connectedClients } from "@/helpers/realtime-broadcast";
 
 export const GET = withAdminAuth(async ({ session }) => {
-
   // Create a readable stream for Server-Sent Events
   // Variables to track controller and client ID
   let currentClientId: string;
@@ -16,7 +15,6 @@ export const GET = withAdminAuth(async ({ session }) => {
         userRole: session.user.role || "admin",
         userEmail: session.user.email,
       });
-
 
       // Send initial connection confirmation
       const initialMessage = {

@@ -34,7 +34,6 @@ export const POST = withAuth(async ({ session }, request) => {
     const userRole = session.user.role || "user";
     const triggeredBy = session.user.email;
 
-
     // Role-based permissions for triggering events
     const canTriggerEvent = checkBroadcastPermission(eventType, userRole);
     if (!canTriggerEvent) {

@@ -33,7 +33,6 @@ export function UserTableClient({ initialUsers }: ClientUserTableProps) {
         const dataChanged =
           JSON.stringify(prevUsers) !== JSON.stringify(newUsers);
 
-
         if (showToast) {
           toast.success("User data refreshed successfully", {
             id: "manual-refresh",
@@ -50,7 +49,6 @@ export function UserTableClient({ initialUsers }: ClientUserTableProps) {
         return newUsers;
       });
     } catch (error) {
-
       // Show more helpful error messages
       if (
         error instanceof Error &&
@@ -97,7 +95,6 @@ export function UserTableClient({ initialUsers }: ClientUserTableProps) {
 
   // Broadcast user operations to all eligible users
   const handleDataChange = useCallback(async () => {
-
     try {
       // Use the new universal broadcast endpoint
       const response = await fetch("/api/realtime/broadcast", {
@@ -119,7 +116,6 @@ export function UserTableClient({ initialUsers }: ClientUserTableProps) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.error || "Failed to broadcast update");
       }
-
     } catch {
       // Fallback to local refresh if broadcast fails
       refreshUsers(false);
