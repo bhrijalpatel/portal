@@ -15,7 +15,7 @@ export default async function ProtectedLayout({
 }) {
   // SECURITY: Layer 2 - Server-side session validation (defense-in-depth)
   // This provides backup protection if middleware is bypassed (CVE-2025-29927)
-  const session = await requireSession();
+  await requireSession();
 
   // Session data is managed client-side by RoleProvider for UI purposes
   return (

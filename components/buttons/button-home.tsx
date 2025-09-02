@@ -1,4 +1,4 @@
-import { FuelIcon, Home } from "lucide-react";
+import { Home } from "lucide-react";
 import { Button } from "../ui/button";
 import Link from "next/link";
 
